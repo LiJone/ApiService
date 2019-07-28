@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.AttendancePoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.AttendancePo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="attdate" jdbcType="DATE" property="attdate"/>
+        <result column="jobnum" jdbcType="VARCHAR" property="jobnum"/>
+        <result column="number" jdbcType="VARCHAR" property="number"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="treatment" jdbcType="INTEGER" property="treatment"/>
+        <result column="amontime" jdbcType="TIME" property="amontime"/>
+        <result column="amofftime" jdbcType="TIME" property="amofftime"/>
+        <result column="pmontime" jdbcType="TIME" property="pmontime"/>
+        <result column="pmofftime" jdbcType="TIME" property="pmofftime"/>
+        <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, attdate, jobnum, number, type, treatment, amontime, amofftime, pmontime, pmofftime, orgid
+  </sql>
+
+    <resultMap id="AttendOTRResultMap" type="com.tss.apiservice.po.AttendOTRecordPo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="ottime" jdbcType="DATE" property="ottime"/>
+        <result column="hour" jdbcType="FLOAT" property="hour"/>
+        <result column="attendid" jdbcType="INTEGER" property="attendid"/>
+    </resultMap>
+
+    <sql id="AttendOTR_Column_List">
+        id, ottime, hour, attendid
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from attendance
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from attendance
+        where orgid = #{orgid} and number = #{staffid}
+        <if test="timeBegin != null">
+            and attdate &gt;= #{timeBegin}
+        </if>
+        <if test="timeEnd != null">
+            and attdate &lt;= #{timeEnd}
+        </if>
+        ORDER BY attdate asc
+    </select>
+
+    <select id="selectCountAmontimeIsNotNull" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+        count(*)
+        from attendance
+        where amontime is not null and orgid = #{orgid} and number = #{staffid}
+        <if test="timeBegin != null">
+            and attdate &gt;= #{timeBegin}
+        </if>
+        <if test="timeEnd != null">
+            and attdate &lt;= #{timeEnd}
+        </if>
+    </select>
+
+    <select id="selectCountPmontimeIsNotNull" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+        count(*)
+        from attendance
+        where pmontime is not null and orgid = #{orgid} and number = #{staffid}
+        <if test="timeBegin != null">
+            and attdate &gt;= #{timeBegin}
+        </if>
+        <if test="timeEnd != null">
+            and attdate &lt;= #{timeEnd}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from attendance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.AttendancePo">
+        insert into attendance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="attdate != null">
+                attdate,
+            </if>
+            <if test="jobnum != null">
+                jobnum,
+            </if>
+            <if test="number != null">
+                number,
+            </if>
+            <if test="type != null">
+                type,
+            </if>treatment
+            <if test="treatment != null">
+                treatment,
+            </if>
+            <if test="amontime != null">
+                amontime,
+            </if>
+            <if test="amofftime != null">
+                amofftime,
+            </if>
+            <if test="pmontime != null">
+                pmontime,
+            </if>
+            <if test="pmofftime != null">
+                pmofftime,
+            </if>
+            <if test="otontime != null">
+                otontime,
+            </if>
+            <if test="otofftime != null">
+                otofftime,
+            </if>
+            <if test="orgid != null">
+                orgid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="attdate != null">
+                #{attdate,jdbcType=DATE},
+            </if>
+            <if test="jobnum != null">
+                #{jobnum,jdbcType=VARCHAR},
+            </if>
+            <if test="number != null">
+                #{number,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="treatment != null">
+                #{treatment,jdbcType=INTEGER},
+            </if>
+            <if test="amontime != null">
+                #{amontime,jdbcType=TIME},
+            </if>
+            <if test="amofftime != null">
+                #{amofftime,jdbcType=TIME},
+            </if>
+            <if test="pmontime != null">
+                #{pmontime,jdbcType=TIME},
+            </if>
+            <if test="pmofftime != null">
+                #{pmofftime,jdbcType=TIME},
+            </if>
+            <if test="otontime != null">
+                #{otontime,jdbcType=TIME},
+            </if>
+            <if test="otofftime != null">
+                #{otofftime,jdbcType=TIME},
+            </if>
+            <if test="orgid != null">
+                #{orgid,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.AttendancePo">
+        update attendance
+        <set>
+            <if test="attdate != null">
+                attdate = #{attdate,jdbcType=DATE},
+            </if>
+            <if test="jobnum != null">
+                jobnum = #{jobnum,jdbcType=VARCHAR},
+            </if>
+            <if test="number != null">
+                number = #{number,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="treatment != null">
+                treatment = #{treatment,jdbcType=INTEGER},
+            </if>
+            <if test="amontime != null">
+                amontime = #{amontime,jdbcType=TIME},
+            </if>
+            <if test="amofftime != null">
+                amofftime = #{amofftime,jdbcType=TIME},
+            </if>
+            <if test="pmontime != null">
+                pmontime = #{pmontime,jdbcType=TIME},
+            </if>
+            <if test="pmofftime != null">
+                pmofftime = #{pmofftime,jdbcType=TIME},
+            </if>
+            <if test="otontime != null">
+                otontime = #{otontime,jdbcType=TIME},
+            </if>
+            <if test="otofftime != null">
+                otofftime = #{otofftime,jdbcType=TIME},
+            </if>
+            <if test="orgid != null">
+                orgid = #{orgid,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectAllAddHourOttimeIsNotNull" resultType="java.lang.Float" parameterType="java.util.Map">
+    select sum(hour) from attendotrecord where ottime is not null and attendid = (
+    select id from attendance where orgid = #{orgid} and number = #{staffid}
+        <if test="timeBegin != null">
+            and attdate &gt;= #{timeBegin}
+        </if>
+        <if test="timeEnd != null">
+            and attdate &lt;= #{timeEnd}
+        </if>
+    )
+  </select>
+
+    <select id="selectDaySalary" resultType="java.lang.Integer" parameterType="java.util.Map">
+    select treatment from attendance where orgid = #{orgid} and number = #{staffid}
+  </select>
+
+    <select id="selectWorkAddInfo" resultMap="AttendOTRResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="AttendOTR_Column_List"/>
+        from attendotrecord
+        where attendid = #{id,jdbcType=INTEGER} and ottime is not null
+    </select>
+
+    <select id="selectAddHour" parameterType="java.lang.Integer" resultType="java.lang.Float">
+        select sum(hour) from attendotrecord where ottime is not null and attendid = #{id,jdbcType=INTEGER}
+    </select>
+</mapper>

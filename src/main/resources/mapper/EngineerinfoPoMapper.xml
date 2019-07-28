@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.EngineerinfoPoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.EngineerinfoPo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="jobnum" jdbcType="VARCHAR" property="jobnum"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="posname" jdbcType="VARCHAR" property="posname"/>
+        <result column="osdid" jdbcType="VARCHAR" property="osdid"/>
+        <result column="starttime" jdbcType="TIMESTAMP" property="starttime"/>
+        <result column="endtime" jdbcType="TIMESTAMP" property="endtime"/>
+        <result column="schedule" jdbcType="INTEGER" property="schedule"/>
+        <result column="osdname" jdbcType="VARCHAR" property="osdname"/>
+        <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, jobnum, name, posname, osdid, starttime, endtime, schedule, osdname, orgid
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from engineerinfo
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByJobNum" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from engineerinfo
+        where jobnum = #{jobnum,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByOsdid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from engineerinfo
+        where osdid = #{osdid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectListByMap" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from engineerinfo
+        where 1 = 1
+        <if test="name != null">
+            and name like '%${name}%'
+        </if>
+        <if test="numberBegin != null">
+            and jobnum &gt;= #{numberBegin}
+        </if>
+        <if test="numberEnd != null">
+            and jobnum &lt;= #{numberEnd}
+        </if>
+        and orgid = #{orgid}
+        <if test="startrow != null and pagesize != null">
+            limit #{startrow} , #{pagesize}
+        </if>
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from engineerinfo
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <delete id="deleteByOsdid" parameterType="java.lang.String">
+    delete from engineerinfo
+    where osdid = #{osdid,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.EngineerinfoPo">
+        insert into engineerinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="jobnum != null">
+                jobnum,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="posname != null">
+                posname,
+            </if>
+            <if test="osdid != null">
+                osdid,
+            </if>
+            <if test="starttime != null">
+                starttime,
+            </if>
+            <if test="endtime != null">
+                endtime,
+            </if>
+            <if test="schedule != null">
+                schedule,
+            </if>
+            <if test="osdname != null">
+                osdname,
+            </if>
+            <if test="orgid != null">
+                orgid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="jobnum != null">
+                #{jobnum,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="posname != null">
+                #{posname,jdbcType=VARCHAR},
+            </if>
+            <if test="osdid != null">
+                #{osdid,jdbcType=VARCHAR},
+            </if>
+            <if test="starttime != null">
+                #{starttime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endtime != null">
+                #{endtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="schedule != null">
+                #{schedule,jdbcType=INTEGER},
+            </if>
+            <if test="osdname != null">
+                #{osdname,jdbcType=VARCHAR},
+            </if>
+            <if test="orgid != null">
+                 #{orgid,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.EngineerinfoPo">
+        update engineerinfo
+        <set>
+            <if test="jobnum != null">
+                jobnum = #{jobnum,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="posname != null">
+                posname = #{posname,jdbcType=VARCHAR},
+            </if>
+            <if test="osdid != null">
+                osdid = #{osdid,jdbcType=VARCHAR},
+            </if>
+            <if test="starttime != null">
+                starttime = #{starttime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endtime != null">
+                endtime = #{endtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="schedule != null">
+                schedule = #{schedule,jdbcType=INTEGER},
+            </if>
+            <if test="osdname != null">
+                osdname = #{osdname,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>

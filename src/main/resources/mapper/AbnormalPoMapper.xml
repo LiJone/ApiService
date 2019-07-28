@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.AbnormalPoMapper">
+  <resultMap id="BaseResultMap" type="com.tss.apiservice.po.AbnormalPo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="abtime" jdbcType="TIMESTAMP" property="abtime" />
+    <result column="jobnum" jdbcType="VARCHAR" property="jobnum" />
+    <result column="number" jdbcType="VARCHAR" property="number" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="imageid" jdbcType="VARCHAR" property="imageid" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="orgid" jdbcType="VARCHAR" property="orgid" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    id, abtime, jobnum, number, type, reason, imageid, code, orgid
+  </sql>
+
+  <select id="selectByHashMap" parameterType="java.lang.Integer" resultType="com.tss.apiservice.po.vo.AbnormalExceptionVo">
+    select abnormal.* ,engineerinfo.name as engineerName
+    from abnormal left join  engineerinfo on abnormal.jobnum = engineerinfo.jobnum
+    where 1 = 1
+    <if test="timeBegin != null">
+      and abnormal.abtime &gt;= #{timeBegin}
+    </if>
+    <if test="timeEnd != null">
+      and abnormal.abtime &lt;= #{timeEnd}
+    </if>
+    and abnormal.orgid = #{orgid}
+    order by abnormal.jobnum asc , abnormal.abtime asc
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from abnormal
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from abnormal
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.tss.apiservice.po.AbnormalPo">
+    insert into abnormal
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="abtime != null">
+        abtime,
+      </if>
+      <if test="jobnum != null">
+        jobnum,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+      <if test="imageid != null">
+        imageid,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="enterpriseid != null">
+        orgid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="abtime != null">
+        #{abtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="jobnum != null">
+        #{jobnum,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="imageid != null">
+        #{imageid,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="orgid != null">
+        #{orgid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.AbnormalPo">
+    update abnormal
+    <set>
+      <if test="abtime != null">
+        abtime = #{abtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="jobnum != null">
+        jobnum = #{jobnum,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="imageid != null">
+        imageid = #{imageid,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="orgid != null">
+        orgid = #{orgid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

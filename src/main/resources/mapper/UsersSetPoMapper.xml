@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.UsersSetPoMapper">
+  <resultMap id="BaseResultMap" type="com.tss.apiservice.po.UsersSetPo">
+    <id column="orgid" jdbcType="VARCHAR" property="orgid" />
+    <result column="timeout" jdbcType="INTEGER" property="timeout" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    orgid, timeout
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from usersset
+    where orgid = #{orgid}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from usersset
+    where orgid = #{orgid,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.tss.apiservice.po.UsersSetPo">
+    insert into usersset
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orgid != null">
+        orgid,
+      </if>
+      <if test="timeout != null">
+        timeout,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orgid != null">
+        #{orgid,jdbcType=VARCHAR},
+      </if>
+      <if test="timeout != null">
+        #{timeout,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.UsersSetPo">
+    update usersset
+    <set>
+      <if test="timeout != null">
+        timeout = #{timeout,jdbcType=INTEGER},
+      </if>
+    </set>
+    where orgid = #{orgid,jdbcType=VARCHAR}
+  </update>
+</mapper>

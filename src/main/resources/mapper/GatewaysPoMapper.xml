@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.GatewaysPoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.GatewaysPo">
+        <id column="number" jdbcType="VARCHAR" property="number"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="protocol" jdbcType="VARCHAR" property="protocol"/>
+        <result column="network" jdbcType="VARCHAR" property="network"/>
+        <result column="distance" jdbcType="INTEGER" property="distance"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="osdid" jdbcType="VARCHAR" property="osdid"/>
+        <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    number, name, type, protocol, network, distance, status, osdid, orgid
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from gateways
+        where number = #{number,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from gateways
+        where name = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectNumsByPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select * from gateways where 1 = 1
+        <if test="name != null">
+            and name like '%${name}%'
+        </if>
+        and orgid = #{orgid}
+        <if test="startrow != null and pagesize != null">
+            limit #{startrow} , #{pagesize}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from gateways
+    where number = #{number,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.GatewaysPo">
+        insert into gateways
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="number != null">
+                number,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="protocol != null">
+                protocol,
+            </if>
+            <if test="network != null">
+                network,
+            </if>
+            <if test="distance != null">
+                distance,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="osdid != null">
+                osdid,
+            </if>
+            <if test="orgid != null">
+                orgid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="number != null">
+                #{number,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="protocol != null">
+                #{protocol,jdbcType=VARCHAR},
+            </if>
+            <if test="network != null">
+                #{network,jdbcType=VARCHAR},
+            </if>
+            <if test="distance != null">
+                #{distance,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="osdid != null">
+                #{osdid,jdbcType=VARCHAR},
+            </if>
+            <if test="orgid != null">
+                #{orgid,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.GatewaysPo">
+        update gateways
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="protocol != null">
+                protocol = #{protocol,jdbcType=VARCHAR},
+            </if>
+            <if test="network != null">
+                network = #{network,jdbcType=VARCHAR},
+            </if>
+            <if test="distance != null">
+                distance = #{distance,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="osdid != null">
+                osdid = #{osdid,jdbcType=VARCHAR},
+            </if>
+            <if test="orgid != null">
+                orgid = #{orgid,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where number = #{number,jdbcType=VARCHAR}
+    </update>
+</mapper>

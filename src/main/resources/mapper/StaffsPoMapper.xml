@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.StaffsPoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.StaffsPo">
+        <id column="staffid" jdbcType="VARCHAR" property="staffid"/>
+        <result column="chname" jdbcType="VARCHAR" property="chname"/>
+        <result column="enname" jdbcType="VARCHAR" property="enname"/>
+        <result column="ensurname" jdbcType="VARCHAR" property="ensurname"/>
+        <result column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
+        <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+        <result column="treatment" jdbcType="INTEGER" property="treatment"/>
+        <result column="altersalary" jdbcType="INTEGER" property="altersalary"/>
+        <result column="effdate" jdbcType="TIME" property="effdate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    staffid, chname, enname, ensurname, imagepath, imagename, type, orgid, treatment, altersalary, effdate
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from staffs
+        where staffid = #{staffid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectListByOrgid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from staffs
+        where orgid = #{orgid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from staffs
+        where 1 = 1
+        <if test="chname != null">
+            and chname like '%${chname}%'
+        </if>
+        <if test="enname != null">
+            and enname like '%${enname}%'
+        </if>
+        <if test="numberBegin != null">
+            and staffid &gt;= #{numberBegin}
+        </if>
+        <if test="numberEnd != null">
+            and staffid &lt;= #{numberEnd}
+        </if>
+        and orgid = #{orgid}
+        <if test="startrow != null and pagesize != null">
+            limit #{startrow} , #{pagesize}
+        </if>
+
+    </select>
+
+    <select id="selectListByMap02" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from staffs
+        where 1 = 1
+        <if test="staffid != null">
+            and staffid like '%${staffid}%'
+        </if>
+        <if test="staffsName != null">
+            and enname like '%${staffsName}%'
+        </if>
+        <if test="orgid != null">
+            and orgid = #{orgid}
+        </if>
+        union
+        select
+        <include refid="Base_Column_List"/>
+        from staffs
+        where 1 = 1
+        <if test="staffid != null">
+            and staffid = #{staffid}
+        </if>
+        <if test="staffsName != null">
+            and chname like '%${staffsName}%'
+        </if>
+        <if test="orgid != null">
+            and orgid = #{orgid}
+        </if>
+
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from staffs
+    where staffid = #{staffid,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.StaffsPo">
+        insert into staffs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="staffid != null">
+                staffid,
+            </if>
+            <if test="chname != null">
+                chname,
+            </if>
+            <if test="enname != null">
+                enname,
+            </if>
+            <if test="ensurname != null">
+                ensurname,
+            </if>
+            <if test="imagepath != null">
+                imagepath,
+            </if>
+            <if test="imagename != null">
+                imagename,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="orgid != null">
+                orgid,
+            </if>
+            <if test="treatment != null">
+                treatment,
+            </if>
+            <if test="altersalary != null">
+                altersalary,
+            </if>
+            <if test="effdate != null">
+                effdate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="staffid != null">
+                #{staffid,jdbcType=VARCHAR},
+            </if>
+            <if test="chname != null">
+                #{chname,jdbcType=VARCHAR},
+            </if>
+            <if test="enname != null">
+                #{enname,jdbcType=VARCHAR},
+            </if>
+            <if test="ensurname != null">
+                #{ensurname,jdbcType=VARCHAR},
+            </if>
+            <if test="imagepath != null">
+                #{imagepath,jdbcType=VARCHAR},
+            </if>
+            <if test="imagename != null">
+                #{imagename,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="orgid != null">
+                #{orgid,jdbcType=VARCHAR},
+            </if>
+            <if test="treatment != null">
+                #{treatment,jdbcType=INTEGER},
+            </if>
+            <if test="altersalary != null">
+                #{altersalary,jdbcType=INTEGER},
+            </if>
+            <if test="effdate != null">
+                #{effdate,jdbcType=TIME},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.StaffsPo">
+        update staffs
+        <set>
+            <if test="chname != null">
+                chname = #{chname,jdbcType=VARCHAR},
+            </if>
+            <if test="enname != null">
+                enname = #{enname,jdbcType=VARCHAR},
+            </if>
+            <if test="ensurname != null">
+                ensurname = #{ensurname,jdbcType=VARCHAR},
+            </if>
+            <if test="imagepath != null">
+                imagepath = #{imagepath,jdbcType=VARCHAR},
+            </if>
+            <if test="imagename != null">
+                imagename = #{imagename,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="orgid != null">
+                orgid = #{orgid,jdbcType=VARCHAR},
+            </if>
+            <if test="treatment != null">
+                treatment = #{treatment,jdbcType=INTEGER},
+            </if>
+            <if test="altersalary != null">
+                altersalary = #{altersalary,jdbcType=INTEGER},
+            </if>
+            <if test="effdate != null">
+                effdate = #{effdate,jdbcType=TIME},
+            </if>
+        </set>
+        where staffid = #{staffid,jdbcType=VARCHAR}
+    </update>
+</mapper>

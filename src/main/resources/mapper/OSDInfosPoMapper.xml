@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.OSDInfosPoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.OSDInfosPo">
+        <id column="osdid" jdbcType="VARCHAR" property="osdid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    osdid, name, orgid
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from osdinfos
+        where osdid = #{osdid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectListByMap" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from osdinfos
+        where 1 = 1
+        <if test="name != null">
+            and name like '%${name}%'
+        </if>
+        and orgid = #{orgid}
+        <if test="startrow != null and pagesize != null">
+            limit #{startrow} , #{pagesize}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from osdinfos
+    where osdid = #{osdid,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.OSDInfosPo">
+        insert into osdinfos
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="osdid != null">
+                osdid,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="orgid != null">
+                orgid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="osdid != null">
+                #{osdid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="orgid != null">
+                #{orgid,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.OSDInfosPo">
+        update osdinfos
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="orgid != null">
+                orgid = #{orgid,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where osdid = #{osdid,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

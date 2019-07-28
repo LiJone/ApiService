@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.StaffscertPoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.StaffscertPo">
+        <id column="certid" jdbcType="VARCHAR" property="certid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="typename" jdbcType="VARCHAR" property="typename"/>
+        <result column="validity" jdbcType="TIMESTAMP" property="validity"/>
+        <result column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
+        <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
+        <result column="staffid" jdbcType="VARCHAR" property="staffid"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    certid, name, typename, validity, imagepath, imagename, staffid
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from staffscert
+        where certid = #{certid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByStaffid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from staffscert
+        where staffid = #{staffid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByStaffidValid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from staffscert
+        where staffid = #{staffid,jdbcType=VARCHAR} and validity > NOW()
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from staffscert
+    where certid = #{certid,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.StaffscertPo">
+        insert into staffscert
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="certid != null">
+                certid,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="typename != null">
+                typename,
+            </if>
+            <if test="validity != null">
+                validity,
+            </if>
+            <if test="imagepath != null">
+                imagepath,
+            </if>
+            <if test="imagename != null">
+                imagename,
+            </if>
+            <if test="staffid != null">
+                staffid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="certid != null">
+                #{certid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="typename != null">
+                #{typename,jdbcType=VARCHAR},
+            </if>
+            <if test="validity != null">
+                #{validity,jdbcType=TIMESTAMP},
+            </if>
+            <if test="imagepath != null">
+                #{imagepath,jdbcType=VARCHAR},
+            </if>
+            <if test="imagename != null">
+                #{imagename,jdbcType=VARCHAR},
+            </if>
+            <if test="staffid != null">
+                #{staffid,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.StaffscertPo">
+        update staffscert
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="typename != null">
+                typename = #{typename,jdbcType=VARCHAR},
+            </if>
+            <if test="validity != null">
+                validity = #{validity,jdbcType=TIMESTAMP},
+            </if>
+            <if test="imagepath != null">
+                imagepath = #{imagepath,jdbcType=VARCHAR},
+            </if>
+            <if test="imagename != null">
+                imagename = #{imagename,jdbcType=VARCHAR},
+            </if>
+            <if test="staffid != null">
+                staffid = #{staffid,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where certid = #{certid,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

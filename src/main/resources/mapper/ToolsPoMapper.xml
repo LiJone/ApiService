@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.ToolsPoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.ToolsPo">
+        <id column="toolid" jdbcType="VARCHAR" property="toolid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
+        <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    toolid, name, imagepath, imagename, type, orgid
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tools
+        where toolid = #{toolid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tools
+        where 1 = 1
+        <if test="name != null">
+            and name like '%${name}%'
+        </if>
+        <if test="numberBegin != null">
+            and toolid &gt;= #{numberBegin}
+        </if>
+        <if test="numberEnd != null">
+            and toolid &lt;= #{numberEnd}
+        </if>
+        and orgid = #{orgid}
+        <if test="startrow != null and pagesize != null">
+            limit #{startrow} , #{pagesize}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from tools
+    where toolid = #{toolid,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.ToolsPo">
+        insert into tools
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="toolid != null">
+                toolid,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="imagepath != null">
+                imagepath,
+            </if>
+            <if test="imagename != null">
+                imagename,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="orgid != null">
+                orgid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="toolid != null">
+                #{toolid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="imagepath != null">
+                #{imagepath,jdbcType=VARCHAR},
+            </if>
+            <if test="imagename != null">
+                #{imagename,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="orgid != null">
+                #{orgid,jdbcType=VARCHAR},
+            </if>
+
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.ToolsPo">
+        update tools
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="imagepath != null">
+                imagepath = #{imagepath,jdbcType=VARCHAR},
+            </if>
+            <if test="imagename != null">
+                imagename = #{imagename,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="orgid != null">
+                orgid = #{orgid,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where toolid = #{toolid,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

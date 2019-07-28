@@ -1,0 +1,7 @@
+package com.tss.apiservice.service;
+
+import com.tss.apiservice.common.ReturnMsg;
+
+public interface CommonService {
+    ReturnMsg getBase64ByPath(String filePath,String filePathTmp , String fileName) throws Exception;
+}

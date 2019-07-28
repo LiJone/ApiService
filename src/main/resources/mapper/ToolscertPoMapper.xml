@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.ToolscertPoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.ToolscertPo">
+        <id column="certid" jdbcType="VARCHAR" property="certid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="typename" jdbcType="VARCHAR" property="typename"/>
+        <result column="validity" jdbcType="TIMESTAMP" property="validity"/>
+        <result column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
+        <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
+        <result column="toolid" jdbcType="VARCHAR" property="toolid"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    certid, name, typename, validity, imagepath, imagename, toolid
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from toolscert
+        where certid = #{certid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByToolid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from toolscert
+        where toolid = #{toolid,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from toolscert
+    where certid = #{certid,jdbcType=VARCHAR}
+  </delete>
+
+    <delete id="deleteByToolid" parameterType="java.lang.String">
+    delete from toolscert
+    where toolid = #{toolid,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.ToolscertPo">
+        insert into toolscert
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="certid != null">
+                certid,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="typename != null">
+                typename,
+            </if>
+            <if test="validity != null">
+                validity,
+            </if>
+            <if test="imagepath != null">
+                imagepath,
+            </if>
+            <if test="imagename != null">
+                imagename,
+            </if>
+            <if test="toolid != null">
+                toolid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="certid != null">
+                #{certid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="typename != null">
+                #{typename,jdbcType=VARCHAR},
+            </if>
+            <if test="validity != null">
+                #{validity,jdbcType=TIMESTAMP},
+            </if>
+            <if test="imagepath != null">
+                #{imagepath,jdbcType=VARCHAR},
+            </if>
+            <if test="imagename != null">
+                #{imagename,jdbcType=VARCHAR},
+            </if>
+            <if test="toolid != null">
+                #{toolid,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.ToolscertPo">
+        update toolscert
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="typename != null">
+                typename = #{typename,jdbcType=VARCHAR},
+            </if>
+            <if test="validity != null">
+                validity = #{validity,jdbcType=TIMESTAMP},
+            </if>
+            <if test="imagepath != null">
+                imagepath = #{imagepath,jdbcType=VARCHAR},
+            </if>
+            <if test="imagename != null">
+                imagename = #{imagename,jdbcType=VARCHAR},
+            </if>
+            <if test="toolid != null">
+                toolid = #{toolid,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where certid = #{certid,jdbcType=VARCHAR}
+    </update>
+</mapper>

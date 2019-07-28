@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.OrganAttendSetPoMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.AttendSetPo">
+        <id column="orgid" jdbcType="VARCHAR" property="orgid"/>
+        <result column="amontime" jdbcType="TIME" property="amontime"/>
+        <result column="amofftime" jdbcType="TIME" property="amofftime"/>
+        <result column="pmontime" jdbcType="TIME" property="pmontime"/>
+        <result column="pmofftime" jdbcType="TIME" property="pmofftime"/>
+    </resultMap>
+
+    <resultMap id="AttendSetOTResultMap" type="com.tss.apiservice.po.AttendOTSetPo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="otontime" jdbcType="TIME" property="otontime"/>
+        <result column="otofftime" jdbcType="TIME" property="otofftime"/>
+        <result column="hour" jdbcType="INTEGER" property="hour"/>
+        <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    orgid, amontime, amofftime, pmontime, pmofftime
+  </sql>
+
+    <sql id="AttendSetOT_Column_List">
+        id, otontime, otofftime,  hour, orgid
+    </sql>
+
+    <select id="selectAttendSet" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from attendset where orgid = #{orgid, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectAttendOTSet" parameterType="java.lang.String" resultMap="AttendSetOTResultMap">
+        select
+        <include refid="AttendSetOT_Column_List"/>
+        from attendotset where orgid = #{orgid, jdbcType=VARCHAR}
+    </select>
+
+    <select id="checkIsExist" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(*) from attendset where orgid = #{orgid, jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteOldAttendOTSet" parameterType="java.lang.String">
+        delete from attendotset where orgid = #{orgid, jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="insertNewAttendOTSet" parameterType="com.tss.apiservice.po.AttendOTSetPo" >
+        insert into attendotset
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="otontime != null">
+                otontime,
+            </if>
+            <if test="otofftime != null">
+                otofftime,
+            </if>
+            <if test="hour != null">
+                hour,
+            </if>
+            <if test="orgid != null">
+                orgid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="otontime != null">
+                #{otontime,jdbcType=TIME},
+            </if>
+            <if test="otofftime != null">
+                #{otofftime,jdbcType=TIME},
+            </if>
+            <if test="hour != null">
+                #{hour,jdbcType=INTEGER},
+            </if>
+            <if test="orgid != null">
+                #{orgid,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.AttendSetPo">
+        insert into attendset
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orgid != null">
+                orgid,
+            </if>
+            <if test="amontime != null">
+                amontime,
+            </if>
+            <if test="amofftime != null">
+                amofftime,
+            </if>
+            <if test="pmontime != null">
+                pmontime,
+            </if>
+            <if test="pmofftime != null">
+                pmofftime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orgid != null">
+                #{orgid,jdbcType=VARCHAR},
+            </if>
+            <if test="amontime != null">
+                #{amontime,jdbcType=TIME},
+            </if>
+            <if test="amofftime != null">
+                #{amofftime,jdbcType=TIME},
+            </if>
+            <if test="pmontime != null">
+                #{pmontime,jdbcType=TIME},
+            </if>
+            <if test="pmofftime != null">
+                #{pmofftime,jdbcType=TIME},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.AttendSetPo">
+        update attendset
+        <set>
+            <if test="amontime != null">
+                amontime = #{amontime,jdbcType=TIME},
+            </if>
+            <if test="amofftime != null">
+                amofftime = #{amofftime,jdbcType=TIME},
+            </if>
+            <if test="pmontime != null">
+                pmontime = #{pmontime,jdbcType=TIME},
+            </if>
+            <if test="pmofftime != null">
+                pmofftime = #{pmofftime,jdbcType=TIME},
+            </if>
+        </set>
+        where orgid = #{orgid,jdbcType=VARCHAR}
+    </update>
+</mapper>
