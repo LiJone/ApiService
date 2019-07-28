@@ -13,6 +13,7 @@ import com.tss.apiservice.po.GatewaysPo;
 import com.tss.apiservice.service.GatewaysService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     UsersPoMapper usersPoMapper;
 
     @Override
+    @Transactional
     public ReturnMsg<Object> addGateways(String userid, GatewaysDto gatewaysDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -60,7 +62,7 @@ public class GatewaysServiceImpl implements GatewaysService {
                     returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
 
                     EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
-                    if (engineerinfoPo.getSchedule() == 1) {
+                    if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
                         MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                     }
                 } else {
@@ -117,6 +119,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
+    @Transactional
     public ReturnMsg deleteGateWaysMsg(String userid, GatewaysDto gatewaysDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -127,7 +130,7 @@ public class GatewaysServiceImpl implements GatewaysService {
             returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
 
             EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
-            if (engineerinfoPo.getSchedule() == 1) {
+            if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
                 MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
             }
         }
@@ -135,6 +138,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
+    @Transactional
     public ReturnMsg updateGateWaysMsg(String userid, GatewaysDto gatewaysDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(gatewaysDto.getNumber()) ||
@@ -152,13 +156,12 @@ public class GatewaysServiceImpl implements GatewaysService {
                 //获取机构id
                 String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
                 gatewaysPo.setOrgid(orgid);
-                gatewaysPo.setDistance(gatewaysDto.getDistance());
                 gatewaysPo.setOsdid(gatewaysDto.getOsdid());
                 gatewaysPoMapper.updateByPrimaryKeySelective(gatewaysPo);
                 returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
 
                 EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
-                if (engineerinfoPo.getSchedule() == 1) {
+                if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
                     MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                 }
             } else {
@@ -169,6 +172,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
+    @Transactional
     public ReturnMsg addGateWaysSetting(String userid, GatewaysDto gatewaysDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(gatewaysDto.getNumber())) {
@@ -177,9 +181,6 @@ public class GatewaysServiceImpl implements GatewaysService {
             GatewaysPo gatewaysPo = new GatewaysPo();
             gatewaysPo.setNumber(gatewaysDto.getNumber());
 
-            if (!StringUtils.isEmpty(gatewaysDto.getDistance())) {
-                gatewaysPo.setDistance(gatewaysDto.getDistance());
-            }
             gatewaysPoMapper.updateByPrimaryKeySelective(gatewaysPo);
             gatewaysPo = gatewaysPoMapper.selectByPrimaryKey(gatewaysDto.getNumber());
             //推送消息 MQ

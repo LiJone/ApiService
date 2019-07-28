@@ -7,13 +7,11 @@
         <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="protocol" jdbcType="VARCHAR" property="protocol"/>
         <result column="network" jdbcType="VARCHAR" property="network"/>
-        <result column="distance" jdbcType="INTEGER" property="distance"/>
-        <result column="status" jdbcType="INTEGER" property="status"/>
         <result column="osdid" jdbcType="VARCHAR" property="osdid"/>
         <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
     </resultMap>
     <sql id="Base_Column_List">
-    number, name, type, protocol, network, distance, status, osdid, orgid
+    number, name, type, protocol, network, osdid, orgid
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -63,12 +61,6 @@
             <if test="network != null">
                 network,
             </if>
-            <if test="distance != null">
-                distance,
-            </if>
-            <if test="status != null">
-                status,
-            </if>
             <if test="osdid != null">
                 osdid,
             </if>
@@ -92,12 +84,6 @@
             <if test="network != null">
                 #{network,jdbcType=VARCHAR},
             </if>
-            <if test="distance != null">
-                #{distance,jdbcType=INTEGER},
-            </if>
-            <if test="status != null">
-                #{status,jdbcType=INTEGER},
-            </if>
             <if test="osdid != null">
                 #{osdid,jdbcType=VARCHAR},
             </if>
@@ -120,12 +106,6 @@
             </if>
             <if test="network != null">
                 network = #{network,jdbcType=VARCHAR},
-            </if>
-            <if test="distance != null">
-                distance = #{distance,jdbcType=INTEGER},
-            </if>
-            <if test="status != null">
-                status = #{status,jdbcType=INTEGER},
             </if>
             <if test="osdid != null">
                 osdid = #{osdid,jdbcType=VARCHAR},

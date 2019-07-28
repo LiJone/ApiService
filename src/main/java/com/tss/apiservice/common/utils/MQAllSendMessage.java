@@ -74,9 +74,6 @@ public class MQAllSendMessage {
         if(!StringUtils.isEmpty(gatewaysPo.getProtocol())){
             map.put("ProtocolType", gatewaysPo.getProtocol());
         }
-        if(!StringUtils.isEmpty(gatewaysPo.getDistance())){
-            map.put("Value", gatewaysPo.getDistance());
-        }
         if(!StringUtils.isEmpty(gatewaysPo.getName())){
             map.put("GatewayName", gatewaysPo.getName());
         }

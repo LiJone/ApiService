@@ -30,11 +30,6 @@ public class GatewaysDto implements Serializable {
     private String network;
 
     /**
-     * 灵敏度
-     */
-    private int distance;
-
-    /**
      * 盒子编号
      */
     private String osdid;
@@ -79,14 +74,6 @@ public class GatewaysDto implements Serializable {
         this.number = number;
     }
 
-    public int getDistance() {
-        return distance;
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
-    }
-
     public String getOsdid() {
         return osdid;
     }
@@ -101,5 +88,17 @@ public class GatewaysDto implements Serializable {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "GatewaysDto{" +
+                "number='" + number + '\'' +
+                ", name='" + name + '\'' +
+                ", protocol='" + protocol + '\'' +
+                ", network='" + network + '\'' +
+                ", osdid='" + osdid + '\'' +
+                ", type=" + type +
+                '}';
     }
 }

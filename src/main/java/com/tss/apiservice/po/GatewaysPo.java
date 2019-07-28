@@ -35,16 +35,6 @@ public class GatewaysPo implements Serializable {
     private String network;
 
     /**
-     * 网关灵敏度（距离）
-     */
-    private Integer distance;
-
-    /**
-     * 网关状态
-     */
-    private Integer status;
-
-    /**
      * osd箱子编码
      */
     private String osdid;
@@ -94,22 +84,6 @@ public class GatewaysPo implements Serializable {
         this.network = network == null ? null : network.trim();
     }
 
-    public Integer getDistance() {
-        return distance;
-    }
-
-    public void setDistance(Integer distance) {
-        this.distance = distance;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
     public String getOsdid() {
         return osdid;
     }
@@ -134,8 +108,6 @@ public class GatewaysPo implements Serializable {
                 ", type=" + type +
                 ", protocol='" + protocol + '\'' +
                 ", network='" + network + '\'' +
-                ", distance=" + distance +
-                ", status=" + status +
                 ", osdid='" + osdid + '\'' +
                 ", orgid='" + orgid + '\'' +
                 '}';
