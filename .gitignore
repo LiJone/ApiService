@@ -14,7 +14,7 @@ HELP.md
 ### IntelliJ IDEA ###
 .idea
 mylog.log
-mylog.log.2019*.gz
+mylog.log.*.gz
 mvnw*
 *.iws
 *.iml

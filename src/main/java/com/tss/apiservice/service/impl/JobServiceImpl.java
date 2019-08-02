@@ -298,12 +298,6 @@ public class JobServiceImpl implements JobService {
 
                 //企业编码
                 UsersPo usersPo = usersPoMapper.selectByPrimaryKey(Integer.valueOf(userid));
-//                if (usersPo.getLevel() == 1) {
-//                    engineerinfoPo.setUserid(Integer.valueOf(userid));
-//                } else {
-//                    engineerinfoPo.setUserid(usersPo.getSuperiorid());
-//                }
-//                engineerinfoPo.setUserid(Integer.valueOf(userid));
                 engineerinfoPo.setOrgid(usersPo.getOrgid());
                 //保存安全对象信息,分别为员工，许可证，工具
                 ArrayList<SafeobjsPo> list = new ArrayList<>();
@@ -320,17 +314,22 @@ public class JobServiceImpl implements JobService {
                     isleave = permitsArr.get(i).get("isleave");
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum);
                     if (safeobjsPo != null) {
-                        returnMsg.setMsgbox("許可證 {" + objname + "} 已在工程中使用...");
-                        return returnMsg;
+                        if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                            list.add(safeobjsPo);
+                        } else {
+                            returnMsg.setMsgbox("許可證 {" + objname + "} 已在工程中使用...");
+                            return returnMsg;
+                        }
+                    } else {
+                        safeobjsPo = new SafeobjsPo();
+                        safeobjsPo.setJobnum(jobDto.getJobnum());
+                        safeobjsPo.setObjnum(objnum);
+                        safeobjsPo.setOsdid(jobDto.getOsdid());
+                        safeobjsPo.setType(0);
+                        safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                        safeobjsPo.setObjname(objname);
+                        list.add(safeobjsPo);
                     }
-                    safeobjsPo = new SafeobjsPo();
-                    safeobjsPo.setJobnum(jobDto.getJobnum());
-                    safeobjsPo.setObjnum(objnum);
-                    safeobjsPo.setOsdid(jobDto.getOsdid());
-                    safeobjsPo.setType(0);
-                    safeobjsPo.setIsleave(Integer.valueOf(isleave));
-                    safeobjsPo.setObjname(objname);
-                    list.add(safeobjsPo);
                 }
 
                 Map<String, List<Map<String, String>>> tools = jobDto.getTools();
@@ -341,19 +340,23 @@ public class JobServiceImpl implements JobService {
                     isleave = toolsArr.get(i).get("isleave");
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum);
                     if (safeobjsPo != null) {
-                        returnMsg.setMsgbox("工具 {" + objname + "} 已在工程中使用...");
-                        return returnMsg;
+                        if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                            list.add(safeobjsPo);
+                        } else {
+                            returnMsg.setMsgbox("工具 {" + objname + "} 已在工程中使用...");
+                            return returnMsg;
+                        }
+                    } else {
+                        safeobjsPo = new SafeobjsPo();
+                        safeobjsPo.setJobnum(jobDto.getJobnum());
+                        safeobjsPo.setObjnum(objnum);
+                        safeobjsPo.setOsdid(jobDto.getOsdid());
+                        safeobjsPo.setType(2);
+                        safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                        safeobjsPo.setObjname(objname);
+                        list.add(safeobjsPo);
                     }
-                    safeobjsPo = new SafeobjsPo();
-                    safeobjsPo.setJobnum(jobDto.getJobnum());
-                    safeobjsPo.setObjnum(objnum);
-                    safeobjsPo.setOsdid(jobDto.getOsdid());
-                    safeobjsPo.setType(2);
-                    safeobjsPo.setIsleave(Integer.valueOf(isleave));
-                    safeobjsPo.setObjname(objname);
-                    list.add(safeobjsPo);
                 }
-
                 Map<String, List<Map<String, Object>>> staffs = jobDto.getStaffs();
                 List<Map<String, Object>> staffsArr = staffs.get("staffsArr");
 
@@ -369,18 +372,22 @@ public class JobServiceImpl implements JobService {
                     isleave = staffsArr.get(i).get("isleave").toString();
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum);
                     if (safeobjsPo != null) {
-                        returnMsg.setMsgbox("員工 {" + objname + "} 已在工程中使用...");
-                        return returnMsg;
+                        if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                            list.add(safeobjsPo);
+                        } else {
+                            returnMsg.setMsgbox("員工 {" + objname + "} 已在工程中使用...");
+                            return returnMsg;
+                        }
+                    } else {
+                        safeobjsPo = new SafeobjsPo();
+                        safeobjsPo.setJobnum(jobDto.getJobnum());
+                        safeobjsPo.setObjnum(objnum);
+                        safeobjsPo.setOsdid(jobDto.getOsdid());
+                        safeobjsPo.setType(1);
+                        safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                        safeobjsPo.setObjname(objname);
+                        list.add(safeobjsPo);
                     }
-                    safeobjsPo = new SafeobjsPo();
-                    safeobjsPo.setJobnum(jobDto.getJobnum());
-                    safeobjsPo.setObjnum(objnum);
-                    safeobjsPo.setOsdid(jobDto.getOsdid());
-                    safeobjsPo.setType(1);
-                    safeobjsPo.setIsleave(Integer.valueOf(isleave));
-                    safeobjsPo.setObjname(objname);
-                    list.add(safeobjsPo);
-
                     objsConditionArr = (List) staffsArr.get(i).get("objsConditionArr");
                     for (int j = 0; j < objsConditionArr.size(); j++) {
                         objsconditionPo = new ObjsconditionPo();

@@ -23,9 +23,6 @@ public class MQAllSendMessage {
         if(!StringUtils.isEmpty(JobNum)){
             map.put("JobNum", String.valueOf(JobNum));
         }
-        if(!StringUtils.isEmpty(OSDID)){
-            map.put("OSDID", String.valueOf(OSDID));
-        }
         arrayList.add(map);
         MQAllSendMessage.sendMQDtoToDataEngine(apiServiceMQ, new MQDto(mqCode, arrayList));
     }
@@ -35,9 +32,6 @@ public class MQAllSendMessage {
         HashMap<String, Object> map = new HashMap<>();
         if(!StringUtils.isEmpty(safeobjsPo.getJobnum())){
             map.put("JobNum", safeobjsPo.getJobnum());
-        }
-        if(!StringUtils.isEmpty(safeobjsPo.getOsdid())){
-            map.put("OSDID", safeobjsPo.getOsdid());
         }
         if(!StringUtils.isEmpty(safeobjsPo.getObjnum())){
             map.put("ObjNum", safeobjsPo.getObjnum());
@@ -52,11 +46,11 @@ public class MQAllSendMessage {
         MQAllSendMessage.sendMQDtoToDataEngine(apiServiceMQ, new MQDto(mqCode, arrayList));
     }
 
-    public static void sendUserSettingToMq(String UserID, Integer TimeOut, int mqCode, ApiServiceMQ apiServiceMQ) {
+    public static void sendUserSettingToMq(String orgId, Integer TimeOut, int mqCode, ApiServiceMQ apiServiceMQ) {
         ArrayList<Object> arrayList = new ArrayList<>();
         HashMap<String, Object> map = new HashMap<>();
-        if(!StringUtils.isEmpty(UserID)){
-            map.put("UserID", UserID);
+        if(!StringUtils.isEmpty(orgId)){
+            map.put("OrgId", orgId);
         }
         if(!StringUtils.isEmpty(TimeOut)){
             map.put("TimeOut", TimeOut);

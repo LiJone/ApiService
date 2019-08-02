@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tss.apiservice.dao.PermitsImageMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.PermitsImagePo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="imageindex" jdbcType="VARCHAR" property="imageindex"/>
+        <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
+        <result column="imagetype" jdbcType="VARCHAR" property="imagetype"/>
+        <result column="permitid" jdbcType="VARCHAR" property="permitid"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, imageindex, imagename, imagetype, permitid
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from permits
+        where permitid = #{permitid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from permits
+        where name = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from permits
+        where 1 = 1
+        <if test="name != null">
+            and name like '%${name}%'
+        </if>
+        <if test="numberBegin != null">
+            and permitid &gt;= #{numberBegin}
+        </if>
+        <if test="numberEnd != null">
+            and permitid &lt;= #{numberEnd}
+        </if>
+        and orgid = #{orgid}
+        <if test="startrow != null and pagesize != null">
+            limit #{startrow} , #{pagesize}
+        </if>
+    </select>
+
+    <select id="selectByPermitsPo" parameterType="com.tss.apiservice.po.PermitsPo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from permits
+        where 1 = 1
+        <if test="orgid != null">
+            and orgid = #{orgid,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null">
+            and name = #{name,jdbcType=VARCHAR}
+        </if>
+        <if test="permitid != null">
+            and permitid = #{permitid,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from permits
+    where permitid = #{permitid,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tss.apiservice.po.PermitsPo">
+        insert into permits
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="permitid != null">
+                permitid,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="typename != null">
+                typename,
+            </if>
+            <if test="startdate != null">
+                startdate,
+            </if>
+            <if test="enddate != null">
+                enddate,
+            </if>
+            <if test="filepath != null">
+                filepath,
+            </if>
+            <if test="filename != null">
+                filename,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="orgid != null">
+                orgid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="permitid != null">
+                #{permitid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="typename != null">
+                #{typename,jdbcType=VARCHAR},
+            </if>
+            <if test="startdate != null">
+                #{startdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="enddate != null">
+                #{enddate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="filepath != null">
+                #{filepath,jdbcType=VARCHAR},
+            </if>
+            <if test="filename != null">
+                #{filename,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="orgid != null">
+                #{orgid,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.PermitsPo">
+        update permits
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="typename != null">
+                typename = #{typename,jdbcType=VARCHAR},
+            </if>
+            <if test="startdate != null">
+                startdate = #{startdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="enddate != null">
+                enddate = #{enddate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="filepath != null">
+                filepath = #{filepath,jdbcType=VARCHAR},
+            </if>
+            <if test="filename != null">
+                filename = #{filename,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="orgid != null">
+                orgid = #{orgid,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where permitid = #{permitid,jdbcType=VARCHAR}
+    </update>
+</mapper>
