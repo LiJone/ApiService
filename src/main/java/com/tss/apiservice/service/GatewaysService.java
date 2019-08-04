@@ -18,4 +18,8 @@ public interface GatewaysService {
     ReturnMsg updateGateWaysMsg( String userid, GatewaysDto gatewaysDto);
 
     ReturnMsg addGateWaysSetting(String userid , GatewaysDto gatewaysDto);
+
+    ReturnMsg<Object> getGateWaysStatus(String userid);
+
+    ReturnMsg<Object> reloadGateWay(String number);
 }

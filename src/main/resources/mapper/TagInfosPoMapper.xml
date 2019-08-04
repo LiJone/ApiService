@@ -17,11 +17,11 @@
         where tagid = #{tagid,jdbcType=VARCHAR}
     </select>
 
-    <select id="selectByObjnum" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByObjnum" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from taginfos
-        where objnum = #{objnum,jdbcType=VARCHAR}
+        where objnum = #{objnum,jdbcType=VARCHAR} and type = #{type,jdbcType=INTEGER}
     </select>
 
     <select id="selectByTagPo" parameterType="com.tss.apiservice.po.TagInfosPo" resultMap="BaseResultMap">

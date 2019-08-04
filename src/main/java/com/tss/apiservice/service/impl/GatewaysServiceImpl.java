@@ -192,4 +192,13 @@ public class GatewaysServiceImpl implements GatewaysService {
         return returnMsg;
     }
 
+    @Override
+    public ReturnMsg<Object> getGateWaysStatus(String userid) {
+        return null;
+    }
+
+    @Override
+    public ReturnMsg<Object> reloadGateWay(String number) {
+        return null;
+    }
 }

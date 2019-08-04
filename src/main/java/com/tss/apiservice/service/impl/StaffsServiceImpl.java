@@ -598,7 +598,10 @@ public class StaffsServiceImpl implements StaffsService {
             //获取员工证件信息
             List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffid);
             //获取标签信息
-            TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(staffid);
+            Map<String, Object> param = new HashMap<>();
+            param.put("objnum", staffid);
+            param.put("type", 1);
+            TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(param);
 
             HashMap<Object, Object> map = new HashMap<>();
             map.put("staffscertPos", staffscertPos);

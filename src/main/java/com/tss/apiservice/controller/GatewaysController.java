@@ -47,6 +47,34 @@ public class GatewaysController {
         return returnMsg;
     }
 
+    @RequestMapping(value = "/app/gateWays/getGateWaysStatus/{userid}", method = RequestMethod.POST)
+    @ResponseBody
+    public ReturnMsg getGateWaysSetting(@PathVariable("userid") String userid) {
+        ReturnMsg<Object> returnMsg = null;
+        try {
+            returnMsg = gatewaysService.getGateWaysStatus(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取網關狀態異常...");
+            logger.info("/app/gateWays/getGateWaysStatus 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/gateWays/reloadGateWay/{number}", method = RequestMethod.POST)
+    @ResponseBody
+    public ReturnMsg reloadGateWay(@PathVariable("number") String number) {
+        ReturnMsg<Object> returnMsg = null;
+        try {
+            returnMsg = gatewaysService.reloadGateWay(number);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "重啟網關異常...");
+            logger.info("/app/gateWays/reloadGateWay 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
     @RequestMapping(value = "/app/gateWays/deleteGateWaysMsg/{userid}", method = RequestMethod.DELETE)
     @ResponseBody
     public ReturnMsg deleteGateWaysMsg(@PathVariable("userid") String userid , @RequestBody GatewaysDto gatewaysDto) {

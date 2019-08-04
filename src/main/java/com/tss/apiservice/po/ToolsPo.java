@@ -34,6 +34,11 @@ public class ToolsPo implements Serializable {
     private Integer type;
 
     /**
+     * 有效期
+     */
+    private String validity;
+
+    /**
      * 机构id
      */
     private String orgid;
@@ -86,6 +91,14 @@ public class ToolsPo implements Serializable {
         this.orgid = orgid;
     }
 
+    public String getValidity() {
+        return validity;
+    }
+
+    public void setValidity(String validity) {
+        this.validity = validity;
+    }
+
     @Override
     public String toString() {
         return "ToolsPo{" +
@@ -94,6 +107,7 @@ public class ToolsPo implements Serializable {
                 ", imagepath='" + imagepath + '\'' +
                 ", imagename='" + imagename + '\'' +
                 ", type=" + type +
+                ", validity='" + validity + '\'' +
                 ", orgid='" + orgid + '\'' +
                 '}';
     }

@@ -94,7 +94,7 @@ public class ToolsServiceImpl implements ToolsService {
                 hashMap.put("startrow", startrow);
                 hashMap.put("pagesize", pagesize);
                 List<ToolsPo> toolsPoList = toolsPoMapper.selectListByMap(hashMap);
-                //根据工具信息去查对应的 工具证件表和标签表
+                //根据工具信息去查对应的标签表
                 TagInfosPo tagInfosPo = null;
                 HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();
@@ -105,11 +105,8 @@ public class ToolsServiceImpl implements ToolsService {
                     tagInfosPo.setObjnum(toolsPoList.get(i).getToolid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
 
-                    //再查找工具证件表
-                    ToolscertPo toolscertPo = toolscertPoMapper.selectByToolid(toolsPoList.get(i).getToolid());
                     retMap.put("toolsPo", toolsPoList.get(i));
                     retMap.put("tagInfosPos", tagInfosPos);
-                    retMap.put("toolscertPo", toolscertPo);
                     arrayList.add(retMap);
                 }
                 pageUtil.setPageData(arrayList);
@@ -133,15 +130,6 @@ public class ToolsServiceImpl implements ToolsService {
             ToolsPo ret = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
             Map map = null;
             if (ret == null) {
-                //保存工具信息和标签表信息和工具证件表信息
-                ToolscertPo toolscertPo = new ToolscertPo();
-                toolscertPo.setToolid(toolsDto.getToolid());
-                toolscertPo.setCertid(toolsDto.getToolid());
-                toolscertPo.setImagepath(filePathStr);
-                toolscertPo.setImagename(fileNameStr);
-                toolscertPo.setTypename(toolsDto.getName());
-                toolscertPo.setValidity(toolsDto.getValiDity());
-
                 TagInfosPo tagInfosPo = null;
                 List<Map<String, String>> tag = toolsDto.getTag();
                 List<TagInfosPo> tagInfosPoList = new ArrayList();
@@ -168,11 +156,13 @@ public class ToolsServiceImpl implements ToolsService {
                     ToolsPo toolsPo = new ToolsPo();
                     toolsPo.setToolid(toolsDto.getToolid());
                     toolsPo.setName(toolsDto.getName());
+                    toolsPo.setImagepath(filePathStr);
+                    toolsPo.setImagename(fileNameStr);
+                    toolsPo.setValidity(toolsDto.getValiDity());
                     //获取机构id
                     String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
                     toolsPo.setOrgid(orgid);
                     toolsPoMapper.insertSelective(toolsPo);
-                    toolscertPoMapper.insertSelective(toolscertPo);
                     returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
                 }
             } else {
@@ -195,7 +185,7 @@ public class ToolsServiceImpl implements ToolsService {
             if (toolsPoOld == null) {
                 returnMsg.setMsgbox("工具不存在...");
             } else {
-                //删除标签，删除工具证件表（删除图片），删除工具
+                //删除标签，删除工具
                 TagInfosPo tagInfosPo = new TagInfosPo();
                 tagInfosPo.setObjnum(toolsDto.getToolid());
                 tagInfosPo.setType(2);
@@ -204,28 +194,20 @@ public class ToolsServiceImpl implements ToolsService {
                 for (int i = 0; i < tagInfosPos.size(); i++) {
                     tagInfosPoMapper.deleteByPrimaryKey(tagInfosPos.get(i).getTagid());
                 }
-                //删除工具证件表
-                ToolscertPo toolscertPo = toolscertPoMapper.selectByToolid(toolsDto.getToolid());
-                toolscertPoMapper.deleteByToolid(toolsDto.getToolid());
+                ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
                 toolsPoMapper.deleteByPrimaryKey(toolsDto.getToolid());
-                FilesUtils.deleteFile(toolscertPo.getImagename(), filePath + toolscertPo.getImagepath());
+                FilesUtils.deleteFile(toolsPo.getImagename(), filePath + toolsPo.getImagepath());
 
-
-                //判断是否发送mq
-//                trueOrFalseToMQ(toolsDto.getToolid());
                 SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
                 if(safeobjsPo != null){
                     safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
-
                     EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
                     if(engineerinfoPo.getSchedule() == 1){
                         MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(),safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE,apiServiceMQ);
                     }
                 }
-
                 returnMsg.setMsgbox("成功");
                 returnMsg.setCode(ReturnMsg.SUCCESS);
-
             }
         }
         return returnMsg;
@@ -245,7 +227,7 @@ public class ToolsServiceImpl implements ToolsService {
         } else {
             toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
             if (toolsPoOld != null) {
-                //删除标签，删除工具证件表，更改工具，删除以前图片
+                //删除标签，更改工具，删除以前图片
                 TagInfosPo tagInfosPo = null;
                 tagInfosPo = new TagInfosPo();
                 tagInfosPo.setType(2);
@@ -275,18 +257,12 @@ public class ToolsServiceImpl implements ToolsService {
                     }
                 }
                 if (tagExist) {
-                    ToolscertPo toolscertPo = new ToolscertPo();
-                    toolscertPo.setToolid(toolsDto.getToolid());
-                    toolscertPo.setCertid(toolsDto.getToolid());
-                    toolscertPo.setImagepath(filePathStr);
-                    toolscertPo.setImagename(fileNameStr);
-                    toolscertPo.setTypename(toolsDto.getName());
-                    toolscertPo.setValidity(toolsDto.getValiDity());
-
                     ToolsPo toolsPo = new ToolsPo();
                     toolsPo.setToolid(toolsDto.getToolid());
                     toolsPo.setName(toolsDto.getName());
-
+                    toolsPo.setImagepath(filePathStr);
+                    toolsPo.setImagename(fileNameStr);
+                    toolsPo.setValidity(toolsDto.getValiDity());
                     //获取机构id
                     String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
                     toolsPo.setOrgid(orgid);
@@ -295,7 +271,7 @@ public class ToolsServiceImpl implements ToolsService {
                         tagInfosPoMapper.insertSelective(tagInfosPoList.get(i));
                     }
                     toolsPoMapper.updateByPrimaryKeySelective(toolsPo);
-                    toolscertPoMapper.insertSelective(toolscertPo);
+
                     returnMsg.setCode(ReturnMsg.SUCCESS);
                     returnMsg.setMsgbox("成功");
                 }
@@ -306,8 +282,6 @@ public class ToolsServiceImpl implements ToolsService {
                     if (toolscertPoOld != null) {
                         FilesUtils.deleteFile(toolscertPoOld.getImagename(), filePath + toolscertPoOld.getImagepath());
                     }
-                    //判断是否发送mq
-//                    trueOrFalseToMQ(toolsDto.getToolid());
                     SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
                     if(safeobjsPo != null){
                         safeobjsPo.setObjname(toolsDto.getName());
@@ -326,7 +300,6 @@ public class ToolsServiceImpl implements ToolsService {
                     for (int i = 0; i < tagInfosPosOld.size(); i++) {
                         tagInfosPoMapper.insertSelective(tagInfosPosOld.get(i));
                     }
-                    toolscertPoMapper.insertSelective(toolscertPoOld);
                 }
             } else {
                 returnMsg.setMsgbox("工具不存在....");
@@ -345,13 +318,13 @@ public class ToolsServiceImpl implements ToolsService {
         } else {
             //获取员工信息
             ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(toolid);
-            //获取员工证件信息
-            ToolscertPo toolscertPo = toolscertPoMapper.selectByToolid(toolid);
             //获取标签信息
-            TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(toolid);
+            Map<String, Object> param = new HashMap<>();
+            param.put("objnum", toolid);
+            param.put("type", 2);
+            TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(param);
 
             HashMap<Object, Object> map = new HashMap<>();
-            map.put("staffscertPos",toolscertPo);
             map.put("toolsPo",toolsPo);
             map.put("tagInfosPos",tagInfosPo);
 

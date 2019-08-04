@@ -325,7 +325,10 @@ public class PermitsServiceImpl implements PermitsService {
             //获取员工信息
             PermitsPo permitsPo = permitsPoMapper.selectByPrimaryKey(permitid);
             //获取标签信息
-            TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(permitid);
+            Map<String, Object> param = new HashMap<>();
+            param.put("objnum", permitid);
+            param.put("type", 0);
+            TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(param);
 
             HashMap<Object, Object> map = new HashMap<>();
             map.put("permitsPo", permitsPo);

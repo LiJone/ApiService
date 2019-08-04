@@ -61,7 +61,7 @@ public class ReportServiceImpl implements ReportService {
             if (!StringUtils.isEmpty(timeEnd)) {
                 map.put("timeEnd", timeEnd);
             }
-            //map.put("userid", userid);
+            map.put("orgid", orgid);
 
             ArrayList<Object> arrayList = new ArrayList<>();
             HashMap<Object, Object> retMap = null;
@@ -139,7 +139,7 @@ public class ReportServiceImpl implements ReportService {
                 AttendancePo attendancePo = attendancePos.get(i);
                 //获取当前考勤该员工加班信息
                 List<AttendOTRecordPo> attendOTRecordPos = attendancePoMapper.selectWorkAddInfo(attendancePo.getId());
-                map = new HashMap<>(3);
+                map = new HashMap<>(6);
                 if (attendancePo.getAmontime() != null) {
                     workDay = workDay + 0.5;
                 }
