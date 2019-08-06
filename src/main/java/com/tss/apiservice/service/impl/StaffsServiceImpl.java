@@ -53,6 +53,9 @@ public class StaffsServiceImpl implements StaffsService {
     @Autowired
     UsersPoMapper usersPoMapper;
 
+    @Autowired
+    AbnormalPoMapper abnormalPoMapper;
+
     @Override
     @Transactional
     public ReturnMsg addStaffsMsg(String userid, StaffsDto staffsDto, HashMap<String, String> hashMap,
@@ -261,6 +264,14 @@ public class StaffsServiceImpl implements StaffsService {
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(staffsDto.getStaffid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
+            Map<String, Object> param = new HashMap<>(2);
+            param.put("number", staffsDto.getStaffid());
+            param.put("type", 1);
+            Integer count = abnormalPoMapper.selectByNumberAndType(param);
+            if (count != null && count > 0) {
+                returnMsg.setMsgbox("已存在相关记录，暂不支持删除操作");
+                return returnMsg;
+            }
             //删除员工，删除标签，删除员工证件，删除头像
             staffsPo = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
             if (staffsPo == null) {

@@ -17,7 +17,7 @@ public interface GatewaysService {
 
     ReturnMsg updateGateWaysMsg( String userid, GatewaysDto gatewaysDto);
 
-    ReturnMsg addGateWaysSetting(String userid , GatewaysDto gatewaysDto);
+    ReturnMsg addGateWaysSetting(String userid , String number, String distance);
 
     ReturnMsg<Object> getGateWaysStatus(String userid);
 

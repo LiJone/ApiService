@@ -173,16 +173,13 @@ public class GatewaysServiceImpl implements GatewaysService {
 
     @Override
     @Transactional
-    public ReturnMsg addGateWaysSetting(String userid, GatewaysDto gatewaysDto) {
+    public ReturnMsg addGateWaysSetting(String userid, String number, String distance) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-        if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(gatewaysDto.getNumber())) {
+        if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(number) || StringUtils.isEmpty(distance)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
-            GatewaysPo gatewaysPo = new GatewaysPo();
-            gatewaysPo.setNumber(gatewaysDto.getNumber());
 
-            gatewaysPoMapper.updateByPrimaryKeySelective(gatewaysPo);
-            gatewaysPo = gatewaysPoMapper.selectByPrimaryKey(gatewaysDto.getNumber());
+            GatewaysPo gatewaysPo = gatewaysPoMapper.selectByPrimaryKey(number);
             //推送消息 MQ
             MQAllSendMessage.sendGateWaysToMq(gatewaysPo, MQCode.GATEWAYS_SETING, apiServiceMQ);
 

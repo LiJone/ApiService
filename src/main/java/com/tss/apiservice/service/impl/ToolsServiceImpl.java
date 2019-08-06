@@ -48,6 +48,9 @@ public class ToolsServiceImpl implements ToolsService {
     @Autowired
     UsersPoMapper usersPoMapper;
 
+    @Autowired
+    AbnormalPoMapper abnormalPoMapper;
+
     @Override
     public ReturnMsg getToolsMsgList(HttpServletRequest request) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
@@ -181,6 +184,14 @@ public class ToolsServiceImpl implements ToolsService {
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(toolsDto.getToolid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
+            Map<String, Object> param = new HashMap<>(2);
+            param.put("number", toolsDto.getToolid());
+            param.put("type", 2);
+            Integer count = abnormalPoMapper.selectByNumberAndType(param);
+            if (count != null && count > 0) {
+                returnMsg.setMsgbox("已存在相关记录，暂不支持删除操作");
+                return returnMsg;
+            }
             toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
             if (toolsPoOld == null) {
                 returnMsg.setMsgbox("工具不存在...");

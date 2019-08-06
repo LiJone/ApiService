@@ -61,9 +61,15 @@ public class ExcelFileController {
                     Double workDay = (Double) retMap.get("workDay");
                     Float workAddHour = (Float) retMap.get("workAddHour");
                     Double workAddSalary = (Double) retMap.get("workAddSalary");
-                    workDays = workDays + workDay;
-                    workAddSalarys = workAddSalarys + workAddSalary;
-                    workAddHours = workAddHours + workAddHour;
+                    if (workDay != null) {
+                        workDays = workDays + workDay;
+                    }
+                    if (workAddSalary != null) {
+                        workAddSalarys = workAddSalarys + workAddSalary;
+                    }
+                    if (workAddHour != null) {
+                        workAddHours = workAddHours + workAddHour;
+                    }
                     dataList[i][0] = ((i + 1) + "");
                     dataList[i][1] = staffsPo.getStaffid();
                     dataList[i][2] = staffsPo.getEnname();
@@ -98,7 +104,7 @@ public class ExcelFileController {
                 String timeEnd = request.getParameter("timeEnd");
                 String name = request.getParameter("name");
                 ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
-                String sheetName = "XXX考勤詳情表格";
+                String sheetName = name + "考勤詳情表格";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String date = sdf.format(new Date());
                 String titleName = name + "考勤詳情報表 (" + timeBegin + "至" + timeEnd + ")";
@@ -119,9 +125,15 @@ public class ExcelFileController {
                     Double workAddHour = (Double) retMap.get("workAddTimes");
                     Integer salary = (Integer) retMap.get("salary");
                     Double realSalary = (Double) retMap.get("realSalary");
-                    workDays = workDays + workDay;
-                    realSalarys = realSalarys + realSalary;
-                    workAddHours = workAddHours + workAddHour;
+                    if (workDay != null) {
+                        workDays = workDays + workDay;
+                    }
+                    if (realSalary != null) {
+                        realSalarys = realSalarys + realSalary;
+                    }
+                    if (workAddHour != null) {
+                        workAddHours = workAddHours + workAddHour;
+                    }
                     dataList[i][0] = ((i + 1) + "");
                     dataList[i][1] = attendancePo.getAttdate();
                     dataList[i][2] = attendancePo.getNumber();

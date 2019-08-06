@@ -136,4 +136,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
+  <select id="selectByNumberAndType" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from abnormal where number = #{number,jdbcType=VARCHAR} and type = #{type,jdbcType=INTEGER}
+  </select>
 </mapper>
