@@ -1,6 +1,7 @@
 package com.tss.apiservice.dao;
 
 import com.tss.apiservice.po.SafeobjsPo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface SafeobjsPoMapper {
 
     int insertSelective(SafeobjsPo record);
 
-    SafeobjsPo selectByPrimaryKey(String objnum);
+    SafeobjsPo selectByPrimaryKey(@Param("objnum") String objnum, @Param("objtype") Integer objtype);
 
     List<SafeobjsPo> selectByOsdid(String osdid);
 

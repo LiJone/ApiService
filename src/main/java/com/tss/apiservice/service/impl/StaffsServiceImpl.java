@@ -303,7 +303,7 @@ public class StaffsServiceImpl implements StaffsService {
             //判断员工是否存在工程中，如果存在，则发送mq
 //            trueOrFalseToMQ(staffsDto.getStaffid());
             //删除的话，需要通知MQ的同时，也需要删除安全对象信息表，删除员工证件条件表
-            SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
+            SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid(), 1);
             if (safeobjsPo != null) {
                 //如果安全对象表中有数据，删除安全对象表，删除员工证件条件表
                 safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
@@ -342,7 +342,7 @@ public class StaffsServiceImpl implements StaffsService {
                 //start 为了实时修改盒子员工加上
                 //判断员工是否存在工程中，如果存在，则发送mq
 //                    trueOrFalseToMQ(staffsDto.getStaffid());
-                SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
+                SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid(), 1);
                 if (safeobjsPo != null) {
                     //员工存在工程中，查看是否添加的员工证件条件是否和以前一样，不一样则不给修改，
                     List<ObjsconditionPo> objsconditionPos = objsconditionPoMapper.selectByStaffid(staffsDto.getStaffid());

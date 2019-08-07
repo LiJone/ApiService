@@ -216,7 +216,7 @@ public class PermitsServiceImpl implements PermitsService {
                 returnMsg.setMsgbox("成功");
 
                 //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
-                SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid());
+                SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid(), 0);
                 if (safeobjsPo != null) {
                     //这里是直接删除
                     safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
@@ -302,7 +302,7 @@ public class PermitsServiceImpl implements PermitsService {
                     }
 
                     //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
-                    SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid());
+                    SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid(), 0);
                     if (safeobjsPo != null) {
                         //修改安全对象信息表中的许可证名称
                         safeobjsPo.setObjname(permitsDto.getName());

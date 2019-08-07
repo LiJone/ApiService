@@ -13,11 +13,14 @@
     <sql id="Base_Column_List">
     objnum, type, isleave, leavetime, osdid, jobnum ,objname
   </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from safeobjs
         where objnum = #{objnum,jdbcType=VARCHAR}
+        <if test="objtype != null">
+            and type = #{objtype}
+        </if>
     </select>
 
     <select id="selectByOsdid" parameterType="java.lang.String" resultMap="BaseResultMap">

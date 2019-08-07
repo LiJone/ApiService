@@ -209,7 +209,7 @@ public class ToolsServiceImpl implements ToolsService {
                 toolsPoMapper.deleteByPrimaryKey(toolsDto.getToolid());
                 FilesUtils.deleteFile(toolsPo.getImagename(), filePath + toolsPo.getImagepath());
 
-                SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
+                SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
                 if(safeobjsPo != null){
                     safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
                     EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
@@ -293,7 +293,7 @@ public class ToolsServiceImpl implements ToolsService {
                     if (toolscertPoOld != null) {
                         FilesUtils.deleteFile(toolscertPoOld.getImagename(), filePath + toolscertPoOld.getImagepath());
                     }
-                    SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
+                    SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
                     if(safeobjsPo != null){
                         safeobjsPo.setObjname(toolsDto.getName());
                         safeobjsPoMapper.updateByPrimaryKeySelective(safeobjsPo);

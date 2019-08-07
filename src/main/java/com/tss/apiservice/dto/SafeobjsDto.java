@@ -28,4 +28,12 @@ public class SafeobjsDto {
     public void setLeavetime(String leavetime) {
         this.leavetime = leavetime;
     }
+
+    public String getObjtype() {
+        return objtype;
+    }
+
+    public void setObjtype(String objtype) {
+        this.objtype = objtype;
+    }
 }
