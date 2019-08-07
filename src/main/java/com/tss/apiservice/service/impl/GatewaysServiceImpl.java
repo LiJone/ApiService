@@ -1,5 +1,8 @@
 package com.tss.apiservice.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.tss.apiservice.common.PageUtil;
 import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.common.utils.MQAllSendMessage;
@@ -11,14 +14,19 @@ import com.tss.apiservice.dto.GatewaysDto;
 import com.tss.apiservice.po.EngineerinfoPo;
 import com.tss.apiservice.po.GatewaysPo;
 import com.tss.apiservice.service.GatewaysService;
+import com.tss.apiservice.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GatewaysServiceImpl implements GatewaysService {
@@ -34,6 +42,9 @@ public class GatewaysServiceImpl implements GatewaysService {
 
     @Autowired
     UsersPoMapper usersPoMapper;
+
+    @Value("${getStatusUrl}")
+    private String getStatusUrl;
 
     @Override
     @Transactional
@@ -77,7 +88,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    public ReturnMsg getGateWaysMsgList(HttpServletRequest request) {
+    public ReturnMsg getGateWaysMsgList(HttpServletRequest request) throws IOException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String pageSize = request.getParameter("pageSize");
@@ -111,6 +122,32 @@ public class GatewaysServiceImpl implements GatewaysService {
                 hashMap.put("startrow", startrow);
                 hashMap.put("pagesize", pagesize);
                 List<GatewaysPo> gatewaysPosList = gatewaysPoMapper.selectNumsByPage(hashMap);
+                List<String> ids = new ArrayList<>(gatewaysPos.size());
+                for (GatewaysPo gatewaysPo : gatewaysPosList) {
+                    ids.add(gatewaysPo.getNumber());
+                }
+                Map<String, Object> param = new HashMap<>(1);
+                param.put("devsn", ids);
+                String s = HttpUtils.sendPost(JSON.toJSONString(param), getStatusUrl);
+                if (!StringUtils.isEmpty(s)) {
+                    JSONObject jsonObject = JSON.parseObject(s);
+                    String code = jsonObject.getString("code");
+                    if ("200".equals(code)) {
+                        JSONArray data = jsonObject.getJSONArray("data");
+                        if (data != null) {
+                            for (int i = 0; i < data.size(); i++) {
+                                JSONObject object = data.getJSONObject(i);
+                                String devsn = object.getString("devsn");
+                                for (GatewaysPo gatewaysPo : gatewaysPosList) {
+                                    if (devsn.equals(gatewaysPo.getNumber())) {
+                                        gatewaysPo.setStatus(object.getBoolean("online"));
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
                 pageUtil.setPageData(gatewaysPosList);
                 returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", pageUtil);
             }
@@ -190,8 +227,39 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    public ReturnMsg<Object> getGateWaysStatus(String userid) {
-        return null;
+    public ReturnMsg<Object> getGateWaysStatus(String userid) throws IOException {
+        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            Map<String, Object> map = new HashMap<>(1);
+            map.put("orgid", orgid);
+            List<GatewaysPo> gatewaysPos = gatewaysPoMapper.selectNumsByPage(map);
+            List<String> ids = new ArrayList<>(gatewaysPos.size());
+            for (GatewaysPo gatewaysPo : gatewaysPos) {
+                ids.add(gatewaysPo.getNumber());
+            }
+            Map<String, Object> param = new HashMap<>(1);
+            param.put("devsn", ids);
+            String s = HttpUtils.sendPost(JSON.toJSONString(param), getStatusUrl);
+            if (!StringUtils.isEmpty(s)) {
+                JSONObject jsonObject = JSON.parseObject(s);
+                String code = jsonObject.getString("code");
+                if ("200".equals(code)) {
+                    JSONArray data = jsonObject.getJSONArray("data");
+                } else {
+
+                }
+            } else {
+                returnMsg.setMsgbox("獲取狀態返回為空");
+                return returnMsg;
+            }
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
     }
 
     @Override

@@ -6,12 +6,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 public interface GatewaysService {
 
     ReturnMsg<Object> addGateways(String userid, GatewaysDto gatewaysDto);
 
-    ReturnMsg getGateWaysMsgList(HttpServletRequest request);
+    ReturnMsg getGateWaysMsgList(HttpServletRequest request) throws IOException;
 
     ReturnMsg deleteGateWaysMsg(String userid, GatewaysDto gatewaysDto);
 
@@ -19,7 +20,7 @@ public interface GatewaysService {
 
     ReturnMsg addGateWaysSetting(String userid , String number, String distance);
 
-    ReturnMsg<Object> getGateWaysStatus(String userid);
+    ReturnMsg<Object> getGateWaysStatus(String userid) throws IOException;
 
     ReturnMsg<Object> reloadGateWay(String number);
 }

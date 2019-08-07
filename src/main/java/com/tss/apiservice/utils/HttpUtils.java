@@ -4,23 +4,25 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
 public class HttpUtils {
-    public static String sendPost(String params, String requestUrl,
-                                  String authorization) throws IOException {
+    public static String sendPost(String params, String requestUrl) throws IOException {
 
         // 将参数转为二进制流
         byte[] requestBytes = params.getBytes("utf-8");
         // 客户端实例化
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod(requestUrl);
-        //设置请求头Authorization
-        postMethod.setRequestHeader("Authorization", "Basic " + authorization);
         // 设置请求头  Content-Type
         postMethod.setRequestHeader("Content-Type", "application/json");
         InputStream inputStream = new ByteArrayInputStream(requestBytes, 0,

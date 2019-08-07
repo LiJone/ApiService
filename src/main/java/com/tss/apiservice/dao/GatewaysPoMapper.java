@@ -3,6 +3,7 @@ package com.tss.apiservice.dao;
 import com.tss.apiservice.po.GatewaysPo;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public interface GatewaysPoMapper {
 
     GatewaysPo selectByName(String name);
 
-    List<GatewaysPo> selectNumsByPage(Map HashMap);
+    List<GatewaysPo> selectNumsByPage(Map<String, Object> map);
 
     int updateByPrimaryKeySelective(GatewaysPo record);
 
