@@ -173,6 +173,7 @@ public class ExcelFileController {
     @RequestMapping(value = "/exceptionExcel", method = RequestMethod.GET)
     public void exceptionExcel(HttpServletRequest request, HttpServletResponse response) {
         try {
+            request.setAttribute("order", "asc");
             ReturnMsg returnMsg = exceptionSerive.getExceptionLog(request);
             if (returnMsg.getCode() == 1) {
                 String timeBegin = request.getParameter("timeBegin");

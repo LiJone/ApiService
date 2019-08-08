@@ -23,13 +23,20 @@
     from abnormal left join  engineerinfo on abnormal.jobnum = engineerinfo.jobnum
     where 1 = 1
     <if test="timeBegin != null">
-      and abnormal.abtime &gt;= #{timeBegin}
+      and DATE_FORMAT(abnormal.abtime,'%Y-%m-%d') &gt;= #{timeBegin}
     </if>
     <if test="timeEnd != null">
-      and abnormal.abtime &lt;= #{timeEnd}
+      and DATE_FORMAT(abnormal.abtime,'%Y-%m-%d') &lt;= #{timeEnd}
     </if>
     and abnormal.orgid = #{orgid}
-    order by abnormal.jobnum asc , abnormal.abtime asc
+    <choose>
+      <when test="order != null">
+        order by abnormal.abtime asc
+      </when>
+      <otherwise>
+        order by abnormal.abtime desc
+      </otherwise>
+    </choose>
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.util.Map" resultMap="BaseResultMap">

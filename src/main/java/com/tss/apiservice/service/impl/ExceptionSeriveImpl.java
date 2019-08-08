@@ -38,6 +38,7 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
         String userid = request.getParameter("userid");
         String timeBegin = request.getParameter("timeBegin");
         String timeEnd = request.getParameter("timeEnd");
+        String order = (String) request.getAttribute("order");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -53,8 +54,9 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
             if(!StringUtils.isEmpty(timeEnd)){
                 map.put("timeEnd", timeEnd);
             }
-
-
+            if(!StringUtils.isEmpty(order)){
+                map.put("order", order);
+            }
             List<AbnormalExceptionVo> abnormalPos = abnormalPoMapper.selectByHashMap(map);
             StaffsPo staffsPo = null;
             ToolsPo toolsPo = null;
@@ -78,7 +80,6 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
                 }
                 list.add(map);
             }
-
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
             returnMsg.setData(list);

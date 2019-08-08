@@ -1,25 +1,56 @@
 package com.tss.apiservice.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class AbnormalPo {
+/**
+ * 异常信息实体类
+ * @author 壮Jone
+ */
+public class AbnormalPo implements Serializable {
+    private static final long serialVersionUID = 2749055316361240695L;
+
     private Integer id;
 
+    /**
+     * 异常时间
+     */
     private Date abtime;
 
+    /**
+     * 工程编号
+     */
     private String jobnum;
 
+    /**
+     * 检测对象编码
+     */
     private String number;
 
+    /**
+     * 检测对象类型
+     */
     private Integer type;
 
+    /**
+     * 异常原因
+     */
     private String reason;
 
+    /**
+     * 图像id
+     */
     private String imageid;
 
-    private Integer userid;
+    /**
+     *
+     */
+    private String orgid;
 
-    private String enterpriseid;
+    /**
+     *
+     */
+    private String code;
 
     public Integer getId() {
         return id;
@@ -69,6 +100,22 @@ public class AbnormalPo {
         this.reason = reason == null ? null : reason.trim();
     }
 
+    public String getOrgid() {
+        return orgid;
+    }
+
+    public void setOrgid(String orgid) {
+        this.orgid = orgid;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getImageid() {
         return imageid;
     }
@@ -77,19 +124,26 @@ public class AbnormalPo {
         this.imageid = imageid == null ? null : imageid.trim();
     }
 
-    public Integer getUserid() {
-        return userid;
+    @Override
+    public String toString() {
+        return "AbnormalPo{" +
+                "id=" + id +
+                ", abtime=" + abtime +
+                ", jobnum='" + jobnum + '\'' +
+                ", number='" + number + '\'' +
+                ", type=" + type +
+                ", reason='" + reason + '\'' +
+                ", imageid='" + imageid + '\'' +
+                ", orgid='" + orgid + '\'' +
+                ", code='" + code + '\'' +
+                '}';
     }
 
-    public void setUserid(Integer userid) {
-        this.userid = userid;
-    }
-
-    public String getEnterpriseid() {
-        return enterpriseid;
-    }
-
-    public void setEnterpriseid(String enterpriseid) {
-        this.enterpriseid = enterpriseid == null ? null : enterpriseid.trim();
-    }
+//    public String getEnterpriseid() {
+//        return enterpriseid;
+//    }
+//
+//    public void setEnterpriseid(String enterpriseid) {
+//        this.enterpriseid = enterpriseid == null ? null : enterpriseid.trim();
+//    }
 }
