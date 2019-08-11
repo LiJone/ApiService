@@ -69,14 +69,20 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
                 number = abnormalPos.get(i).getNumber();
                 if (abnormalPos.get(i).getType() == 0){
                     permitsPo = permitsPoMapper.selectByPrimaryKey(number);
-                    map.put("objName" , permitsPo.getName());
+                    if (permitsPo != null) {
+                        map.put("objName" , permitsPo.getName());
+                    }
                 }else if(abnormalPos.get(i).getType() == 1){
                     staffsPo = staffsPoMapper.selectByPrimaryKey(number);
-                    map.put("objName" , staffsPo.getEnname());
-                    map.put("objNameCh" , staffsPo.getChname());
+                    if (staffsPo != null) {
+                        map.put("objName" , staffsPo.getEnname());
+                        map.put("objNameCh" , staffsPo.getChname());
+                    }
                 }else if(abnormalPos.get(i).getType() == 2){
                     toolsPo = toolsPoMapper.selectByPrimaryKey(number);
-                    map.put("objName" , toolsPo.getName());
+                    if (toolsPo != null) {
+                        map.put("objName" , toolsPo.getName());
+                    }
                 }
                 list.add(map);
             }

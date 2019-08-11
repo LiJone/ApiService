@@ -18,9 +18,9 @@ public interface GatewaysService {
 
     ReturnMsg updateGateWaysMsg( String userid, GatewaysDto gatewaysDto);
 
-    ReturnMsg addGateWaysSetting(String userid , String number, String distance);
+    ReturnMsg addGateWaysSetting(String userid , String number, Integer distance) throws IOException;
 
-    ReturnMsg<Object> getGateWaysStatus(String userid) throws IOException;
+    ReturnMsg<Object> reloadGateWay(String number) throws IOException;
 
-    ReturnMsg<Object> reloadGateWay(String number);
+    ReturnMsg<Object> getGateWaysSetting(String userid, String number) throws IOException;
 }

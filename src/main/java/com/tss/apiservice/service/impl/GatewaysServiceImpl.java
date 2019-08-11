@@ -46,6 +46,15 @@ public class GatewaysServiceImpl implements GatewaysService {
     @Value("${getStatusUrl}")
     private String getStatusUrl;
 
+    @Value("${setDistanceUrl}")
+    private String setDistanceUrl;
+
+    @Value("${getDistanceUrl}")
+    private String getDistanceUrl;
+
+    @Value("${restartUrl}")
+    private String restartUrl;
+
     @Override
     @Transactional
     public ReturnMsg<Object> addGateways(String userid, GatewaysDto gatewaysDto) {
@@ -124,6 +133,18 @@ public class GatewaysServiceImpl implements GatewaysService {
                 List<GatewaysPo> gatewaysPosList = gatewaysPoMapper.selectNumsByPage(hashMap);
                 List<String> ids = new ArrayList<>(gatewaysPos.size());
                 for (GatewaysPo gatewaysPo : gatewaysPosList) {
+                    Map<String, Object> param = new HashMap<>(1);
+                    param.put("devsn", gatewaysPo.getNumber());
+                    String s = HttpUtils.sendPost(JSON.toJSONString(param), getDistanceUrl);
+                    if (!StringUtils.isEmpty(s)) {
+                        JSONObject jsonObject = JSON.parseObject(s);
+                        String code = jsonObject.getString("code");
+                        if ("200".equals(code)) {
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            Integer sensitivity = data.getInteger("sensitivity");
+                            gatewaysPo.setSensitivity(sensitivity);
+                        }
+                    }
                     ids.add(gatewaysPo.getNumber());
                 }
                 Map<String, Object> param = new HashMap<>(1);
@@ -210,60 +231,91 @@ public class GatewaysServiceImpl implements GatewaysService {
 
     @Override
     @Transactional
-    public ReturnMsg addGateWaysSetting(String userid, String number, String distance) {
+    public ReturnMsg addGateWaysSetting(String userid, String number, Integer distance) throws IOException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(number) || StringUtils.isEmpty(distance)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
-
-            GatewaysPo gatewaysPo = gatewaysPoMapper.selectByPrimaryKey(number);
-            //推送消息 MQ
-            MQAllSendMessage.sendGateWaysToMq(gatewaysPo, MQCode.GATEWAYS_SETING, apiServiceMQ);
-
-            returnMsg.setCode(ReturnMsg.SUCCESS);
-            returnMsg.setMsgbox("成功");
-        }
-        return returnMsg;
-    }
-
-    @Override
-    public ReturnMsg<Object> getGateWaysStatus(String userid) throws IOException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-        if (StringUtils.isEmpty(userid)) {
-            returnMsg.setMsgbox("參數異常...");
-        } else {
-            //获取机构id
-            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
-            Map<String, Object> map = new HashMap<>(1);
-            map.put("orgid", orgid);
-            List<GatewaysPo> gatewaysPos = gatewaysPoMapper.selectNumsByPage(map);
-            List<String> ids = new ArrayList<>(gatewaysPos.size());
-            for (GatewaysPo gatewaysPo : gatewaysPos) {
-                ids.add(gatewaysPo.getNumber());
-            }
+            //设置灵敏度
             Map<String, Object> param = new HashMap<>(1);
-            param.put("devsn", ids);
-            String s = HttpUtils.sendPost(JSON.toJSONString(param), getStatusUrl);
+            param.put("devsn", number);
+            param.put("value", distance);
+            String s = HttpUtils.sendPost(JSON.toJSONString(param), setDistanceUrl);
             if (!StringUtils.isEmpty(s)) {
                 JSONObject jsonObject = JSON.parseObject(s);
                 String code = jsonObject.getString("code");
                 if ("200".equals(code)) {
-                    JSONArray data = jsonObject.getJSONArray("data");
+                    GatewaysPo gatewaysPo = gatewaysPoMapper.selectByPrimaryKey(number);
+                    //推送消息 MQ
+                    MQAllSendMessage.sendGateWaysToMq(gatewaysPo, MQCode.GATEWAYS_SETING, apiServiceMQ);
+                    returnMsg.setCode(ReturnMsg.SUCCESS);
+                    returnMsg.setMsgbox("成功");
                 } else {
-
+                    returnMsg.setMsgbox("設置靈敏度返回失敗");
+                    return returnMsg;
                 }
             } else {
-                returnMsg.setMsgbox("獲取狀態返回為空");
+                returnMsg.setMsgbox("設置靈敏度返回為空");
                 return returnMsg;
             }
-            returnMsg.setCode(ReturnMsg.SUCCESS);
-            returnMsg.setMsgbox("成功");
         }
         return returnMsg;
     }
 
     @Override
-    public ReturnMsg<Object> reloadGateWay(String number) {
-        return null;
+    public ReturnMsg<Object> reloadGateWay(String number) throws IOException {
+        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(number)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            Map<String, Object> param = new HashMap<>(1);
+            param.put("devsn", number);
+            String s = HttpUtils.sendPost(JSON.toJSONString(param), restartUrl);
+            if (!StringUtils.isEmpty(s)) {
+                JSONObject jsonObject = JSON.parseObject(s);
+                String code = jsonObject.getString("code");
+                if ("200".equals(code)) {
+                    returnMsg.setCode(ReturnMsg.SUCCESS);
+                    returnMsg.setMsgbox("成功");
+                } else {
+                    returnMsg.setMsgbox("重啟網關返回失敗");
+                    return returnMsg;
+                }
+            } else {
+                returnMsg.setMsgbox("重啟網關返回為空");
+                return returnMsg;
+            }
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg<Object> getGateWaysSetting(String userid, String number) throws IOException {
+        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(number)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            Map<String, Object> param = new HashMap<>(1);
+            param.put("devsn", number);
+            String s = HttpUtils.sendPost(JSON.toJSONString(param), getDistanceUrl);
+            if (!StringUtils.isEmpty(s)) {
+                JSONObject jsonObject = JSON.parseObject(s);
+                String code = jsonObject.getString("code");
+                if ("200".equals(code)) {
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    String sensitivity = data.getString("sensitivity");
+                    returnMsg.setData(sensitivity);
+                    returnMsg.setCode(ReturnMsg.SUCCESS);
+                    returnMsg.setMsgbox("成功");
+                } else {
+                    returnMsg.setMsgbox("獲取網關靈敏度返回失敗");
+                    return returnMsg;
+                }
+            } else {
+                returnMsg.setMsgbox("獲取網關靈敏度返回為空");
+                return returnMsg;
+            }
+        }
+        return returnMsg;
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Controller
 //@RequiredPermission(PermissionConstants.ADMIN_PERSONG_COMPANY_ADMIN)
@@ -42,20 +43,6 @@ public class GatewaysController {
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取網關列表異常...");
             logger.info("/app/gateWays/getGateWaysMsgList 异常");
-            e.printStackTrace();
-        }
-        return returnMsg;
-    }
-
-    @RequestMapping(value = "/app/gateWays/getGateWaysStatus/{userid}", method = RequestMethod.POST)
-    @ResponseBody
-    public ReturnMsg getGateWaysSetting(@PathVariable("userid") String userid) {
-        ReturnMsg<Object> returnMsg = null;
-        try {
-            returnMsg = gatewaysService.getGateWaysStatus(userid);
-        } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取網關狀態異常...");
-            logger.info("/app/gateWays/getGateWaysStatus 异常");
             e.printStackTrace();
         }
         return returnMsg;
@@ -103,17 +90,31 @@ public class GatewaysController {
         return returnMsg;
     }
 
-    @RequestMapping(value = "/app/gateWays/addGateWaysSetting/{userid}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/app/gateWays/addGateWaysSetting/{userid}", method = RequestMethod.POST)
     @ResponseBody
     public ReturnMsg addGateWaysSetting(@PathVariable("userid") String userid ,
-                                        @RequestParam("number") String number,
-                                        @RequestParam("distance") String distance) {
+                                        @RequestBody GatewaysDto gatewaysDto) {
         ReturnMsg<Object> returnMsg = null;
         try {
-            returnMsg = gatewaysService.addGateWaysSetting(userid , number, distance);
+            returnMsg = gatewaysService.addGateWaysSetting(userid , gatewaysDto.getNumber(), gatewaysDto.getDistance());
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關設置異常...");
             logger.info("/app/gateWays/addGateWaysSetting 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/gateWays/getGateWaysSetting/{userid}", method = RequestMethod.POST)
+    @ResponseBody
+    public ReturnMsg getGateWaysSetting(@PathVariable("userid") String userid ,
+                                        @RequestParam("number") String number) {
+        ReturnMsg<Object> returnMsg = null;
+        try {
+            returnMsg = gatewaysService.getGateWaysSetting(userid , number);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "获取網關設置異常...");
+            logger.info("/app/gateWays/getGateWaysSetting 异常");
             e.printStackTrace();
         }
         return returnMsg;

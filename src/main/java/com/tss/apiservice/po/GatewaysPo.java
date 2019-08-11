@@ -45,9 +45,22 @@ public class GatewaysPo implements Serializable {
     private String orgid;
 
     /**
-     * 机构id
+     * 网关状态
      */
     private Boolean status;
+
+    /**
+     * 网关灵敏度
+     */
+    private Integer sensitivity;
+
+    public Integer getSensitivity() {
+        return sensitivity;
+    }
+
+    public void setSensitivity(Integer sensitivity) {
+        this.sensitivity = sensitivity;
+    }
 
     public Boolean getStatus() {
         return status;
@@ -123,6 +136,8 @@ public class GatewaysPo implements Serializable {
                 ", network='" + network + '\'' +
                 ", osdid='" + osdid + '\'' +
                 ", orgid='" + orgid + '\'' +
+                ", status=" + status +
+                ", sensitivity=" + sensitivity +
                 '}';
     }
 }

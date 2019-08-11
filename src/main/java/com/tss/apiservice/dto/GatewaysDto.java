@@ -39,6 +39,19 @@ public class GatewaysDto implements Serializable {
      */
     private int type;
 
+    /**
+     * 网关灵敏度
+     */
+    private Integer distance;
+
+    public Integer getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Integer distance) {
+        this.distance = distance;
+    }
+
     public GatewaysDto() {
     }
 
