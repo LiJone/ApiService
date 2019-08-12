@@ -17,10 +17,8 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class PermitsServiceImpl implements PermitsService {
@@ -114,7 +112,7 @@ public class PermitsServiceImpl implements PermitsService {
     }
 
     @Override
-    public ReturnMsg<Object> getPermitsMsgList(HttpServletRequest request) {
+    public ReturnMsg<Object> getPermitsMsgList(HttpServletRequest request) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String pageSize = request.getParameter("pageSize");
@@ -168,7 +166,14 @@ public class PermitsServiceImpl implements PermitsService {
                     tagInfosPo.setType(0);
                     tagInfosPo.setObjnum(permitsPoList.get(i).getPermitid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
-
+                    retMap.put("permitsStatus", "證正常");
+                    String validity = permitsPoList.get(i).getEnddate();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Date d1 =formatter.parse(validity);
+                    if (d1.compareTo(new Date()) == -1) {
+                        retMap.put("permitsStatus", "證過期");
+                        break;
+                    }
                     //再查找工具证件表
                     retMap.put("permitsPo", permitsPoList.get(i));
                     retMap.put("tagInfosPos", tagInfosPos);

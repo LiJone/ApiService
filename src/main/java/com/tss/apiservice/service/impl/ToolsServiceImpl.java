@@ -17,10 +17,8 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ToolsServiceImpl implements ToolsService {
@@ -52,7 +50,7 @@ public class ToolsServiceImpl implements ToolsService {
     AbnormalPoMapper abnormalPoMapper;
 
     @Override
-    public ReturnMsg getToolsMsgList(HttpServletRequest request) {
+    public ReturnMsg getToolsMsgList(HttpServletRequest request) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String pageSize = request.getParameter("pageSize");
@@ -107,7 +105,14 @@ public class ToolsServiceImpl implements ToolsService {
                     tagInfosPo.setType(2);
                     tagInfosPo.setObjnum(toolsPoList.get(i).getToolid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
-
+                    retMap.put("toolStatus", "證正常");
+                    String validity = toolsPoList.get(i).getValidity();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Date d1 =formatter.parse(validity);
+                    if (d1.compareTo(new Date()) == -1) {
+                        retMap.put("toolStatus", "證過期");
+                        break;
+                    }
                     retMap.put("toolsPo", toolsPoList.get(i));
                     retMap.put("tagInfosPos", tagInfosPos);
                     arrayList.add(retMap);
