@@ -105,13 +105,12 @@ public class ToolsServiceImpl implements ToolsService {
                     tagInfosPo.setType(2);
                     tagInfosPo.setObjnum(toolsPoList.get(i).getToolid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
-                    retMap.put("toolStatus", "證正常");
+                    retMap.put("toolStatus", "正常");
                     String validity = toolsPoList.get(i).getValidity();
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     Date d1 =formatter.parse(validity);
                     if (d1.compareTo(new Date()) == -1) {
-                        retMap.put("toolStatus", "證過期");
-                        break;
+                        retMap.put("toolStatus", "過期");
                     }
                     retMap.put("toolsPo", toolsPoList.get(i));
                     retMap.put("tagInfosPos", tagInfosPos);

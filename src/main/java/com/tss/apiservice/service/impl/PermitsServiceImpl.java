@@ -172,7 +172,6 @@ public class PermitsServiceImpl implements PermitsService {
                     Date d1 =formatter.parse(validity);
                     if (d1.compareTo(new Date()) == -1) {
                         retMap.put("permitsStatus", "證過期");
-                        break;
                     }
                     //再查找工具证件表
                     retMap.put("permitsPo", permitsPoList.get(i));
