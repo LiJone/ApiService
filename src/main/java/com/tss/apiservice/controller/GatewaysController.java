@@ -105,13 +105,12 @@ public class GatewaysController {
         return returnMsg;
     }
 
-    @RequestMapping(value = "/app/gateWays/getGateWaysSetting/{userid}", method = RequestMethod.POST)
+    @RequestMapping(value = "/app/gateWays/getGateWaysSetting/{number}", method = RequestMethod.POST)
     @ResponseBody
-    public ReturnMsg getGateWaysSetting(@PathVariable("userid") String userid ,
-                                        @RequestParam("number") String number) {
+    public ReturnMsg getGateWaysSetting(@PathVariable("number") String number ) {
         ReturnMsg<Object> returnMsg = null;
         try {
-            returnMsg = gatewaysService.getGateWaysSetting(userid , number);
+            returnMsg = gatewaysService.getGateWaysSetting(number);
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "获取網關設置異常...");
             logger.info("/app/gateWays/getGateWaysSetting 异常");

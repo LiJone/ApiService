@@ -22,5 +22,5 @@ public interface GatewaysService {
 
     ReturnMsg<Object> reloadGateWay(String number) throws IOException;
 
-    ReturnMsg<Object> getGateWaysSetting(String userid, String number) throws IOException;
+    ReturnMsg<Object> getGateWaysSetting(String number) throws IOException;
 }

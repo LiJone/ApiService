@@ -290,7 +290,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    public ReturnMsg<Object> getGateWaysSetting(String userid, String number) throws IOException {
+    public ReturnMsg<Object> getGateWaysSetting(String number) throws IOException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(number)) {
             returnMsg.setMsgbox("參數異常...");
@@ -308,7 +308,8 @@ public class GatewaysServiceImpl implements GatewaysService {
                     returnMsg.setCode(ReturnMsg.SUCCESS);
                     returnMsg.setMsgbox("成功");
                 } else {
-                    returnMsg.setMsgbox("獲取網關靈敏度返回失敗");
+                    String msg = jsonObject.getString("msg");
+                    returnMsg.setMsgbox(msg);
                     return returnMsg;
                 }
             } else {
