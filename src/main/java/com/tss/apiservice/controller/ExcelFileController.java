@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author 壮Jone
@@ -111,7 +112,7 @@ public class ExcelFileController {
                 String titleName2 = "打印時間：" + date;
                 String fileName = name + "考勤詳情表格";
                 int columnNumber = 12;
-                int[] columnWidth = {8, 18, 18, 10, 15, 18, 13, 18, 18, 10, 15, 18};
+                int[] columnWidth = {8, 18, 20, 10, 15, 18, 13, 18, 18, 10, 15, 18};
                 String[] columnName = {"No.", "日期", "員工編號", "上午上班時間", "上午下班時間", "下午上班時間",
                         "下午下班時間", "晚上加班時間", "上班天數", "加班小時", "每日薪酬", "實際薪酬"};
                 Double workDays = 0.0;
@@ -125,6 +126,15 @@ public class ExcelFileController {
                     Double workAddHour = (Double) retMap.get("workAddTimes");
                     Integer salary = (Integer) retMap.get("salary");
                     Double realSalary = (Double) retMap.get("realSalary");
+                    List<String> times = (List<String>) retMap.get("times");
+                    String time = "";
+                    if (times != null && times.size() > 0) {
+                        StringBuffer sb = new StringBuffer();
+                        for (String s :times) {
+                            sb.append(s).append(",");
+                        }
+                        time = sb.substring(0, sb.length() - 1);
+                    }
                     if (workDay != null) {
                         workDays = workDays + workDay;
                     }
@@ -141,11 +151,11 @@ public class ExcelFileController {
                     dataList[i][4] = attendancePo.getAmofftime();
                     dataList[i][5] = attendancePo.getPmontime();
                     dataList[i][6] = attendancePo.getPmofftime();
-                    dataList[i][7] = attendancePo.getAmontime();
-                    dataList[i][8] = (workDay + "天");
-                    dataList[i][9] = (workAddHour + "小時");
-                    dataList[i][10] = (salary + "元");
-                    dataList[i][11] = (realSalary + "元");
+                    dataList[i][7] = time;
+                    dataList[i][8] = workDay == null ? "" : (workDay + "天");
+                    dataList[i][9] = workAddHour == null ? "" : (workAddHour + "小時");
+                    dataList[i][10] = salary == null ? "0" : (salary + "元");
+                    dataList[i][11] = realSalary == null ? "0" : (realSalary + "元");
                 }
                 dataList[arrayList.size()][0] = ("合計");
                 dataList[arrayList.size()][1] = ("");
@@ -164,7 +174,6 @@ public class ExcelFileController {
                 logger.error("获取個人考勤汇总数据失败");
             }
         } catch (Exception e) {
-
             logger.info("/app/excel/OneStaffAttendanceExcel 异常");
             e.printStackTrace();
         }
@@ -213,7 +222,6 @@ public class ExcelFileController {
                 logger.error("获取異常数据失败");
             }
         } catch (Exception e) {
-
             logger.info("/app/excel/exceptionExcel 异常");
             e.printStackTrace();
         }

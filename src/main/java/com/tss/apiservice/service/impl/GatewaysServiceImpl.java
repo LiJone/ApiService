@@ -133,18 +133,18 @@ public class GatewaysServiceImpl implements GatewaysService {
                 List<GatewaysPo> gatewaysPosList = gatewaysPoMapper.selectNumsByPage(hashMap);
                 List<String> ids = new ArrayList<>(gatewaysPos.size());
                 for (GatewaysPo gatewaysPo : gatewaysPosList) {
-                    Map<String, Object> param = new HashMap<>(1);
-                    param.put("devsn", gatewaysPo.getNumber());
-                    String s = HttpUtils.sendPost(JSON.toJSONString(param), getDistanceUrl);
-                    if (!StringUtils.isEmpty(s)) {
-                        JSONObject jsonObject = JSON.parseObject(s);
-                        String code = jsonObject.getString("code");
-                        if ("200".equals(code)) {
-                            JSONObject data = jsonObject.getJSONObject("data");
-                            Integer sensitivity = data.getInteger("sensitivity");
-                            gatewaysPo.setSensitivity(sensitivity);
-                        }
-                    }
+//                    Map<String, Object> param = new HashMap<>(1);
+//                    param.put("devsn", gatewaysPo.getNumber());
+//                    String s = HttpUtils.sendPost(JSON.toJSONString(param), getDistanceUrl);
+//                    if (!StringUtils.isEmpty(s)) {
+//                        JSONObject jsonObject = JSON.parseObject(s);
+//                        String code = jsonObject.getString("code");
+//                        if ("200".equals(code)) {
+//                            JSONObject data = jsonObject.getJSONObject("data");
+//                            Integer sensitivity = data.getInteger("sensitivity");
+//                            gatewaysPo.setSensitivity(sensitivity);
+//                        }
+//                    }
                     ids.add(gatewaysPo.getNumber());
                 }
                 Map<String, Object> param = new HashMap<>(1);
@@ -251,7 +251,8 @@ public class GatewaysServiceImpl implements GatewaysService {
                     returnMsg.setCode(ReturnMsg.SUCCESS);
                     returnMsg.setMsgbox("成功");
                 } else {
-                    returnMsg.setMsgbox("設置靈敏度返回失敗");
+                    String msg = jsonObject.getString("msg");
+                    returnMsg.setMsgbox(msg);
                     return returnMsg;
                 }
             } else {
@@ -278,7 +279,8 @@ public class GatewaysServiceImpl implements GatewaysService {
                     returnMsg.setCode(ReturnMsg.SUCCESS);
                     returnMsg.setMsgbox("成功");
                 } else {
-                    returnMsg.setMsgbox("重啟網關返回失敗");
+                    String msg = jsonObject.getString("msg");
+                    returnMsg.setMsgbox(msg);
                     return returnMsg;
                 }
             } else {
