@@ -23,4 +23,6 @@ public interface UsersService {
     ReturnMsg getUserSetting(HttpServletRequest request);
 
     ReturnMsg setUserSetting(String userid, UsersSetDto usersSetDto) throws ParseException;
+
+    String getUserNameById(Integer userid);
 }

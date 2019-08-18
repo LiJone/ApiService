@@ -3,9 +3,9 @@ package com.tss.apiservice.controller;
 import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.po.AttendancePo;
 import com.tss.apiservice.po.StaffsPo;
+import com.tss.apiservice.po.StaffscertPo;
 import com.tss.apiservice.po.vo.AbnormalExceptionVo;
-import com.tss.apiservice.service.ExceptionSerive;
-import com.tss.apiservice.service.ReportService;
+import com.tss.apiservice.service.*;
 import com.tss.apiservice.utils.ExcelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -35,6 +36,12 @@ public class ExcelFileController {
     @Autowired
     private ExceptionSerive exceptionSerive;
 
+    @Autowired
+    private StaffsService staffsService;
+
+    @Autowired
+    private UsersService usersService;
+
     @RequestMapping(value = "/attendanceExcel", method = RequestMethod.GET)
     public void attendanceExcel(HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -42,15 +49,17 @@ public class ExcelFileController {
             if (returnMsg.getCode() == 1) {
                 String timeBegin = request.getParameter("timeBegin");
                 String timeEnd = request.getParameter("timeEnd");
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
                 ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
                 String sheetName = "考勤汇总表格";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String date = sdf.format(new Date());
                 String titleName = "考勤匯總報表 (" + timeBegin + "至" + timeEnd + ")";
-                String titleName2 = "打印時間：" + date;
+                String titleName2 = "打印人：" + username + "                  打印時間：" + date;
                 String fileName = "考勤汇总表格";
                 int columnNumber = 7;
-                int[] columnWidth = {8, 18, 18, 10, 15, 18, 13};
+                int[] columnWidth = {8, 20, 18, 10, 15, 18, 13};
                 String[] columnName = {"No.", "員工編號", "英文名", "中文名", "個人總天數", "個人加班總小時", "總薪酬"};
                 Double workDays = 0.0;
                 Double workAddSalarys = 0.0;
@@ -104,12 +113,14 @@ public class ExcelFileController {
                 String timeBegin = request.getParameter("timeBegin");
                 String timeEnd = request.getParameter("timeEnd");
                 String name = request.getParameter("name");
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
                 ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
                 String sheetName = name + "考勤詳情表格";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String date = sdf.format(new Date());
                 String titleName = name + "考勤詳情報表 (" + timeBegin + "至" + timeEnd + ")";
-                String titleName2 = "打印時間：" + date;
+                String titleName2 = "打印人：" + username + "                  打印時間：" + date;
                 String fileName = name + "考勤詳情表格";
                 int columnNumber = 12;
                 int[] columnWidth = {8, 18, 20, 10, 15, 18, 13, 18, 18, 10, 15, 18};
@@ -130,7 +141,7 @@ public class ExcelFileController {
                     String time = "";
                     if (times != null && times.size() > 0) {
                         StringBuffer sb = new StringBuffer();
-                        for (String s :times) {
+                        for (String s : times) {
                             sb.append(s).append(",");
                         }
                         time = sb.substring(0, sb.length() - 1);
@@ -187,15 +198,17 @@ public class ExcelFileController {
             if (returnMsg.getCode() == 1) {
                 String timeBegin = request.getParameter("timeBegin");
                 String timeEnd = request.getParameter("timeEnd");
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
                 ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
                 String sheetName = "異常信息表格";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String date = sdf.format(new Date());
                 String titleName = "異常信息報表 (" + timeBegin + "至" + timeEnd + ")";
-                String titleName2 = "打印時間：" + date;
+                String titleName2 = "打印人："+username+"                  打印時間：" + date;
                 String fileName = "異常信息表格";
                 int columnNumber = 8;
-                int[] columnWidth = {8, 18, 18, 10, 15, 18, 13, 13};
+                int[] columnWidth = {8, 20, 18, 10, 15, 18, 13, 13};
                 String[] columnName = {"No.", "日期", "工程編號", "工程名稱", "人員/工具/許可證", "名稱", "異常原因", "圖片"};
                 String[][] dataList = new String[arrayList.size()][8];
                 for (int i = 0; i < arrayList.size(); i++) {
@@ -223,6 +236,89 @@ public class ExcelFileController {
             }
         } catch (Exception e) {
             logger.info("/app/excel/exceptionExcel 异常");
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/expireExcel", method = RequestMethod.GET)
+    public void expireExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            ReturnMsg returnMsg = staffsService.getExpireDataList(request);
+            if (returnMsg.getCode() == 1) {
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
+                ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                String sheetName = "過期員工表格";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(new Date());
+                String titleName = "過期員工報表";
+                String titleName2 = "打印人：" + username + "                  打印時間：" + date;
+                String fileName = "過期員工表格";
+                int columnNumber = 7;
+                int[] columnWidth = {8, 20, 18, 10, 15, 15, 18};
+                String[] columnName = {"No.", "員工編號", "英文名稱", "中文名稱", "證件", "狀態", "過期時間"};
+                String[][] dataList = new String[arrayList.size()][7];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
+                    StaffsPo staffsPo = (StaffsPo) retMap.get("staffsPo");
+                    List<StaffscertPo> staffscertPos = (List<StaffscertPo>) retMap.get("staffscertPos");
+                    String staffscertStatus = (String) retMap.get("staffscertStatus");
+                    dataList[i][0] = ((i + 1) + "");
+                    dataList[i][1] = staffsPo.getStaffid();
+                    dataList[i][2] = staffsPo.getEnname();
+                    dataList[i][3] = staffsPo.getChname();
+                    dataList[i][4] = "綠卡";
+                    dataList[i][5] = staffscertStatus;
+                    dataList[i][6] = staffscertPos.get(0).getValidity();
+                }
+                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+            } else {
+                logger.error("获取異常数据失败");
+            }
+        } catch (Exception e) {
+            logger.info("/app/excel/expireExcel 异常");
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/warningExpireExcel", method = RequestMethod.GET)
+    public void warningExpireExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            request.setAttribute("expire", "30");
+            ReturnMsg returnMsg = staffsService.getExpireDataList(request);
+            if (returnMsg.getCode() == 1) {
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
+                ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                String sheetName = "逾過期員工表格";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(new Date());
+                String titleName = "逾過期員工報表";
+                String titleName2 = "打印人：" + username + "                  打印時間：" + date;
+                String fileName = "逾過期員工表格";
+                int columnNumber = 7;
+                int[] columnWidth = {8, 20, 18, 10, 15, 15, 18};
+                String[] columnName = {"No.", "員工編號", "英文名稱", "中文名稱", "證件", "狀態", "過期時間"};
+                String[][] dataList = new String[arrayList.size()][7];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
+                    StaffsPo staffsPo = (StaffsPo) retMap.get("staffsPo");
+                    List<StaffscertPo> staffscertPos = (List<StaffscertPo>) retMap.get("staffscertPos");
+                    String staffscertStatus = (String) retMap.get("staffscertStatus");
+                    dataList[i][0] = ((i + 1) + "");
+                    dataList[i][1] = staffsPo.getStaffid();
+                    dataList[i][2] = staffsPo.getEnname();
+                    dataList[i][3] = staffsPo.getChname();
+                    dataList[i][4] = "綠卡";
+                    dataList[i][5] = staffscertStatus;
+                    dataList[i][6] = staffscertPos.get(0).getValidity();
+                }
+                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+            } else {
+                logger.error("获取異常数据失败");
+            }
+        } catch (Exception e) {
+            logger.info("/app/excel/warningExpireExcel 异常");
             e.printStackTrace();
         }
     }

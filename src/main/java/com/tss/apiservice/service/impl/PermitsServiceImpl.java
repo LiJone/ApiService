@@ -198,7 +198,7 @@ public class PermitsServiceImpl implements PermitsService {
             param.put("type", 0);
             Integer count = abnormalPoMapper.selectByNumberAndType(param);
             if (count != null && count > 0) {
-                returnMsg.setMsgbox("已存在相关记录，暂不支持删除操作");
+                returnMsg.setMsgbox("已存在相關記錄，暫不支持刪除操作");
                 return returnMsg;
             }
             //删除还要对图片进行删除

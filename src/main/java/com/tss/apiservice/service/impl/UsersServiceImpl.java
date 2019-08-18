@@ -338,4 +338,10 @@ public class UsersServiceImpl implements UsersService {
         }
         return returnMsg;
     }
+
+    @Override
+    public String getUserNameById(Integer userid) {
+        UsersPo usersPo = usersPoMapper.selectByPrimaryKey(userid);
+        return usersPo.getUsername();
+    }
 }

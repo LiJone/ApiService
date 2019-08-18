@@ -29,6 +29,7 @@
         <include refid="Base_Column_List"/>
         from staffs
         where orgid = #{orgid,jdbcType=VARCHAR}
+        order by staffid
     </select>
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
