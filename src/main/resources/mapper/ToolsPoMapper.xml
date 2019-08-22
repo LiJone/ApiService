@@ -35,6 +35,7 @@
             and toolid &lt;= #{numberEnd}
         </if>
         and orgid = #{orgid}
+        order by toolid
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>

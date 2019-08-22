@@ -284,7 +284,6 @@ public class ExcelFileController {
     @RequestMapping(value = "/warningExpireExcel", method = RequestMethod.GET)
     public void warningExpireExcel(HttpServletRequest request, HttpServletResponse response) {
         try {
-            request.setAttribute("expire", "30");
             ReturnMsg returnMsg = staffsService.getExpireDataList(request);
             if (returnMsg.getCode() == 1) {
                 String userid = request.getParameter("userid");
