@@ -33,24 +33,69 @@
     </select>
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from staffs
-        where 1 = 1
-        <if test="chname != null">
-            and chname like '%${chname}%'
+        <if test="expire == null and expireNumber == null">
+            select
+            <include refid="Base_Column_List"/>
+            from staffs
+            where 1 = 1
+            <if test="chname != null">
+                and chname like '%${chname}%'
+            </if>
+            <if test="enname != null">
+                and enname like '%${enname}%'
+            </if>
+            <if test="numberBegin != null">
+                and staffid &gt;= #{numberBegin}
+            </if>
+            <if test="numberEnd != null">
+                and staffid &lt;= #{numberEnd}
+            </if>
+            and orgid = #{orgid}
+            order by staffid
         </if>
-        <if test="enname != null">
-            and enname like '%${enname}%'
+        <if test="expire != null">
+            select
+            a.*
+            from staffs a inner join staffscert s on a.staffid = s.staffid and
+            DATE_FORMAT(s.validity,'%Y-%m-%d') &lt; DATE_FORMAT(now(),'%Y-%m-%d')
+            where 1 = 1
+            <if test="chname != null">
+                and a.chname like '%${chname}%'
+            </if>
+            <if test="enname != null">
+                and a.enname like '%${enname}%'
+            </if>
+            <if test="numberBegin != null">
+                and a.staffid &gt;= #{numberBegin}
+            </if>
+            <if test="numberEnd != null">
+                and a.staffid &lt;= #{numberEnd}
+            </if>
+            and a.orgid = #{orgid}
+            order by a.staffid
         </if>
-        <if test="numberBegin != null">
-            and staffid &gt;= #{numberBegin}
+        <if test="expireNumber != null">
+            select
+            a.*
+            from staffs a inner join staffscert s on a.staffid = s.staffid and
+            DATE_FORMAT(s.validity,'%Y-%m-%d') &lt;= DATE_FORMAT(#{expireNumber},'%Y-%m-%d') and
+            DATE_FORMAT(s.validity,'%Y-%m-%d') &gt;= DATE_FORMAT(now(),'%Y-%m-%d')
+            where 1 = 1
+            <if test="chname != null">
+                and a.chname like '%${chname}%'
+            </if>
+            <if test="enname != null">
+                and a.enname like '%${enname}%'
+            </if>
+            <if test="numberBegin != null">
+                and a.staffid &gt;= #{numberBegin}
+            </if>
+            <if test="numberEnd != null">
+                and a.staffid &lt;= #{numberEnd}
+            </if>
+            and a.orgid = #{orgid}
+            order by a.staffid
         </if>
-        <if test="numberEnd != null">
-            and staffid &lt;= #{numberEnd}
-        </if>
-        and orgid = #{orgid}
-        order by staffid
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>

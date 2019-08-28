@@ -58,6 +58,8 @@ public class JobServiceImpl implements JobService {
                 //开始保存工程
                 engineerinfoPo = new EngineerinfoPo();
                 if (StringUtils.isEmpty(jobDto.getJobnum())) {
+                    returnMsg.setMsgbox("工程編號為空!");
+                    return returnMsg;
                 } else {
                     engineerinfoPo.setJobnum(jobDto.getJobnum());
                 }
@@ -278,6 +280,10 @@ public class JobServiceImpl implements JobService {
             //safeobjsPoMapper.deleteByOsdid(jobDto.getOsdid());
             //objsconditionPoMapper.deleteByOsdid(jobDto.getOsdid());
             EngineerinfoPo engineerinfoPoOld = engineerinfoPoMapper.selectByPrimaryKey(jobDto.getId());
+            if (StringUtils.isEmpty(engineerinfoPoOld.getJobnum())) {
+                returnMsg.setMsgbox("工程編號為空!");
+                return returnMsg;
+            }
             EngineerinfoPo engineerinfoPoNew = engineerinfoPoMapper.selectByOsdid(jobDto.getOsdid());
             if (engineerinfoPoNew != null && !engineerinfoPoNew.getId().equals(jobDto.getId())) {
                 returnMsg.setMsgbox("盒子編號已綁定...");
@@ -314,12 +320,22 @@ public class JobServiceImpl implements JobService {
                     isleave = permitsArr.get(i).get("isleave");
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 0);
                     if (safeobjsPo != null) {
-                        if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                        if (StringUtils.isEmpty(safeobjsPo.getJobnum())) {
                             safeobjsPo.setIsleave(Integer.valueOf(isleave));
                             list.add(safeobjsPo);
                         } else {
-                            returnMsg.setMsgbox("許可證 {" + objname + "} 已在工程中使用...");
-                            return returnMsg;
+                            if (StringUtils.isEmpty(engineerinfoPoOld.getJobnum())) {
+                                safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                                list.add(safeobjsPo);
+                            } else {
+                                if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                                    safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                                    list.add(safeobjsPo);
+                                } else {
+                                    returnMsg.setMsgbox("許可證 {" + objname + "} 已在工程中使用...");
+                                    return returnMsg;
+                                }
+                            }
                         }
                     } else {
                         safeobjsPo = new SafeobjsPo();
@@ -341,12 +357,22 @@ public class JobServiceImpl implements JobService {
                     isleave = toolsArr.get(i).get("isleave");
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 2);
                     if (safeobjsPo != null) {
-                        if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                        if (StringUtils.isEmpty(safeobjsPo.getJobnum())) {
                             safeobjsPo.setIsleave(Integer.valueOf(isleave));
                             list.add(safeobjsPo);
                         } else {
-                            returnMsg.setMsgbox("工具 {" + objname + "} 已在工程中使用...");
-                            return returnMsg;
+                            if (StringUtils.isEmpty(engineerinfoPoOld.getJobnum())) {
+                                safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                                list.add(safeobjsPo);
+                            } else {
+                                if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                                    safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                                    list.add(safeobjsPo);
+                                } else {
+                                    returnMsg.setMsgbox("工具 {" + objname + "} 已在工程中使用...");
+                                    return returnMsg;
+                                }
+                            }
                         }
                     } else {
                         safeobjsPo = new SafeobjsPo();
@@ -374,12 +400,22 @@ public class JobServiceImpl implements JobService {
                     isleave = staffsArr.get(i).get("isleave").toString();
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 1);
                     if (safeobjsPo != null) {
-                        if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                        if (StringUtils.isEmpty(safeobjsPo.getJobnum())) {
                             safeobjsPo.setIsleave(Integer.valueOf(isleave));
                             list.add(safeobjsPo);
                         } else {
-                            returnMsg.setMsgbox("員工 {" + objname + "} 已在工程中使用...");
-                            return returnMsg;
+                            if (StringUtils.isEmpty(engineerinfoPoOld.getJobnum())) {
+                                safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                                list.add(safeobjsPo);
+                            } else {
+                                if (engineerinfoPoOld.getJobnum().equals(safeobjsPo.getJobnum())) {
+                                    safeobjsPo.setIsleave(Integer.valueOf(isleave));
+                                    list.add(safeobjsPo);
+                                } else {
+                                    returnMsg.setMsgbox("員工 {" + objname + "} 已在工程中使用...");
+                                    return returnMsg;
+                                }
+                            }
                         }
                     } else {
                         safeobjsPo = new SafeobjsPo();

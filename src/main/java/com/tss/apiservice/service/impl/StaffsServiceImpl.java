@@ -174,6 +174,7 @@ public class StaffsServiceImpl implements StaffsService {
         String enname = request.getParameter("enname");
         String expire =  request.getParameter("expire");
         String expireNumber =  request.getParameter("expireNumber");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -195,6 +196,15 @@ public class StaffsServiceImpl implements StaffsService {
                 hashMap.put("enname", enname);
             }
             //根据带有符合条件的总数，进行分页查询的操作
+            if (!StringUtils.isEmpty(expire)) {
+                hashMap.put("expire", expire);
+            } else if (!StringUtils.isEmpty(expireNumber)) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.MONTH, 1);
+                String format = formatter.format(cal.getTime());
+                hashMap.put("expireNumber", format);
+            }
             List<StaffsPo> staffsPos = staffsPoMapper.selectListByMap(hashMap);
             if (StringUtils.isEmpty(pageSize)) {
                 pageSize = "10";
@@ -205,7 +215,7 @@ public class StaffsServiceImpl implements StaffsService {
             if (staffsPos.size() < 1) {
                 returnMsg.setMsgbox("找不到符合條件數據...");
             } else {
-                PageUtil pageUtil = new PageUtil(staffsPos.size(), Integer.valueOf(pageSize), Integer.valueOf(currentPage), 5);
+                PageUtil pageUtil = new PageUtil(staffsPos.size(), Integer.parseInt(pageSize), Integer.parseInt(currentPage), 5);
                 int startrow = pageUtil.getStartrow();
                 int pagesize = pageUtil.getPagesize();
                 hashMap.put("startrow", startrow);
@@ -215,16 +225,15 @@ public class StaffsServiceImpl implements StaffsService {
                 TagInfosPo tagInfosPo = null;
                 HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();
-                out : for (int i = 0; i < staffsPoList.size(); i++) {
+                for (int i = 0; i < staffsPoList.size(); i++) {
                     retMap = new HashMap<>();
                     tagInfosPo = new TagInfosPo();
                     tagInfosPo.setType(1);
                     tagInfosPo.setObjnum(staffsPoList.get(i).getStaffid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
                     String effdate = staffsPoList.get(i).getEffdate();
-                    SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
                     if (effdate != null && !"".equals(effdate)) {
-                        Date d2 =formatter1.parse(effdate);
+                        Date d2 =formatter.parse(effdate);
                         if (!d2.after(new Date())) {
                             staffsPoList.get(i).setTreatment(staffsPoList.get(i).getAltersalary());
                         }
@@ -237,7 +246,6 @@ public class StaffsServiceImpl implements StaffsService {
                     if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
                         for (int y = 0; y < staffscertPos.size(); y++) {
                             String validity = staffscertPos.get(y).getValidity();
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                             Date d1 =formatter.parse(validity);
                             if (d1.compareTo(new Date()) == -1) {
                                 retMap.put("staffscertStatus", "證過期");
@@ -248,25 +256,24 @@ public class StaffsServiceImpl implements StaffsService {
                         for (int y = 0; y < staffscertPos.size(); y++) {
                             retMap.put("staffscertStatus", "證正常");
                             String validity = staffscertPos.get(y).getValidity();
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                             Date d1 = formatter.parse(validity);
                             if (!StringUtils.isEmpty(expireNumber)) {
-                                String format = formatter.format(new Date());
-                                Date now = formatter.parse(format);
-                                long day = (d1.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
-                                if (day > 0 && day <= Long.parseLong(expireNumber)) {
-                                    retMap.put("staffscertStatus", "證正常");
-                                    break;
-                                } else {
-                                    continue out;
-                                }
+//                                String format = formatter.format(new Date());
+//                                Date now = formatter.parse(format);
+//                                long day = (d1.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
+//                                if (day > 0 && day <= Long.parseLong(expireNumber)) {
+//                                    retMap.put("staffscertStatus", "證正常");
+//                                    break;
+//                                } else {
+//                                    continue out;
+//                                }
                             } else {
-                                if (d1.compareTo(new Date()) == -1) {
+//                                if (d1.compareTo(new Date()) == -1) {
                                     retMap.put("staffscertStatus", "證過期");
-                                    break;
-                                } else {
-                                    continue out;
-                                }
+//                                    break;
+//                                } else {
+//                                    continue out;
+//                                }
                             }
                         }
                     }
@@ -537,7 +544,7 @@ public class StaffsServiceImpl implements StaffsService {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String typeNameStr = request.getParameter("typeNameStr");
-
+        String type = request.getParameter("type");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -578,38 +585,42 @@ public class StaffsServiceImpl implements StaffsService {
             if (staffsPos != null && staffsPos.size() > 0) {
                 //循环每一个员工
                 for (int i = 0; i < staffsPos.size(); i++) {
-                    status = true;
-                    map = new HashMap<>();
-                    //获取员工编号的所有员工证件记录
-                    staffscertPos = staffscertPoMapper.selectByStaffidValid(staffsPos.get(i).getStaffid());
-
-                    if (staffscertPos.size() < certnameArr.size()) {
-                        continue;
-                    }
-
-                    //比较
-                    if (certnameArr.size() > 0) {
-                        sb1 = new StringBuffer();
-                        for (int j = 0; j < staffscertPos.size(); j++) {
-                            sb1.append(staffscertPos.get(j).getTypename()).append(";");
-                        }
-
-                        for (int y = 0; y < certnameArr.size(); y++) {
-                            int i1 = sb1.toString().indexOf(certnameArr.get(y).toString());
-                            if (i1 < 0) {
-                                status = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (status) {
-                        map = new HashMap<>();
+                    if (type != null && !"".equals(type)) {
+                        map = new HashMap<>(1);
                         map.put("staffsPo", staffsPos.get(i));
                         map.put("staffscertPo", staffscertPos);
                         list.add(map);
-                    }
+                    } else {
+                        status = true;
+                        //获取员工编号的所有员工证件记录
+                        staffscertPos = staffscertPoMapper.selectByStaffidValid(staffsPos.get(i).getStaffid());
+                        if (staffscertPos.size() < certnameArr.size()) {
+                            continue;
+                        }
 
+                        //比较
+                        if (certnameArr.size() > 0) {
+                            sb1 = new StringBuffer();
+                            for (int j = 0; j < staffscertPos.size(); j++) {
+                                sb1.append(staffscertPos.get(j).getTypename()).append(";");
+                            }
+
+                            for (int y = 0; y < certnameArr.size(); y++) {
+                                int i1 = sb1.toString().indexOf(certnameArr.get(y).toString());
+                                if (i1 < 0) {
+                                    status = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (status) {
+                            map = new HashMap<>(2);
+                            map.put("staffsPo", staffsPos.get(i));
+                            map.put("staffscertPo", staffscertPos);
+                            list.add(map);
+                        }
+                    }
                 }
             }
             if (list.size() > 0) {
