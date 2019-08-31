@@ -136,7 +136,7 @@ public class ExcelFileController {
                     HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
                     AttendancePo attendancePo = (AttendancePo) retMap.get("attendancePo");
                     Double workDay = (Double) retMap.get("workDay");
-                    Double workAddHour = (Double) retMap.get("workAddTimes");
+                    Double workAddHour = (Double) retMap.get("workAddDay");
                     Integer salary = (Integer) retMap.get("salary");
                     Double realSalary = (Double) retMap.get("realSalary");
                     List<String> times = (List<String>) retMap.get("times");
@@ -218,7 +218,7 @@ public class ExcelFileController {
                     AbnormalExceptionVo abnormalPo = (AbnormalExceptionVo) retMap.get("abnormalPo");
                     String objName = (String) retMap.get("objName");
                     dataList[i][0] = ((i + 1) + "");
-                    dataList[i][1] = abnormalPo.getAbtime() + "";
+                    dataList[i][1] = sdf.format(abnormalPo.getAbtime());
                     dataList[i][2] = abnormalPo.getJobnum();
                     dataList[i][3] = abnormalPo.getEngineerName();
                     if (abnormalPo.getType() == 0) {
