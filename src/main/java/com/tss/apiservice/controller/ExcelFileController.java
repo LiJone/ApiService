@@ -45,6 +45,7 @@ public class ExcelFileController {
     @RequestMapping(value = "/attendanceExcel", method = RequestMethod.GET)
     public void attendanceExcel(HttpServletRequest request, HttpServletResponse response) {
         try {
+            request.setAttribute("excel", "1");
             ReturnMsg returnMsg = reportService.getAttendanceCollect(request);
             if (returnMsg.getCode() == 1) {
                 String timeBegin = request.getParameter("timeBegin");
@@ -108,6 +109,7 @@ public class ExcelFileController {
     @RequestMapping(value = "/OneStaffAttendanceExcel", method = RequestMethod.GET)
     public void oneStaffAttendanceExcel(HttpServletRequest request, HttpServletResponse response) {
         try {
+            request.setAttribute("excel", "1");
             ReturnMsg returnMsg = reportService.getOneStaffAttendance(request);
             if (returnMsg.getCode() == 1) {
                 String timeBegin = request.getParameter("timeBegin");

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ public class ReportServiceImpl implements ReportService {
         String timeBegin = request.getParameter("timeBegin");
         String timeEnd = request.getParameter("timeEnd");
         String staffsName = request.getParameter("staffsName");
+        String excel = (String) request.getAttribute("excel");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -96,8 +98,14 @@ public class ReportServiceImpl implements ReportService {
                         }
                     }
                 }
+                BigDecimal b = new BigDecimal(workAddSalary);
+                if (excel != null) {
+                    workAddSalary = b.setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue();
+                    retMap.put("workAddSalary", workAddSalary);
+                } else {
+                    retMap.put("workAddSalary", b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                }
                 retMap.put("workAddHour", workAddHour);
-                retMap.put("workAddSalary", workAddSalary);
                 arrayList.add(retMap);
             }
             returnMsg.setCode(ReturnMsg.SUCCESS);
@@ -114,6 +122,7 @@ public class ReportServiceImpl implements ReportService {
         String staffid = request.getParameter("staffid");
         String timeBegin = request.getParameter("timeBegin");
         String timeEnd = request.getParameter("timeEnd");
+        String excel = (String) request.getAttribute("excel");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(staffid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -156,17 +165,23 @@ public class ReportServiceImpl implements ReportService {
                 if (salary == null || salary == 0) {
                     realSalary = 0.0;
                 } else {
-                    realSalary = salary / 9 * workAddTimes * 1.5;
+                    realSalary = salary / 9.0 * workAddTimes * 1.5;
                     if (workDay != 0.0) {
                         realSalary = realSalary + workDay * salary;
                     }
+                }
+                BigDecimal b = new BigDecimal(realSalary);
+                if (excel != null) {
+                    realSalary = b.setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue();
+                    map.put("realSalary", realSalary);
+                } else {
+                    map.put("realSalary", b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
                 }
                 map.put("workDay", workDay);
                 map.put("workAddDay", workAddTimes);
                 map.put("attendancePo", attendancePo);
                 map.put("times", times);
                 map.put("salary", salary);
-                map.put("realSalary", realSalary);
                 arrayList.add(map);
             }
             returnMsg.setCode(ReturnMsg.SUCCESS);
