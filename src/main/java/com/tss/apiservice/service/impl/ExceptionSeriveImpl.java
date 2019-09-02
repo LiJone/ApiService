@@ -1,5 +1,6 @@
 package com.tss.apiservice.service.impl;
 
+import com.tss.apiservice.common.PageUtil;
 import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.dao.*;
 import com.tss.apiservice.po.*;
@@ -38,7 +39,10 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
         String userid = request.getParameter("userid");
         String timeBegin = request.getParameter("timeBegin");
         String timeEnd = request.getParameter("timeEnd");
+        String pageSize = request.getParameter("pageSize");
+        String currentPage = request.getParameter("currentPage");
         String order = (String) request.getAttribute("order");
+        String excel = (String) request.getAttribute("excel");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -56,6 +60,21 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
             }
             if(!StringUtils.isEmpty(order)){
                 map.put("order", order);
+            }
+            if (StringUtils.isEmpty(pageSize)) {
+                pageSize = "10";
+            }
+            if (StringUtils.isEmpty(currentPage)) {
+                currentPage = "1";
+            }
+            PageUtil pageUtil = null;
+            if (StringUtils.isEmpty(excel)) {
+                List<AbnormalExceptionVo> count = abnormalPoMapper.selectByHashMap(map);
+                pageUtil = new PageUtil(count.size(), Integer.parseInt(pageSize), Integer.parseInt(currentPage), 5);
+                int startrow = pageUtil.getStartrow();
+                int pagesize = pageUtil.getPagesize();
+                map.put("startrow", startrow);
+                map.put("pagesize", pagesize);
             }
             List<AbnormalExceptionVo> abnormalPos = abnormalPoMapper.selectByHashMap(map);
             StaffsPo staffsPo = null;
@@ -86,9 +105,14 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
                 }
                 list.add(map);
             }
+            pageUtil.setPageData(list);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
-            returnMsg.setData(list);
+            if (StringUtils.isEmpty(excel)) {
+                returnMsg.setData(pageUtil);
+            } else {
+                returnMsg.setData(list);
+            }
         }
         return returnMsg;
     }

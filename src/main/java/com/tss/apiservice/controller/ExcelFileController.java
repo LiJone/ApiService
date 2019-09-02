@@ -196,6 +196,7 @@ public class ExcelFileController {
     public void exceptionExcel(HttpServletRequest request, HttpServletResponse response) {
         try {
             request.setAttribute("order", "asc");
+            request.setAttribute("excel", "1");
             ReturnMsg returnMsg = exceptionSerive.getExceptionLog(request);
             if (returnMsg.getCode() == 1) {
                 String timeBegin = request.getParameter("timeBegin");

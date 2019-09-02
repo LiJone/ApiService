@@ -37,6 +37,9 @@
         order by abnormal.abtime desc
       </otherwise>
     </choose>
+    <if test="startrow != null and pagesize != null">
+      limit #{startrow} , #{pagesize}
+    </if>
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.util.Map" resultMap="BaseResultMap">
