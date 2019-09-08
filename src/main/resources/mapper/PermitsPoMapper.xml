@@ -43,6 +43,13 @@
         <if test="numberEnd != null">
             and permitid &lt;= #{numberEnd}
         </if>
+        <if test="expire != null">
+            and DATE_FORMAT(enddate,'%Y-%m-%d') &lt; DATE_FORMAT(now(),'%Y-%m-%d')
+        </if>
+        <if test="expireNumber != null">
+            and DATE_FORMAT(enddate,'%Y-%m-%d') &lt;= DATE_FORMAT(#{expireNumber},'%Y-%m-%d')
+            and DATE_FORMAT(enddate,'%Y-%m-%d') &gt;= DATE_FORMAT(now(),'%Y-%m-%d')
+        </if>
         and orgid = #{orgid}
         order by permitid
         <if test="startrow != null and pagesize != null">

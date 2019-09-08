@@ -1,9 +1,7 @@
 package com.tss.apiservice.controller;
 
 import com.tss.apiservice.common.ReturnMsg;
-import com.tss.apiservice.po.AttendancePo;
-import com.tss.apiservice.po.StaffsPo;
-import com.tss.apiservice.po.StaffscertPo;
+import com.tss.apiservice.po.*;
 import com.tss.apiservice.po.vo.AbnormalExceptionVo;
 import com.tss.apiservice.service.*;
 import com.tss.apiservice.utils.ExcelUtils;
@@ -41,6 +39,15 @@ public class ExcelFileController {
 
     @Autowired
     private UsersService usersService;
+
+    @Autowired
+    private PermitsService permitsService;
+
+    @Autowired
+    private ToolsService toolsService;
+
+    @Autowired
+    private DepositoryService depositoryService;
 
     @RequestMapping(value = "/attendanceExcel", method = RequestMethod.GET)
     public void attendanceExcel(HttpServletRequest request, HttpServletResponse response) {
@@ -276,7 +283,7 @@ public class ExcelFileController {
                 }
                 ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
-                logger.error("获取異常数据失败");
+                logger.error("获取過期員工数据失败");
             }
         } catch (Exception e) {
             logger.info("/app/excel/expireExcel 异常");
@@ -317,10 +324,216 @@ public class ExcelFileController {
                 }
                 ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
-                logger.error("获取異常数据失败");
+                logger.error("获取逾過期員工数据失败");
             }
         } catch (Exception e) {
             logger.info("/app/excel/warningExpireExcel 异常");
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/expirePermitsExcel", method = RequestMethod.GET)
+    public void expirePermitsExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            ReturnMsg returnMsg = permitsService.getExpireDataList(request);
+            if (returnMsg.getCode() == 1) {
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
+                ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                String sheetName = "過期許可證表格";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(new Date());
+                String titleName = "過期許可證報表";
+                String titleName2 = "打印人：" + username + "                  打印時間：" + date;
+                String fileName = "過期許可證表格";
+                int columnNumber = 7;
+                int[] columnWidth = {8, 20, 18, 10, 15, 15, 18};
+                String[] columnName = {"No.", "許可證編號", "許可證名稱", "許可證種類名稱", "開始日期", "結束日期", "狀態"};
+                String[][] dataList = new String[arrayList.size()][7];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
+                    PermitsPo permitsPo = (PermitsPo) retMap.get("permitsPo");
+                    String permitsStatus = (String) retMap.get("permitsStatus");
+                    dataList[i][0] = ((i + 1) + "");
+                    dataList[i][1] = permitsPo.getPermitid();
+                    dataList[i][2] = permitsPo.getName();
+                    dataList[i][3] = permitsPo.getTypename();
+                    dataList[i][4] = permitsPo.getStartdate();
+                    dataList[i][5] = permitsPo.getEnddate();
+                    dataList[i][6] = permitsStatus;
+                }
+                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+            } else {
+                logger.error("获取過期許可證数据失败");
+            }
+        } catch (Exception e) {
+            logger.info("/app/excel/expirePermitsExcel 异常");
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/warningPermitsExpireExcel", method = RequestMethod.GET)
+    public void warningPermitsExpireExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            ReturnMsg returnMsg = permitsService.getExpireDataList(request);
+            if (returnMsg.getCode() == 1) {
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
+                ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                String sheetName = "逾過期許可證表格";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(new Date());
+                String titleName = "逾過期許可證報表";
+                String titleName2 = "打印人：" + username + "                  打印時間：" + date;
+                String fileName = "逾過期許可證表格";
+                int columnNumber = 7;
+                int[] columnWidth = {8, 20, 18, 10, 15, 15, 18};
+                String[] columnName = {"No.", "許可證編號", "許可證名稱", "許可證種類名稱", "開始日期", "結束日期", "狀態"};
+                String[][] dataList = new String[arrayList.size()][7];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
+                    PermitsPo permitsPo = (PermitsPo) retMap.get("permitsPo");
+                    String permitsStatus = (String) retMap.get("permitsStatus");
+                    dataList[i][0] = ((i + 1) + "");
+                    dataList[i][1] = permitsPo.getPermitid();
+                    dataList[i][2] = permitsPo.getName();
+                    dataList[i][3] = permitsPo.getTypename();
+                    dataList[i][4] = permitsPo.getStartdate();
+                    dataList[i][5] = permitsPo.getEnddate();
+                    dataList[i][6] = permitsStatus;
+                }
+                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+            } else {
+                logger.error("获取逾過期許可證数据失败");
+            }
+        } catch (Exception e) {
+            logger.info("/app/excel/warningPermitsExpireExcel 异常");
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/expireToolsExcel", method = RequestMethod.GET)
+    public void expireToolsExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            ReturnMsg returnMsg = toolsService.getExpireDataList(request);
+            if (returnMsg.getCode() == 1) {
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
+                ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                String sheetName = "過期工具表格";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(new Date());
+                String titleName = "過期工具報表";
+                String titleName2 = "打印人：" + username + "                  打印時間：" + date;
+                String fileName = "過期工具表格";
+                int columnNumber = 5;
+                int[] columnWidth = {8, 20, 18, 10, 18};
+                String[] columnName = {"No.", "工具編號", "工具名稱", "狀態", "過期時間"};
+                String[][] dataList = new String[arrayList.size()][5];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
+                    ToolsPo toolsPo = (ToolsPo) retMap.get("toolsPo");
+                    String toolStatus = (String) retMap.get("toolStatus");
+                    dataList[i][0] = ((i + 1) + "");
+                    dataList[i][1] = toolsPo.getToolid();
+                    dataList[i][2] = toolsPo.getName();
+                    dataList[i][3] = toolStatus;
+                    dataList[i][4] = toolsPo.getValidity();
+                }
+                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+            } else {
+                logger.error("获取過期工具数据失败");
+            }
+        } catch (Exception e) {
+            logger.info("/app/excel/expireToolsExcel 异常");
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/warningToolsExpireExcel", method = RequestMethod.GET)
+    public void warningToolsExpireExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            ReturnMsg returnMsg = toolsService.getExpireDataList(request);
+            if (returnMsg.getCode() == 1) {
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
+                ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                String sheetName = "逾過期工具表格";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(new Date());
+                String titleName = "逾過期工具報表";
+                String titleName2 = "打印人：" + username + "                  打印時間：" + date;
+                String fileName = "逾過期工具表格";
+                int columnNumber = 5;
+                int[] columnWidth = {8, 20, 18, 10, 18};
+                String[] columnName = {"No.", "工具編號", "工具名稱", "狀態", "過期時間"};
+                String[][] dataList = new String[arrayList.size()][5];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
+                    ToolsPo toolsPo = (ToolsPo) retMap.get("toolsPo");
+                    String toolStatus = (String) retMap.get("toolStatus");
+                    dataList[i][0] = ((i + 1) + "");
+                    dataList[i][1] = toolsPo.getToolid();
+                    dataList[i][2] = toolsPo.getName();
+                    dataList[i][3] = toolStatus;
+                    dataList[i][4] = toolsPo.getValidity();
+                }
+                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+            } else {
+                logger.error("获取逾過期工具数据失败");
+            }
+        } catch (Exception e) {
+            logger.info("/app/excel/warningToolsExpireExcel 异常");
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/depositoryExcel", method = RequestMethod.GET)
+    public void depositoryExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            request.setAttribute("excel", "1");
+            ReturnMsg returnMsg = depositoryService.getDepositoryMsgList(request);
+            if (returnMsg.getCode() == 1) {
+                String timeBegin = request.getParameter("timeBegin");
+                String timeEnd = request.getParameter("timeEnd");
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
+                ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                String sheetName = "倉庫信息表格";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(new Date());
+                String titleName = "倉庫信息報表 (" + timeBegin + "至" + timeEnd + ")";
+                String titleName2 = "打印人："+username+"                  打印時間：" + date;
+                String fileName = "倉庫信息表格";
+                int columnNumber = 8;
+                int[] columnWidth = {8, 20, 18, 10, 15, 18, 13, 13};
+                String[] columnName = {"No.", "日期", "工程編號", "工程名稱", "人員/工具/許可證", "名稱", "異常原因", "圖片"};
+                String[][] dataList = new String[arrayList.size()][8];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
+                    AbnormalExceptionVo abnormalPo = (AbnormalExceptionVo) retMap.get("abnormalPo");
+                    String objName = (String) retMap.get("objName");
+                    dataList[i][0] = ((i + 1) + "");
+                    dataList[i][1] = sdf.format(abnormalPo.getAbtime());
+                    dataList[i][2] = abnormalPo.getJobnum();
+                    dataList[i][3] = abnormalPo.getEngineerName();
+                    if (abnormalPo.getType() == 0) {
+                        dataList[i][4] = "許可證";
+                    } else if (abnormalPo.getType() == 1) {
+                        dataList[i][4] = "員工";
+                    } else if (abnormalPo.getType() == 2) {
+                        dataList[i][4] = "工具";
+                    }
+                    dataList[i][5] = objName;
+                    dataList[i][6] = abnormalPo.getReason();
+                    dataList[i][7] = abnormalPo.getImageid();
+                }
+                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+            } else {
+                logger.error("获取倉庫数据失败");
+            }
+        } catch (Exception e) {
+            logger.info("/app/excel/depositoryExcel 异常");
             e.printStackTrace();
         }
     }

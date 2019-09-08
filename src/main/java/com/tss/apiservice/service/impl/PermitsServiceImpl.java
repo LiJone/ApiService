@@ -120,6 +120,9 @@ public class PermitsServiceImpl implements PermitsService {
         String numberBegin = request.getParameter("numberBegin");
         String numberEnd = request.getParameter("numberEnd");
         String name = request.getParameter("name");
+        String expire =  request.getParameter("expire");
+        String expireNumber =  request.getParameter("expireNumber");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -137,10 +140,17 @@ public class PermitsServiceImpl implements PermitsService {
             if (!StringUtils.isEmpty(name)) {
                 hashMap.put("name", name);
             }
-
             //根据带有符合条件的总数，进行分页查询的操作
+            if (!StringUtils.isEmpty(expire)) {
+                hashMap.put("expire", expire);
+            } else if (!StringUtils.isEmpty(expireNumber)) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.MONTH, 1);
+                String format = formatter.format(cal.getTime());
+                hashMap.put("expireNumber", format);
+            }
             List<PermitsPo> permitsPos = permitsPoMapper.selectListByMap(hashMap);
-
             if (StringUtils.isEmpty(pageSize)) {
                 pageSize = "10";
             }
@@ -150,13 +160,13 @@ public class PermitsServiceImpl implements PermitsService {
             if (permitsPos.size() < 1) {
                 returnMsg.setMsgbox("找不到符合條件數據...");
             } else {
-                PageUtil pageUtil = new PageUtil(permitsPos.size(), Integer.valueOf(pageSize), Integer.valueOf(currentPage), 5);
+                PageUtil pageUtil = new PageUtil(permitsPos.size(), Integer.parseInt(pageSize), Integer.parseInt(currentPage), 5);
                 int startrow = pageUtil.getStartrow();
                 int pagesize = pageUtil.getPagesize();
                 hashMap.put("startrow", startrow);
                 hashMap.put("pagesize", pagesize);
                 List<PermitsPo> permitsPoList = permitsPoMapper.selectListByMap(hashMap);
-                //根据工具信息去查对应的 工具证件表和标签表
+                //根据工具信息去查对应的标签表
                 TagInfosPo tagInfosPo = null;
                 HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();
@@ -166,12 +176,19 @@ public class PermitsServiceImpl implements PermitsService {
                     tagInfosPo.setType(0);
                     tagInfosPo.setObjnum(permitsPoList.get(i).getPermitid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
-                    retMap.put("permitsStatus", "證正常");
-                    String validity = permitsPoList.get(i).getEnddate();
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    Date d1 =formatter.parse(validity);
-                    if (d1.compareTo(new Date()) == -1) {
-                        retMap.put("permitsStatus", "證過期");
+                    if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
+                        retMap.put("permitsStatus", "證正常");
+                        String validity = permitsPoList.get(i).getEnddate();
+                        Date d1 =formatter.parse(validity);
+                        if (d1.compareTo(new Date()) == -1) {
+                            retMap.put("permitsStatus", "證過期");
+                        }
+                    } else {
+                        if (!StringUtils.isEmpty(expireNumber)) {
+                            retMap.put("permitsStatus", "證正常");
+                        } else {
+                            retMap.put("permitsStatus", "證過期");
+                        }
                     }
                     //再查找工具证件表
                     retMap.put("permitsPo", permitsPoList.get(i));
@@ -351,6 +368,52 @@ public class PermitsServiceImpl implements PermitsService {
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
             returnMsg.setData(map);
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException {
+        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        String userid = request.getParameter("userid");
+        String expireNumber =  request.getParameter("expireNumber");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            //查看许可证列表，根据许可证查找标签
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("orgid", orgid);
+            //根据带有符合条件的总数，进行分页查询的操作
+            if (!StringUtils.isEmpty(expireNumber)) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.MONTH, 1);
+                String format = formatter.format(cal.getTime());
+                hashMap.put("expireNumber", format);
+            } else {
+                hashMap.put("expire", 1);
+            }
+            List<PermitsPo> permitsPos = permitsPoMapper.selectListByMap(hashMap);
+            if (permitsPos.size() < 1) {
+                returnMsg.setMsgbox("找不到符合條件數據...");
+            } else {
+                HashMap<String, Object> retMap = null;
+                ArrayList<Object> arrayList = new ArrayList<>();
+                for (PermitsPo permitsPo : permitsPos) {
+                    retMap = new HashMap<>();
+                    if (!StringUtils.isEmpty(expireNumber)) {
+                        retMap.put("permitsStatus", "證正常");
+                    } else {
+                        retMap.put("permitsStatus", "證過期");
+                    }
+                    retMap.put("permitsPo", permitsPo);
+                    arrayList.add(retMap);
+                }
+                returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
+            }
         }
         return returnMsg;
     }

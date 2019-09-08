@@ -254,26 +254,10 @@ public class StaffsServiceImpl implements StaffsService {
                         }
                     } else {
                         for (int y = 0; y < staffscertPos.size(); y++) {
-                            retMap.put("staffscertStatus", "證正常");
-                            String validity = staffscertPos.get(y).getValidity();
-                            Date d1 = formatter.parse(validity);
                             if (!StringUtils.isEmpty(expireNumber)) {
-//                                String format = formatter.format(new Date());
-//                                Date now = formatter.parse(format);
-//                                long day = (d1.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
-//                                if (day > 0 && day <= Long.parseLong(expireNumber)) {
-//                                    retMap.put("staffscertStatus", "證正常");
-//                                    break;
-//                                } else {
-//                                    continue out;
-//                                }
+                                retMap.put("staffscertStatus", "證正常");
                             } else {
-//                                if (d1.compareTo(new Date()) == -1) {
-                                    retMap.put("staffscertStatus", "證過期");
-//                                    break;
-//                                } else {
-//                                    continue out;
-//                                }
+                                retMap.put("staffscertStatus", "證過期");
                             }
                         }
                     }
@@ -669,6 +653,7 @@ public class StaffsServiceImpl implements StaffsService {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String expireNumber =  request.getParameter("expireNumber");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -678,43 +663,30 @@ public class StaffsServiceImpl implements StaffsService {
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("orgid", orgid);
             //根据带有符合条件的总数，进行分页查询的操作
+            if (!StringUtils.isEmpty(expireNumber)) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.MONTH, 1);
+                String format = formatter.format(cal.getTime());
+                hashMap.put("expireNumber", format);
+            } else {
+                hashMap.put("expire", 1);
+            }
             List<StaffsPo> staffsPos = staffsPoMapper.selectListByMap(hashMap);
             if (staffsPos.size() < 1) {
                 returnMsg.setMsgbox("找不到符合條件數據...");
             } else {
-                //根据员工信息去查对应的 员工证件表和标签表
-                TagInfosPo tagInfosPo = null;
+                //根据员工信息去查对应的 员工证件表
                 HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();
-                out :
                 for (StaffsPo staffsPo : staffsPos) {
                     retMap = new HashMap<>();
                     //再查找员工证件表
                     List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffsPo.getStaffid());
-                    //循环员工证件表，得到证件是否存在过期
-                    for (int y = 0; y < staffscertPos.size(); y++) {
-                        retMap.put("staffscertStatus", "證正常");
-                        String validity = staffscertPos.get(y).getValidity();
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                        Date d1 = formatter.parse(validity);
-                        if (!StringUtils.isEmpty(expireNumber)) {
-                            String format = formatter.format(new Date());
-                            Date now = formatter.parse(format);
-                            long day = (d1.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
-                            if (day > 0 && day <= Long.parseLong(expireNumber)) {
-                                retMap.put("staffscertStatus", "證正常");
-                                break;
-                            } else {
-                                continue out;
-                            }
-                        } else {
-                            if (d1.compareTo(new Date()) == -1) {
-                                retMap.put("staffscertStatus", "證過期");
-                                break;
-                            } else {
-                                continue out;
-                            }
-                        }
+                    if (!StringUtils.isEmpty(expireNumber)) {
+                        retMap.put("permitsStatus", "證正常");
+                    } else {
+                        retMap.put("permitsStatus", "證過期");
                     }
                     retMap.put("staffsPo", staffsPo);
                     retMap.put("staffscertPos", staffscertPos);

@@ -17,4 +17,6 @@ public interface PermitsService {
     ReturnMsg updatePermitsMsg(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) throws ParseException;
 
     ReturnMsg getPermitsMsg(HttpServletRequest request);
+
+    ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException;
 }

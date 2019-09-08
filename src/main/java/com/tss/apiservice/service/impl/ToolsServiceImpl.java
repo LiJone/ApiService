@@ -58,7 +58,9 @@ public class ToolsServiceImpl implements ToolsService {
         String numberBegin = request.getParameter("numberBegin");
         String numberEnd = request.getParameter("numberEnd");
         String name = request.getParameter("name");
-
+        String expire =  request.getParameter("expire");
+        String expireNumber =  request.getParameter("expireNumber");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -76,8 +78,16 @@ public class ToolsServiceImpl implements ToolsService {
             if (!StringUtils.isEmpty(name)) {
                 hashMap.put("name", name);
             }
-
             //根据带有符合条件的总数，进行分页查询的操作
+            if (!StringUtils.isEmpty(expire)) {
+                hashMap.put("expire", expire);
+            } else if (!StringUtils.isEmpty(expireNumber)) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.MONTH, 1);
+                String format = formatter.format(cal.getTime());
+                hashMap.put("expireNumber", format);
+            }
             List<ToolsPo> toolsPos = toolsPoMapper.selectListByMap(hashMap);
 
             if (StringUtils.isEmpty(pageSize)) {
@@ -89,7 +99,7 @@ public class ToolsServiceImpl implements ToolsService {
             if (toolsPos.size() < 1) {
                 returnMsg.setMsgbox("找不到符合條件數據...");
             } else {
-                PageUtil pageUtil = new PageUtil(toolsPos.size(), Integer.valueOf(pageSize), Integer.valueOf(currentPage), 5);
+                PageUtil pageUtil = new PageUtil(toolsPos.size(), Integer.parseInt(pageSize), Integer.parseInt(currentPage), 5);
                 int startrow = pageUtil.getStartrow();
                 int pagesize = pageUtil.getPagesize();
                 hashMap.put("startrow", startrow);
@@ -105,12 +115,19 @@ public class ToolsServiceImpl implements ToolsService {
                     tagInfosPo.setType(2);
                     tagInfosPo.setObjnum(toolsPoList.get(i).getToolid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
-                    retMap.put("toolStatus", "正常");
-                    String validity = toolsPoList.get(i).getValidity();
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    Date d1 =formatter.parse(validity);
-                    if (d1.compareTo(new Date()) == -1) {
-                        retMap.put("toolStatus", "過期");
+                    if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
+                        retMap.put("toolStatus", "正常");
+                        String validity = toolsPoList.get(i).getValidity();
+                        Date d1 =formatter.parse(validity);
+                        if (d1.compareTo(new Date()) == -1) {
+                            retMap.put("toolStatus", "過期");
+                        }
+                    } else {
+                        if (!StringUtils.isEmpty(expireNumber)) {
+                            retMap.put("toolStatus", "正常");
+                        } else {
+                            retMap.put("toolStatus", "過期");
+                        }
                     }
                     retMap.put("toolsPo", toolsPoList.get(i));
                     retMap.put("tagInfosPos", tagInfosPos);
@@ -346,6 +363,52 @@ public class ToolsServiceImpl implements ToolsService {
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
             returnMsg.setData(map);
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException {
+        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        String userid = request.getParameter("userid");
+        String expireNumber =  request.getParameter("expireNumber");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            //查看工具列表，根据工具查找标签，查找工具证件
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("orgid", orgid);
+            //根据带有符合条件的总数，进行分页查询的操作
+            if (!StringUtils.isEmpty(expireNumber)) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.MONTH, 1);
+                String format = formatter.format(cal.getTime());
+                hashMap.put("expireNumber", format);
+            } else {
+                hashMap.put("expire", 1);
+            }
+            List<ToolsPo> toolsPos = toolsPoMapper.selectListByMap(hashMap);
+            if (toolsPos.size() < 1) {
+                returnMsg.setMsgbox("找不到符合條件數據...");
+            } else {
+                HashMap<String, Object> retMap = null;
+                ArrayList<Object> arrayList = new ArrayList<>();
+                for (ToolsPo toolsPo : toolsPos) {
+                    retMap = new HashMap<>();
+                    if (!StringUtils.isEmpty(expireNumber)) {
+                        retMap.put("toolStatus", "正常");
+                    } else {
+                        retMap.put("toolStatus", "過期");
+                    }
+                    retMap.put("toolsPo", toolsPo);
+                    arrayList.add(retMap);
+                }
+                returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
+            }
         }
         return returnMsg;
     }

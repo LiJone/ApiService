@@ -16,4 +16,6 @@ public interface ToolsService {
     ReturnMsg updateToolsMsg(String userid, ToolsDto toolsDto, String filePathStr, String fileNameStr) throws ParseException;
 
     ReturnMsg  getToolsMsg(HttpServletRequest request);
+
+    ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException;
 }
