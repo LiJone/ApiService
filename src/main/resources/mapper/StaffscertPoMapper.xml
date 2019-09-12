@@ -5,33 +5,37 @@
         <id column="certid" jdbcType="VARCHAR" property="certid"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="typename" jdbcType="VARCHAR" property="typename"/>
+        <result column="typeid" jdbcType="INTEGER" property="typeid"/>
         <result column="validity" jdbcType="TIMESTAMP" property="validity"/>
         <result column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
         <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
         <result column="staffid" jdbcType="VARCHAR" property="staffid"/>
     </resultMap>
     <sql id="Base_Column_List">
-    certid, name, typename, validity, imagepath, imagename, staffid
+    certid, name, typeid, validity, imagepath, imagename, staffid
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from staffscert
-        where certid = #{certid,jdbcType=VARCHAR}
+        c.typename,
+        s.certid, s.name, s.typeid, s.validity, s.imagepath, s.imagename, s.staffid
+        from staffscert s left join certtype c on s.typeid = c.id
+        where s.certid = #{certid,jdbcType=VARCHAR}
     </select>
 
     <select id="selectByStaffid" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from staffscert
-        where staffid = #{staffid,jdbcType=VARCHAR}
+        c.typename,
+        s.certid, s.name, s.typeid, s.validity, s.imagepath, s.imagename, s.staffid
+        from staffscert s left join certtype c on s.typeid = c.id
+        where s.staffid = #{staffid,jdbcType=VARCHAR}
     </select>
 
     <select id="selectByStaffidValid" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from staffscert
-        where staffid = #{staffid,jdbcType=VARCHAR} and validity > NOW()
+        c.typename,
+        s.certid, s.name, s.typeid, s.validity, s.imagepath, s.imagename, s.staffid
+        from staffscert s left join certtype c on s.typeid = c.id
+        where s.staffid = #{staffid,jdbcType=VARCHAR} and s.validity > NOW()
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
@@ -48,8 +52,8 @@
             <if test="name != null">
                 name,
             </if>
-            <if test="typename != null">
-                typename,
+            <if test="typeid != null">
+                typeid,
             </if>
             <if test="validity != null">
                 validity,
@@ -71,8 +75,8 @@
             <if test="name != null">
                 #{name,jdbcType=VARCHAR},
             </if>
-            <if test="typename != null">
-                #{typename,jdbcType=VARCHAR},
+            <if test="typeid != null">
+                #{typeid,jdbcType=INTEGER},
             </if>
             <if test="validity != null">
                 #{validity,jdbcType=TIMESTAMP},
@@ -94,8 +98,8 @@
             <if test="name != null">
                 name = #{name,jdbcType=VARCHAR},
             </if>
-            <if test="typename != null">
-                typename = #{typename,jdbcType=VARCHAR},
+            <if test="typeid != null">
+                typeid = #{typeid,jdbcType=INTEGER},
             </if>
             <if test="validity != null">
                 validity = #{validity,jdbcType=TIMESTAMP},

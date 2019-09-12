@@ -237,4 +237,19 @@ public class StaffsController {
         }
         return returnMsg;
     }
+
+
+    @RequestMapping(value = "/app/staffs/getCertType" , method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getCertType(HttpServletRequest request){
+        ReturnMsg returnMsg = null;
+        try {
+            returnMsg = staffsService.getCertType(request);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取證件類型異常...");
+            logger.info("/app/staffs/getCerType/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

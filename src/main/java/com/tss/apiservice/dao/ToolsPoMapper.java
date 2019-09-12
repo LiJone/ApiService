@@ -1,6 +1,7 @@
 package com.tss.apiservice.dao;
 
 
+import com.tss.apiservice.po.ToolType;
 import com.tss.apiservice.po.ToolsPo;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +20,5 @@ public interface ToolsPoMapper {
 
     int updateByPrimaryKeySelective(ToolsPo record);
 
+    List<ToolType> getToolType();
 }

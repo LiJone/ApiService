@@ -12,6 +12,8 @@ public class StaffscertPo implements Serializable {
 
     private String name;
 
+    private Integer typeid;
+
     private String typename;
 
     private String validity;
@@ -21,6 +23,14 @@ public class StaffscertPo implements Serializable {
     private String imagename;
 
     private String staffid;
+
+    public Integer getTypeid() {
+        return typeid;
+    }
+
+    public void setTypeid(Integer typeid) {
+        this.typeid = typeid;
+    }
 
     public String getCertid() {
         return certid;
@@ -84,6 +94,7 @@ public class StaffscertPo implements Serializable {
                 "certid='" + certid + '\'' +
                 ", name='" + name + '\'' +
                 ", typename='" + typename + '\'' +
+                ", typeid='" + typeid + '\'' +
                 ", validity='" + validity + '\'' +
                 ", imagepath='" + imagepath + '\'' +
                 ", imagename='" + imagename + '\'' +

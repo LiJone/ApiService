@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-//@RequiredPermission(PermissionConstants.ADMIN_PERSONG_COMPANY_ADMIN)
 public class PermitsController {
     private static Logger logger = LoggerFactory.getLogger(ToolsController.class);
 
@@ -47,7 +46,7 @@ public class PermitsController {
                     map = (HashMap) filesDataArr.get(i);
                     if (StringUtils.isEmpty(map.get("base64").toString()) || StringUtils.isEmpty(map.get("type").toString())) {
 
-                    }else{
+                    } else {
                         fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
                         if (fileAllPath == null) {
                             status = false;
@@ -112,7 +111,7 @@ public class PermitsController {
         String filePathStr = null;
         List filesDataArr = null;
         try {
-//保存文件
+            //保存文件
             boolean status = true;
             String fileAllPath = null;
             filesDataArr = permitsDto.getFilesDataArr();
@@ -122,7 +121,7 @@ public class PermitsController {
                     map = (HashMap) filesDataArr.get(i);
                     if (StringUtils.isEmpty(map.get("base64").toString()) || StringUtils.isEmpty(map.get("type").toString())) {
 
-                    }else{
+                    } else {
                         fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
                         if (fileAllPath == null) {
                             status = false;
@@ -150,14 +149,14 @@ public class PermitsController {
         return returnMsg;
     }
 
-    @RequestMapping(value = "/app/permits/getPermitsMsg" , method = RequestMethod.GET)
+    @RequestMapping(value = "/app/permits/getPermitsMsg", method = RequestMethod.GET)
     @ResponseBody
-    public ReturnMsg getPermitsMsg(HttpServletRequest request){
+    public ReturnMsg getPermitsMsg(HttpServletRequest request) {
         ReturnMsg returnMsg = null;
         try {
             returnMsg = permitsService.getPermitsMsg(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取員工異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取許可證異常...");
             logger.info("/app/permits/getPermitsMsg/{userid} 异常");
             e.printStackTrace();
         }

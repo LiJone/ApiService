@@ -14,9 +14,27 @@
         <result column="altersalary" jdbcType="INTEGER" property="altersalary"/>
         <result column="effdate" jdbcType="TIME" property="effdate"/>
     </resultMap>
+
+    <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.CertTypePO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="abbreviation" jdbcType="VARCHAR" property="abbreviation"/>
+        <result column="typename" jdbcType="VARCHAR" property="typename"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
     staffid, chname, enname, ensurname, imagepath, imagename, type, orgid, treatment, altersalary, effdate
   </sql>
+
+    <sql id="Base_Column_List_type">
+    id, abbreviation, typename
+  </sql>
+
+    <select id="getCerType" resultMap="BaseResultMapType">
+        select
+        <include refid="Base_Column_List_type"/>
+        from certtype
+    </select>
+
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

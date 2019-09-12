@@ -4,45 +4,67 @@
     <resultMap id="BaseResultMap" type="com.tss.apiservice.po.ToolsPo">
         <id column="toolid" jdbcType="VARCHAR" property="toolid"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="typeid" jdbcType="INTEGER" property="typeid"/>
         <result column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
         <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
         <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
         <result column="validity" jdbcType="TIMESTAMP" property="validity"/>
     </resultMap>
+
+    <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.ToolType">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="typenum" jdbcType="VARCHAR" property="typenum"/>
+        <result column="typename" jdbcType="VARCHAR" property="typename"/>
+        <result column="spec" jdbcType="VARCHAR" property="spec"/>
+        <result column="weight" jdbcType="FLOAT" property="weight"/>
+    </resultMap>
     <sql id="Base_Column_List">
-    toolid, name, imagepath, imagename, type, orgid, validity
+    toolid, name, typeid, imagepath, imagename, type, orgid, validity
   </sql>
+
+    <sql id="Base_Column_List_type">
+    id, type, typenum, typename, spec, weight
+  </sql>
+
+    <select id="getToolType" resultMap="BaseResultMapType">
+        select
+        <include refid="Base_Column_List_type"/>
+        from tooltype
+    </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from tools
-        where toolid = #{toolid,jdbcType=VARCHAR}
+<!--        c.typename as name,-->
+        t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
+        from tools t left join tooltype c on t.typeid = c.id
+        where t.toolid = #{toolid,jdbcType=VARCHAR}
     </select>
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from tools
+        <!--        c.typename as name,-->
+        t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
+        from tools left join tooltype c on t.typeid = c.id
         where 1 = 1
         <if test="name != null">
-            and name like '%${name}%'
+            and c.name like '%${name}%'
         </if>
         <if test="numberBegin != null">
-            and toolid &gt;= #{numberBegin}
+            and t.toolid &gt;= #{numberBegin}
         </if>
         <if test="numberEnd != null">
-            and toolid &lt;= #{numberEnd}
+            and t.toolid &lt;= #{numberEnd}
         </if>
         <if test="expire != null">
-            and DATE_FORMAT(validity,'%Y-%m-%d') &lt; DATE_FORMAT(now(),'%Y-%m-%d')
+            and DATE_FORMAT(t.validity,'%Y-%m-%d') &lt; DATE_FORMAT(now(),'%Y-%m-%d')
         </if>
         <if test="expireNumber != null">
-            and DATE_FORMAT(validity,'%Y-%m-%d') &lt;= DATE_FORMAT(#{expireNumber},'%Y-%m-%d')
-            and DATE_FORMAT(validity,'%Y-%m-%d') &gt;= DATE_FORMAT(now(),'%Y-%m-%d')
+            and DATE_FORMAT(t.validity,'%Y-%m-%d') &lt;= DATE_FORMAT(#{expireNumber},'%Y-%m-%d')
+            and DATE_FORMAT(t.validity,'%Y-%m-%d') &gt;= DATE_FORMAT(now(),'%Y-%m-%d')
         </if>
-        and orgid = #{orgid}
-        order by toolid
+        and t.orgid = #{orgid}
+        order by t.toolid
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>
@@ -61,6 +83,9 @@
             </if>
             <if test="name != null">
                 name,
+            </if>
+            <if test="typeid != null">
+                typeid,
             </if>
             <if test="imagepath != null">
                 imagepath,
@@ -85,6 +110,9 @@
             <if test="name != null">
                 #{name,jdbcType=VARCHAR},
             </if>
+            <if test="typeid != null">
+                #{typeid,jdbcType=INTEGER},
+            </if>
             <if test="imagepath != null">
                 #{imagepath,jdbcType=VARCHAR},
             </if>
@@ -107,6 +135,9 @@
         <set>
             <if test="name != null">
                 name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="typeid != null">
+                typeid = #{typeid,jdbcType=INTEGER},
             </if>
             <if test="imagepath != null">
                 imagepath = #{imagepath,jdbcType=VARCHAR},

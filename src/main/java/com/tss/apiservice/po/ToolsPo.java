@@ -19,6 +19,11 @@ public class ToolsPo implements Serializable {
     private String name;
 
     /**
+     * 工具類型id
+     */
+    private Integer typeid;
+
+    /**
      * 工具图像路径
      */
     private String imagepath;
@@ -42,6 +47,14 @@ public class ToolsPo implements Serializable {
      * 机构id
      */
     private String orgid;
+
+    public Integer getTypeid() {
+        return typeid;
+    }
+
+    public void setTypeid(Integer typeid) {
+        this.typeid = typeid;
+    }
 
     public String getToolid() {
         return toolid;

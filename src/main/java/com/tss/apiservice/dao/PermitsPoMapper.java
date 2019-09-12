@@ -1,5 +1,6 @@
 package com.tss.apiservice.dao;
 
+import com.tss.apiservice.po.CertTypePO;
 import com.tss.apiservice.po.PermitsPo;
 import org.springframework.stereotype.Repository;
 
@@ -21,4 +22,6 @@ public interface PermitsPoMapper {
     int updateByPrimaryKeySelective(PermitsPo record);
 
     List<PermitsPo> selectByPermitsPo(PermitsPo permitsPo);
+
+    List<CertTypePO> getCerType();
 }

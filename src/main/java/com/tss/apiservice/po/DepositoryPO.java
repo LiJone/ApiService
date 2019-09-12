@@ -11,12 +11,12 @@ public class DepositoryPO {
     /**
      * 主键
      */
-    private String id;
+    private Integer id;
 
     /**
      * 仓库id
      */
-    private String depositoryId;
+    private String osdId;
 
     /**
      * 工具id
@@ -24,18 +24,12 @@ public class DepositoryPO {
     private String toolsId;
 
     /**
-     * 工具名称
-     */
-    private String name;
-
-    /**
-     * 工具类型
-     */
-    private String type;
-
-    /**
      * 记录时间
      */
     private String time;
 
+    /**
+     * 机构id
+     */
+    private String orgId;
 }

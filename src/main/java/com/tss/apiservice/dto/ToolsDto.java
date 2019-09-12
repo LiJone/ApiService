@@ -18,6 +18,11 @@ public class ToolsDto implements Serializable {
     private String toolid;
 
     /**
+     * 工具類型
+     */
+    private Integer typeid;
+
+    /**
      * 工具名称
      */
     private String name;
@@ -38,6 +43,14 @@ public class ToolsDto implements Serializable {
     private List<Map<String,String>> filesDataArr;
 
     public ToolsDto() {
+    }
+
+    public Integer getTypeid() {
+        return typeid;
+    }
+
+    public void setTypeid(Integer typeid) {
+        this.typeid = typeid;
     }
 
     public String getToolid() {

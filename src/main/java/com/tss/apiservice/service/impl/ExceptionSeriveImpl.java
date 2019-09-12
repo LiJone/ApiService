@@ -105,10 +105,10 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
                 }
                 list.add(map);
             }
-            pageUtil.setPageData(list);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
             if (StringUtils.isEmpty(excel)) {
+                pageUtil.setPageData(list);
                 returnMsg.setData(pageUtil);
             } else {
                 returnMsg.setData(list);

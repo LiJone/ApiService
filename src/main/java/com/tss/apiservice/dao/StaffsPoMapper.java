@@ -1,5 +1,6 @@
 package com.tss.apiservice.dao;
 
+import com.tss.apiservice.po.CertTypePO;
 import com.tss.apiservice.po.StaffsPo;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +26,6 @@ public interface StaffsPoMapper {
     StaffsPo selectByPrimaryKey(String staffid);
 
     int updateByPrimaryKeySelective(StaffsPo record);
+
+    List<CertTypePO> getCerType();
 }

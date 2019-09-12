@@ -292,6 +292,7 @@ public class ToolsServiceImpl implements ToolsService {
                     ToolsPo toolsPo = new ToolsPo();
                     toolsPo.setToolid(toolsDto.getToolid());
                     toolsPo.setName(toolsDto.getName());
+                    toolsPo.setTypeid(toolsDto.getTypeid());
                     toolsPo.setImagepath(filePathStr);
                     toolsPo.setImagename(fileNameStr);
                     toolsPo.setValidity(toolsDto.getValiDity());
@@ -411,5 +412,11 @@ public class ToolsServiceImpl implements ToolsService {
             }
         }
         return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getToolType(HttpServletRequest request) {
+        List<ToolType> arrayList = toolsPoMapper.getToolType();
+        return new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
     }
 }

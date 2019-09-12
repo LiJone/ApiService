@@ -5,10 +5,11 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="permitname" jdbcType="VARCHAR" property="permitname" />
     <result column="certname" jdbcType="VARCHAR" property="certname" />
+    <result column="typeid" jdbcType="INTEGER" property="typeid"/>
     <result column="type" jdbcType="INTEGER" property="type" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, permitname, certname, type
+    id, permitname, typeid, certname, type
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -30,13 +31,6 @@
     </if>
   </select>
 
-  <!--<select id="selectByPermitname" parameterType="java.lang.String" resultMap="BaseResultMap">-->
-    <!--select-->
-    <!--<include refid="Base_Column_List" />-->
-    <!--from permitscondition-->
-    <!--where permitname = #{permitname,jdbcType=VARCHAR}-->
-  <!--</select>-->
-
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from permitscondition
     where id = #{id,jdbcType=INTEGER}
@@ -50,6 +44,9 @@
       </if>
       <if test="permitname != null">
         permitname,
+      </if>
+      <if test="typeid != null">
+        typeid,
       </if>
       <if test="certname != null">
         certname,
@@ -65,6 +62,9 @@
       <if test="permitname != null">
         #{permitname,jdbcType=VARCHAR},
       </if>
+      <if test="typeid != null">
+        #{typeid,jdbcType=INTEGER},
+      </if>
       <if test="certname != null">
         #{certname,jdbcType=VARCHAR},
       </if>
@@ -78,6 +78,9 @@
     <set>
       <if test="permitname != null">
         permitname = #{permitname,jdbcType=VARCHAR},
+      </if>
+      <if test="typeid != null">
+        typeid = #{typeid,jdbcType=INTEGER},
       </if>
       <if test="certname != null">
         certname = #{certname,jdbcType=VARCHAR},

@@ -155,8 +155,22 @@ public class ToolsController {
         try {
             returnMsg = toolsService.getToolsMsg(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取員工異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取工具異常...");
             logger.info("/app/tools/getToolsMsg/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/tools/getToolType" , method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getToolType(HttpServletRequest request){
+        ReturnMsg returnMsg = null;
+        try {
+            returnMsg = toolsService.getToolType(request);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取工具類型異常...");
+            logger.info("/app/tools/getToolType/{userid} 异常");
             e.printStackTrace();
         }
         return returnMsg;

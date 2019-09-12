@@ -18,4 +18,6 @@ public interface ToolsService {
     ReturnMsg  getToolsMsg(HttpServletRequest request);
 
     ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException;
+
+    ReturnMsg getToolType(HttpServletRequest request);
 }
