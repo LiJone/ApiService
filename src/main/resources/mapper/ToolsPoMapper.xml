@@ -45,10 +45,10 @@
         select
         <!--        c.typename as name,-->
         t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
-        from tools left join tooltype c on t.typeid = c.id
+        from tools t left join tooltype c on t.typeid = c.id
         where 1 = 1
         <if test="name != null">
-            and c.name like '%${name}%'
+            and c.typename like '%${name}%'
         </if>
         <if test="numberBegin != null">
             and t.toolid &gt;= #{numberBegin}

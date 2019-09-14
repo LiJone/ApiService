@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tss.apiservice.dao.DepositoryMapper">
+    <resultMap id="BaseResultMap" type="com.tss.apiservice.po.DepositoryPO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="osdid" jdbcType="VARCHAR" property="osdid"/>
+        <result column="osdname" jdbcType="VARCHAR" property="osdname"/>
+        <result column="toolid" jdbcType="VARCHAR" property="toolid"/>
+        <result column="toolname" jdbcType="VARCHAR" property="toolname"/>
+        <result column="time" jdbcType="VARCHAR" property="time"/>
+        <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, osdid, toolid, time, orgid
+  </sql>
+
+    <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        d.id, d.osdid, d.toolid, d.time, d.orgid, c.typename as toolname, o.name as osdname
+        from depotrecord d left join tools t on d.toolid = t.toolid
+        left join tooltype c on t.typeid = c.id left join osdinfos o on d.osdid = o.osdid
+        where 1 = 1
+        <if test="toolname != null">
+            and c.typename like '%${toolname}%'
+        </if>
+        <if test="osdname != null">
+            and o.name like '%${osdname}%'
+        </if>
+        <if test="numberBegin != null">
+            and d.osdid &gt;= #{numberBegin}
+        </if>
+        <if test="numberEnd != null">
+            and d.osdid &lt;= #{numberEnd}
+        </if>
+        and d.orgid = #{orgid}
+        and DATE_FORMAT(d.time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
+        order by d.id
+        <if test="startrow != null and pagesize != null">
+            limit #{startrow} , #{pagesize}
+        </if>
+    </select>
+</mapper>

@@ -494,40 +494,38 @@ public class ExcelFileController {
             request.setAttribute("excel", "1");
             ReturnMsg returnMsg = depositoryService.getDepositoryMsgList(request);
             if (returnMsg.getCode() == 1) {
-                String timeBegin = request.getParameter("timeBegin");
-                String timeEnd = request.getParameter("timeEnd");
                 String userid = request.getParameter("userid");
                 String username = usersService.getUserNameById(Integer.valueOf(userid));
+                String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                 ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
                 String sheetName = "倉庫信息表格";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String date = sdf.format(new Date());
-                String titleName = "倉庫信息報表 (" + timeBegin + "至" + timeEnd + ")";
+                String titleName = "倉庫信息報表 (" + now + ")";
                 String titleName2 = "打印人："+username+"                  打印時間：" + date;
                 String fileName = "倉庫信息表格";
-                int columnNumber = 8;
+                int columnNumber = 6;
                 int[] columnWidth = {8, 20, 18, 10, 15, 18, 13, 13};
-                String[] columnName = {"No.", "日期", "工程編號", "工程名稱", "人員/工具/許可證", "名稱", "異常原因", "圖片"};
-                String[][] dataList = new String[arrayList.size()][8];
+                String[] columnName = {"No.", "日期", "倉庫編號", "倉庫名稱", "工具編號", "工具名稱", "數量"};
+                String[][] dataList = new String[arrayList.size() + 1][6];
                 for (int i = 0; i < arrayList.size(); i++) {
                     HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
-                    AbnormalExceptionVo abnormalPo = (AbnormalExceptionVo) retMap.get("abnormalPo");
-                    String objName = (String) retMap.get("objName");
+                    DepositoryPO depositoryPo = (DepositoryPO) retMap.get("depositoryPo");
                     dataList[i][0] = ((i + 1) + "");
-                    dataList[i][1] = sdf.format(abnormalPo.getAbtime());
-                    dataList[i][2] = abnormalPo.getJobnum();
-                    dataList[i][3] = abnormalPo.getEngineerName();
-                    if (abnormalPo.getType() == 0) {
-                        dataList[i][4] = "許可證";
-                    } else if (abnormalPo.getType() == 1) {
-                        dataList[i][4] = "員工";
-                    } else if (abnormalPo.getType() == 2) {
-                        dataList[i][4] = "工具";
-                    }
-                    dataList[i][5] = objName;
-                    dataList[i][6] = abnormalPo.getReason();
-                    dataList[i][7] = abnormalPo.getImageid();
+                    dataList[i][1] = depositoryPo.getTime();
+                    dataList[i][2] = depositoryPo.getOrgid();
+                    dataList[i][3] = depositoryPo.getOsdname();
+                    dataList[i][4] = depositoryPo.getToolid();
+                    dataList[i][5] = depositoryPo.getToolname();
+                    dataList[i][6] = "1";
                 }
+                dataList[arrayList.size()][0] = ("合計");
+                dataList[arrayList.size()][1] = ("");
+                dataList[arrayList.size()][2] = ("");
+                dataList[arrayList.size()][3] = ("");
+                dataList[arrayList.size()][4] = ("");
+                dataList[arrayList.size()][5] = ("");
+                dataList[arrayList.size()][6] = arrayList.size() + "个";
                 ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取倉庫数据失败");

@@ -16,12 +16,22 @@ public class DepositoryPO {
     /**
      * 仓库id
      */
-    private String osdId;
+    private String osdid;
+
+    /**
+     * 仓库名称
+     */
+    private String osdname;
 
     /**
      * 工具id
      */
-    private String toolsId;
+    private String toolid;
+
+    /**
+     * 工具名称
+     */
+    private String toolname;
 
     /**
      * 记录时间
@@ -31,5 +41,5 @@ public class DepositoryPO {
     /**
      * 机构id
      */
-    private String orgId;
+    private String orgid;
 }
