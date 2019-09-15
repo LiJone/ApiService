@@ -41,6 +41,7 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
         String timeEnd = request.getParameter("timeEnd");
         String pageSize = request.getParameter("pageSize");
         String currentPage = request.getParameter("currentPage");
+        String jobnum = request.getParameter("jobnum");
         String order = (String) request.getAttribute("order");
         String excel = (String) request.getAttribute("excel");
         if (StringUtils.isEmpty(userid)) {
@@ -51,7 +52,9 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
             //获取这个人的记录
             HashMap<Object, Object> map = new HashMap<>();
             map.put("orgid", orgid);
-
+            if(!StringUtils.isEmpty(jobnum)){
+                map.put("jobnum", jobnum);
+            }
             if(!StringUtils.isEmpty(timeBegin)){
                 map.put("timeBegin", timeBegin);
             }

@@ -28,6 +28,9 @@
     <if test="timeEnd != null">
       and DATE_FORMAT(abnormal.abtime,'%Y-%m-%d') &lt;= #{timeEnd}
     </if>
+    <if test="jobnum != null">
+      and jobnum = #{jobnum}
+    </if>
     and abnormal.orgid = #{orgid}
     <choose>
       <when test="order != null">

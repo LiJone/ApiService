@@ -5,11 +5,11 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="permitname" jdbcType="VARCHAR" property="permitname" />
     <result column="certname" jdbcType="VARCHAR" property="certname" />
-    <result column="typeid" jdbcType="INTEGER" property="typeid"/>
+    <result column="certtypeid" jdbcType="INTEGER" property="certtypeid"/>
     <result column="type" jdbcType="INTEGER" property="type" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, permitname, typeid, certname, type
+    id, permitname, certtypeid, certname, type
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -45,8 +45,8 @@
       <if test="permitname != null">
         permitname,
       </if>
-      <if test="typeid != null">
-        typeid,
+      <if test="certtypeid != null">
+        certtypeid,
       </if>
       <if test="certname != null">
         certname,
@@ -62,8 +62,8 @@
       <if test="permitname != null">
         #{permitname,jdbcType=VARCHAR},
       </if>
-      <if test="typeid != null">
-        #{typeid,jdbcType=INTEGER},
+      <if test="certtypeid != null">
+        #{certtypeid,jdbcType=INTEGER},
       </if>
       <if test="certname != null">
         #{certname,jdbcType=VARCHAR},
@@ -79,8 +79,8 @@
       <if test="permitname != null">
         permitname = #{permitname,jdbcType=VARCHAR},
       </if>
-      <if test="typeid != null">
-        typeid = #{typeid,jdbcType=INTEGER},
+      <if test="certtypeid != null">
+        certtypeid = #{crettypeid,jdbcType=INTEGER},
       </if>
       <if test="certname != null">
         certname = #{certname,jdbcType=VARCHAR},

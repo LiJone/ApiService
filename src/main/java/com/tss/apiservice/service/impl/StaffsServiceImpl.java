@@ -62,7 +62,6 @@ public class StaffsServiceImpl implements StaffsService {
                                   String headImageName, String headPath) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(staffsDto.getStaffid()) ||
-                StringUtils.isEmpty(staffsDto.getChname()) ||
                 StringUtils.isEmpty(staffsDto.getEnname())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -365,17 +364,18 @@ public class StaffsServiceImpl implements StaffsService {
                     //员工存在工程中，查看是否添加的员工证件条件是否和以前一样，不一样则不给修改，
                     List<ObjsconditionPo> objsconditionPos = objsconditionPoMapper.selectByStaffid(staffsDto.getStaffid());
                     //保存需要满足员工个人的证件
-                    Integer s = null;
+                    StringBuffer sb1 = new StringBuffer();
                     List<Map<String, String>> carDataArr = staffsDto.getCarDataArr();
                     for (int i = 0; i < carDataArr.size(); i++) {
-                        s = Integer.valueOf(carDataArr.get(i).get("typeid"));
+                        sb1.append(carDataArr.get(i).get("typeid")).append(";");
                     }
                     List<PermitsconditionPo> permitsconditionPos = null;
+                    int i1 = 0;
                     for (int i = 0; i < objsconditionPos.size(); i++) {
                         permitsconditionPos = permitsconditionPoMapper.selectByPermitname(objsconditionPos.get(i).getPermitname());
                         for (int j = 0; j < permitsconditionPos.size(); j++) {
-                            assert s != null;
-                            if (s.equals(permitsconditionPos.get(j).getTypeid())) {
+                            i1 = sb1.indexOf(permitsconditionPos.get(j).getCerttypeid().toString());
+                            if (i1 < 0) {
                                 returnMsg.setMsgbox("工程已綁定用戶，修改用戶證件需要滿足工程中要求...");
                                 return returnMsg;
                             }
@@ -556,14 +556,14 @@ public class StaffsServiceImpl implements StaffsService {
             for (int i = 0; i < split.length; i++) {
                 permitsconditionPo = permitsconditionPoMapper.selectByPermitname(split[i]);
                 for (int j = 0; j < permitsconditionPo.size(); j++) {
-                    if (!certnameArr.contains(permitsconditionPo.get(j).getTypeid())) {
-                        certnameArr.add(permitsconditionPo.get(j).getTypeid());
+                    if (!certnameArr.contains(permitsconditionPo.get(j).getCerttypeid())) {
+                        certnameArr.add(permitsconditionPo.get(j).getCerttypeid());
                     }
                 }
             }
             //获取到了员工证件类型
             boolean status = true;
-            Integer sb1 = null;
+            StringBuffer sb1 = null;
             if (staffsPos != null && staffsPos.size() > 0) {
                 //循环每一个员工
                 for (int i = 0; i < staffsPos.size(); i++) {
@@ -582,12 +582,14 @@ public class StaffsServiceImpl implements StaffsService {
 
                         //比较
                         if (certnameArr.size() > 0) {
+                            sb1 = new StringBuffer();
                             for (int j = 0; j < staffscertPos.size(); j++) {
-                                sb1 = (staffscertPos.get(j).getTypeid());
+                                sb1.append(staffscertPos.get(j).getTypeid()).append(";");
                             }
 
                             for (int y = 0; y < certnameArr.size(); y++) {
-                                if (sb1.equals(certnameArr.get(y))) {
+                                int i1 = sb1.toString().indexOf(certnameArr.get(y).toString());
+                                if (i1 < 0) {
                                     status = false;
                                     break;
                                 }

@@ -7,16 +7,16 @@ public class PermitsconditionPo {
 
     private String certname;
 
-    private Integer typeid;
+    private Integer certtypeid;
 
     private Integer type;
 
-    public Integer getTypeid() {
-        return typeid;
+    public Integer getCerttypeid() {
+        return certtypeid;
     }
 
-    public void setTypeid(Integer typeid) {
-        this.typeid = typeid;
+    public void setCerttypeid(Integer certtypeid) {
+        this.certtypeid = certtypeid;
     }
 
     public Integer getId() {

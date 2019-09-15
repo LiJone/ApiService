@@ -18,12 +18,12 @@
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
-        d.id, d.osdid, d.toolid, d.time, d.orgid, c.typename as toolname, o.name as osdname
+        d.id, d.osdid, d.toolid, d.time, d.orgid, t.name as toolname, o.name as osdname
         from depotrecord d left join tools t on d.toolid = t.toolid
         left join tooltype c on t.typeid = c.id left join osdinfos o on d.osdid = o.osdid
         where 1 = 1
         <if test="toolname != null">
-            and c.typename like '%${toolname}%'
+            and t.name like '%${toolname}%'
         </if>
         <if test="osdname != null">
             and o.name like '%${osdname}%'
