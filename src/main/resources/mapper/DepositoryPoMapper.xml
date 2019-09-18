@@ -36,7 +36,7 @@
         </if>
         and d.orgid = #{orgid}
         and DATE_FORMAT(d.time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
-        order by d.id
+        order by d.osdid
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>

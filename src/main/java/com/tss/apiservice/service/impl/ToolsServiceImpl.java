@@ -395,6 +395,8 @@ public class ToolsServiceImpl implements ToolsService {
             List<ToolsPo> toolsPos = toolsPoMapper.selectListByMap(hashMap);
             if (toolsPos.size() < 1) {
                 returnMsg.setMsgbox("找不到符合條件數據...");
+                returnMsg.setCode(ReturnMsg.SUCCESS);
+                returnMsg.setData(new ArrayList<>());
             } else {
                 HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();

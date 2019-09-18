@@ -399,6 +399,8 @@ public class PermitsServiceImpl implements PermitsService {
             List<PermitsPo> permitsPos = permitsPoMapper.selectListByMap(hashMap);
             if (permitsPos.size() < 1) {
                 returnMsg.setMsgbox("找不到符合條件數據...");
+                returnMsg.setCode(ReturnMsg.SUCCESS);
+                returnMsg.setData(new ArrayList<>());
             } else {
                 HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();

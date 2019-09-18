@@ -673,6 +673,8 @@ public class StaffsServiceImpl implements StaffsService {
             List<StaffsPo> staffsPos = staffsPoMapper.selectListByMap(hashMap);
             if (staffsPos.size() < 1) {
                 returnMsg.setMsgbox("找不到符合條件數據...");
+                returnMsg.setCode(ReturnMsg.SUCCESS);
+                returnMsg.setData(new ArrayList<>());
             } else {
                 //根据员工信息去查对应的 员工证件表
                 HashMap<String, Object> retMap = null;

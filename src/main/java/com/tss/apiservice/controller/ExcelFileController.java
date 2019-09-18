@@ -505,7 +505,7 @@ public class ExcelFileController {
                 String titleName2 = "打印人："+username+"                  打印時間：" + date;
                 String fileName = "倉庫信息表格";
                 int columnNumber = 7;
-                int[] columnWidth = {8, 20, 18, 10, 15, 18, 8};
+                int[] columnWidth = {8, 20, 18, 18, 15, 18, 8};
                 String[] columnName = {"No.", "日期", "倉庫編號", "倉庫名稱", "工具編號", "工具名稱", "數量"};
                 String[][] dataList = new String[arrayList.size() + 1][7];
                 for (int i = 0; i < arrayList.size(); i++) {
