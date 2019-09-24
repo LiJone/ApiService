@@ -15,9 +15,9 @@ public interface DepositoryMapper {
 
     /**
      * 条件查询仓库记录
-     * @param HashMap
+     * @param hashMap
      * @return
      */
-    List<DepositoryPO> selectListByMap(Map HashMap);
+    List<DepositoryPO> selectListByMap(Map<Object, Object> hashMap);
 
 }

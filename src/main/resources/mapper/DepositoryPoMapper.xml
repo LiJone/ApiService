@@ -35,8 +35,8 @@
             and d.osdid &lt;= #{numberEnd}
         </if>
         and d.orgid = #{orgid}
-        and DATE_FORMAT(d.time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
-        order by d.osdid
+        and d.time BETWEEN DATE_SUB(NOW(),INTERVAL 1 MINUTE) and now()
+        order by d.osdid,d.toolid
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>

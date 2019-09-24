@@ -47,6 +47,12 @@ public class PermitsServiceImpl implements PermitsService {
     @Autowired
     AbnormalPoMapper abnormalPoMapper;
 
+    @Autowired
+    StaffsPoMapper staffsPoMapper;
+
+    @Autowired
+    ToolsPoMapper toolsPoMapper;
+
     @Override
     @Transactional
     public ReturnMsg<Object> addPermits(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) throws ParseException {
@@ -76,9 +82,33 @@ public class PermitsServiceImpl implements PermitsService {
                         tagInfosPo.setTagid(map.get("tagCode").toString());
                         tagInfosPo.setType(0);
                         tagInfosPo.setObjnum(permitsDto.getPermitid());
-                        if (tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid()) != null) {
+                        TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
+                        if (tagInfo != null) {
                             tagExist = false;
-                            returnMsg.setMsgbox("標簽已存在...");
+                            Integer type = tagInfo.getType();
+                            String number = tagInfo.getObjnum();
+                            if (type == 0) {
+                                PermitsPo permitsPo = permitsPoMapper.selectByPrimaryKey(number);
+                                if (orgid.equals(permitsPo.getOrgid())) {
+                                    returnMsg.setMsgbox("許可證編號:" + permitsPo.getPermitid() + "正在使用標簽");
+                                } else {
+                                    returnMsg.setMsgbox("標簽已存在其他機構...");
+                                }
+                            } else if (type == 1) {
+                                StaffsPo staffsPo = staffsPoMapper.selectByPrimaryKey(number);
+                                if (orgid.equals(staffsPo.getOrgid())) {
+                                    returnMsg.setMsgbox("員工編號:" + staffsPo.getStaffid() + "正在使用標簽");
+                                } else {
+                                    returnMsg.setMsgbox("標簽已存在其他機構...");
+                                }
+                            } else if (type == 2) {
+                                ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(number);
+                                if (orgid.equals(toolsPo.getOrgid())) {
+                                    returnMsg.setMsgbox("工具編號:" + toolsPo.getToolid() + "正在使用標簽");
+                                } else {
+                                    returnMsg.setMsgbox("標簽已存在其他機構...");
+                                }
+                            }
                             break;
                         } else {
                             tagInfosPoList.add(tagInfosPo);
@@ -120,8 +150,8 @@ public class PermitsServiceImpl implements PermitsService {
         String numberBegin = request.getParameter("numberBegin");
         String numberEnd = request.getParameter("numberEnd");
         String name = request.getParameter("name");
-        String expire =  request.getParameter("expire");
-        String expireNumber =  request.getParameter("expireNumber");
+        String expire = request.getParameter("expire");
+        String expireNumber = request.getParameter("expireNumber");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
@@ -179,7 +209,7 @@ public class PermitsServiceImpl implements PermitsService {
                     if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
                         retMap.put("permitsStatus", "證正常");
                         String validity = permitsPoList.get(i).getEnddate();
-                        Date d1 =formatter.parse(validity);
+                        Date d1 = formatter.parse(validity);
                         if (d1.compareTo(new Date()) == -1) {
                             retMap.put("permitsStatus", "證過期");
                         }
@@ -285,13 +315,37 @@ public class PermitsServiceImpl implements PermitsService {
                     tagInfosPo = new TagInfosPo();
                     map = (HashMap) tag.get(i);
                     tagInfosPo.setTagid(map.get("tagCode").toString());
-                    if (tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid()) == null) {
+                    TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
+                    if (tagInfo == null) {
                         tagInfosPo.setType(0);
                         tagInfosPo.setObjnum(permitsDto.getPermitid());
                         tagInfosPoList.add(tagInfosPo);
                     } else {
                         tagExist = false;
-                        returnMsg.setMsgbox("標簽已存在...");
+                        Integer type = tagInfo.getType();
+                        String number = tagInfo.getObjnum();
+                        if (type == 0) {
+                            PermitsPo permitsPo = permitsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(permitsPo.getOrgid())) {
+                                returnMsg.setMsgbox("許可證編號:" + permitsPo.getPermitid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 1) {
+                            StaffsPo staffsPo = staffsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(staffsPo.getOrgid())) {
+                                returnMsg.setMsgbox("員工編號:" + staffsPo.getStaffid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 2) {
+                            ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(toolsPo.getOrgid())) {
+                                returnMsg.setMsgbox("工具編號:" + toolsPo.getToolid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        }
                         break;
                     }
                 }
@@ -376,7 +430,7 @@ public class PermitsServiceImpl implements PermitsService {
     public ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
-        String expireNumber =  request.getParameter("expireNumber");
+        String expireNumber = request.getParameter("expireNumber");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");

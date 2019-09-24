@@ -49,6 +49,12 @@ public class ToolsServiceImpl implements ToolsService {
     @Autowired
     AbnormalPoMapper abnormalPoMapper;
 
+    @Autowired
+    PermitsPoMapper permitsPoMapper;
+
+    @Autowired
+    StaffsPoMapper staffsPoMapper;
+
     @Override
     public ReturnMsg getToolsMsgList(HttpServletRequest request) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
@@ -154,6 +160,8 @@ public class ToolsServiceImpl implements ToolsService {
             ToolsPo ret = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
             Map map = null;
             if (ret == null) {
+                //获取机构id
+                String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
                 TagInfosPo tagInfosPo = null;
                 List<Map<String, String>> tag = toolsDto.getTag();
                 List<TagInfosPo> tagInfosPoList = new ArrayList();
@@ -162,13 +170,37 @@ public class ToolsServiceImpl implements ToolsService {
                     tagInfosPo = new TagInfosPo();
                     map = (HashMap) tag.get(i);
                     tagInfosPo.setTagid(map.get("tagCode").toString());
-                    if (tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid()) == null) {
+                    TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
+                    if (tagInfo == null) {
                         tagInfosPo.setType(2);
                         tagInfosPo.setObjnum(toolsDto.getToolid());
                         tagInfosPoList.add(tagInfosPo);
                     } else {
                         tagExist = false;
-                        returnMsg.setMsgbox("標簽已存在...");
+                        Integer type = tagInfo.getType();
+                        String number = tagInfo.getObjnum();
+                        if (type == 0) {
+                            PermitsPo permitsPo = permitsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(permitsPo.getOrgid())) {
+                                returnMsg.setMsgbox("許可證編號:" + permitsPo.getPermitid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 1) {
+                            StaffsPo staffsPo = staffsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(staffsPo.getOrgid())) {
+                                returnMsg.setMsgbox("員工編號:" + staffsPo.getStaffid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 2) {
+                            ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(toolsPo.getOrgid())) {
+                                returnMsg.setMsgbox("工具編號:" + toolsPo.getToolid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        }
                         break;
                     }
                 }
@@ -183,8 +215,7 @@ public class ToolsServiceImpl implements ToolsService {
                     toolsPo.setImagepath(filePathStr);
                     toolsPo.setImagename(fileNameStr);
                     toolsPo.setValidity(toolsDto.getValiDity());
-                    //获取机构id
-                    String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+
                     toolsPo.setOrgid(orgid);
                     toolsPoMapper.insertSelective(toolsPo);
                     returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
@@ -259,6 +290,8 @@ public class ToolsServiceImpl implements ToolsService {
         } else {
             toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
             if (toolsPoOld != null) {
+                //获取机构id
+                String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
                 //删除标签，更改工具，删除以前图片
                 TagInfosPo tagInfosPo = null;
                 tagInfosPo = new TagInfosPo();
@@ -278,13 +311,37 @@ public class ToolsServiceImpl implements ToolsService {
                     tagInfosPo = new TagInfosPo();
                     map = (HashMap) tag.get(i);
                     tagInfosPo.setTagid(map.get("tagCode").toString());
-                    if (tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid()) == null) {
+                    TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
+                    if (tagInfo == null) {
                         tagInfosPo.setType(2);
                         tagInfosPo.setObjnum(toolsDto.getToolid());
                         tagInfosPoList.add(tagInfosPo);
                     } else {
                         tagExist = false;
-                        returnMsg.setMsgbox("標簽已存在...");
+                        Integer type = tagInfo.getType();
+                        String number = tagInfo.getObjnum();
+                        if (type == 0) {
+                            PermitsPo permitsPo = permitsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(permitsPo.getOrgid())) {
+                                returnMsg.setMsgbox("許可證編號:" + permitsPo.getPermitid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 1) {
+                            StaffsPo staffsPo = staffsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(staffsPo.getOrgid())) {
+                                returnMsg.setMsgbox("員工編號:" + staffsPo.getStaffid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 2) {
+                            ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(toolsPo.getOrgid())) {
+                                returnMsg.setMsgbox("工具編號:" + toolsPo.getToolid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        }
                         break;
                     }
                 }
@@ -296,8 +353,7 @@ public class ToolsServiceImpl implements ToolsService {
                     toolsPo.setImagepath(filePathStr);
                     toolsPo.setImagename(fileNameStr);
                     toolsPo.setValidity(toolsDto.getValiDity());
-                    //获取机构id
-                    String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+
                     toolsPo.setOrgid(orgid);
 
                     for (int i = 0; i < tagInfosPoList.size(); i++) {

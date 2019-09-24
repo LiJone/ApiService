@@ -56,6 +56,12 @@ public class StaffsServiceImpl implements StaffsService {
     @Autowired
     AbnormalPoMapper abnormalPoMapper;
 
+    @Autowired
+    ToolsPoMapper toolsPoMapper;
+
+    @Autowired
+    PermitsPoMapper permitsPoMapper;
+
     @Override
     @Transactional
     public ReturnMsg addStaffsMsg(String userid, StaffsDto staffsDto, HashMap<String, String> hashMap,
@@ -66,6 +72,8 @@ public class StaffsServiceImpl implements StaffsService {
             returnMsg.setMsgbox("參數異常...");
         } else {
             StaffsPo ret = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             Map map = null;
             if (ret == null) {
                 //添加标签信息表
@@ -76,13 +84,37 @@ public class StaffsServiceImpl implements StaffsService {
                     TagInfosPo tagInfosPo = new TagInfosPo();
                     map = tag.get(i);
                     tagInfosPo.setTagid(map.get("tagCode").toString());
-                    if (tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid()) == null) {
+                    TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
+                    if (tagInfo == null) {
                         tagInfosPo.setType(1);
                         tagInfosPo.setObjnum(staffsDto.getStaffid());
                         tagInfosPoList.add(tagInfosPo);
                     } else {
                         tagExist = false;
-                        returnMsg.setMsgbox("標簽已存在...");
+                        Integer type = tagInfo.getType();
+                        String number = tagInfo.getObjnum();
+                        if (type == 0) {
+                            PermitsPo permitsPo = permitsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(permitsPo.getOrgid())) {
+                                returnMsg.setMsgbox("許可證編號:" + permitsPo.getPermitid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 1) {
+                            StaffsPo staffsPo = staffsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(staffsPo.getOrgid())) {
+                                returnMsg.setMsgbox("員工編號:" + staffsPo.getStaffid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 2) {
+                            ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(toolsPo.getOrgid())) {
+                                returnMsg.setMsgbox("工具編號:" + toolsPo.getToolid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        }
                         break;
                     }
                 }
@@ -137,8 +169,7 @@ public class StaffsServiceImpl implements StaffsService {
                     staffsPo.setStaffid(staffsDto.getStaffid());
                     staffsPo.setChname(staffsDto.getChname());
                     staffsPo.setEnname(staffsDto.getEnname());
-                    //获取机构id
-                    String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+
                     staffsPo.setOrgid(orgid);
                     if (!StringUtils.isEmpty(headImageName)) {
                         staffsPo.setImagepath(headPath);
@@ -350,6 +381,8 @@ public class StaffsServiceImpl implements StaffsService {
         } else {
             //头像，绿卡图片，标签表，员工表，员工证件表
             staffsPoOld = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             //1.上传头像和证件图片(前面已经上传了)
             //2.删除标签表和证件表
             //3.新加标签表和证件表
@@ -412,13 +445,37 @@ public class StaffsServiceImpl implements StaffsService {
                     tagInfosPo = new TagInfosPo();
                     map = (HashMap) tag.get(i);
                     tagInfosPo.setTagid(map.get("tagCode").toString());
-                    if (tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid()) == null) {
+                    TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
+                    if (tagInfo == null) {
                         tagInfosPo.setType(1);
                         tagInfosPo.setObjnum(staffsDto.getStaffid());
                         tagInfosPoList.add(tagInfosPo);
                     } else {
                         tagExist = false;
-                        returnMsg.setMsgbox("標簽已存在...");
+                        Integer type = tagInfo.getType();
+                        String number = tagInfo.getObjnum();
+                        if (type == 0) {
+                            PermitsPo permitsPo = permitsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(permitsPo.getOrgid())) {
+                                returnMsg.setMsgbox("許可證編號:" + permitsPo.getPermitid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 1) {
+                            StaffsPo staffsPo = staffsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(staffsPo.getOrgid())) {
+                                returnMsg.setMsgbox("員工編號:" + staffsPo.getStaffid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        } else if (type == 2) {
+                            ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(number);
+                            if (orgid.equals(toolsPo.getOrgid())) {
+                                returnMsg.setMsgbox("工具編號:" + toolsPo.getToolid() + "正在使用標簽");
+                            } else {
+                                returnMsg.setMsgbox("標簽已存在其他機構...");
+                            }
+                        }
                         break;
                     }
                 }
@@ -474,8 +531,7 @@ public class StaffsServiceImpl implements StaffsService {
                     staffsPo.setChname(staffsDto.getChname());
                     staffsPo.setEnname(staffsDto.getEnname());
 
-                    //获取机构id
-                    String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+
                     staffsPo.setOrgid(orgid);
                     if (!StringUtils.isEmpty(headImageName)) {
                         staffsPo.setImagepath(headPath);
