@@ -41,4 +41,31 @@
             limit #{startrow} , #{pagesize}
         </if>
     </select>
+
+    <select id="selectStatisticListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        d.id, d.osdid, d.toolid, d.time, d.orgid, t.name as toolname, o.name as osdname
+        from depotrecord d left join tools t on d.toolid = t.toolid
+        left join tooltype c on t.typeid = c.id left join osdinfos o on d.osdid = o.osdid
+        where 1 = 1
+        <if test="toolname != null">
+            and t.name like '%${toolname}%'
+        </if>
+        <if test="osdname != null">
+            and o.name like '%${osdname}%'
+        </if>
+        <if test="numberBegin != null">
+            and d.osdid &gt;= #{numberBegin}
+        </if>
+        <if test="numberEnd != null">
+            and d.osdid &lt;= #{numberEnd}
+        </if>
+        and d.orgid = #{orgid}
+        and d.time BETWEEN DATE_SUB(NOW(),INTERVAL 1 MINUTE) and now()
+        group by d.osdid,t.typeid
+        order by d.osdid,d.toolid
+        <if test="startrow != null and pagesize != null">
+            limit #{startrow} , #{pagesize}
+        </if>
+    </select>
 </mapper>

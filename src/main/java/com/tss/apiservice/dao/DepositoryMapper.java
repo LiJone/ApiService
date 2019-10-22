@@ -4,6 +4,7 @@ import com.tss.apiservice.po.DepositoryPO;
 import com.tss.apiservice.po.ToolsPo;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +21,10 @@ public interface DepositoryMapper {
      */
     List<DepositoryPO> selectListByMap(Map<Object, Object> hashMap);
 
+    /**
+     * 条件查询仓库統計记录
+     * @param hashMap
+     * @return
+     */
+    List<DepositoryPO> selectStatisticListByMap(HashMap<Object, Object> hashMap);
 }

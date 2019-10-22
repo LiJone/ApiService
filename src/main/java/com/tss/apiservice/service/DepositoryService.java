@@ -18,4 +18,10 @@ public interface DepositoryService {
      */
     ReturnMsg<Object> getDepositoryMsgList(HttpServletRequest request) throws ParseException;
 
+    /**
+     * 根据条件获取所有仓库统计记录
+     * @param request 条件信息
+     * @return 返回集合
+     */
+    ReturnMsg<Object> getDepositoryStatisticMsgList(HttpServletRequest request);
 }

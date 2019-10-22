@@ -474,7 +474,7 @@ public class ToolsServiceImpl implements ToolsService {
 
     @Override
     public ReturnMsg getToolType(HttpServletRequest request) {
-        List<ToolType> arrayList = toolsPoMapper.getToolType();
+        List<ToolTypePO> arrayList = toolsPoMapper.getToolType();
         return new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
     }
 }

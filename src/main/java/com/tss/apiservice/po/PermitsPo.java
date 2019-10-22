@@ -19,6 +19,11 @@ public class PermitsPo implements Serializable {
     private String name;
 
     /**
+     * 许可证种类id
+     */
+    private Integer typeid;
+
+    /**
      * 许可证种类名称
      */
     private String typename;
@@ -125,12 +130,21 @@ public class PermitsPo implements Serializable {
         this.type = type;
     }
 
+    public Integer getTypeid() {
+        return typeid;
+    }
+
+    public void setTypeid(Integer typeid) {
+        this.typeid = typeid;
+    }
+
     @Override
     public String toString() {
         return "PermitsPo{" +
                 "permitid='" + permitid + '\'' +
                 ", name='" + name + '\'' +
-                ", typename='" + typename + '\'' +
+                ", typeid=" + typeid +
+                ", typename=" + typename +
                 ", startdate='" + startdate + '\'' +
                 ", enddate='" + enddate + '\'' +
                 ", filepath='" + filepath + '\'' +

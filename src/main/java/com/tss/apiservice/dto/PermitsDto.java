@@ -12,11 +12,6 @@ public class PermitsDto implements Serializable {
     private static final long serialVersionUID = 1552514575083269439L;
 
     /**
-     * 许可证类型名称
-     */
-    private String typeName;
-
-    /**
      * 许可证编号
      */
     private String permitid;
@@ -25,6 +20,11 @@ public class PermitsDto implements Serializable {
      * 许可证名称
      */
     private String name;
+
+    /**
+     * 许可证种类id
+     */
+    private Integer typeid;
 
     /**
      * 许可证开始日期
@@ -46,15 +46,15 @@ public class PermitsDto implements Serializable {
      */
     private List<Map<String,String>> filesDataArr;
 
+    public Integer getTypeid() {
+        return typeid;
+    }
+
+    public void setTypeid(Integer typeid) {
+        this.typeid = typeid;
+    }
+
     public PermitsDto() {
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
     }
 
     public String getPermitid() {
@@ -109,9 +109,9 @@ public class PermitsDto implements Serializable {
     @Override
     public String toString() {
         return "PermitsDto{" +
-                "typeName='" + typeName + '\'' +
                 ", permitid='" + permitid + '\'' +
                 ", name='" + name + '\'' +
+                ", typeid=" + typeid +
                 ", startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
                 ", tag=" + tag +

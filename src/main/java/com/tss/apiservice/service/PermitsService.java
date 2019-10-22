@@ -19,4 +19,6 @@ public interface PermitsService {
     ReturnMsg getPermitsMsg(HttpServletRequest request);
 
     ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException;
+
+    ReturnMsg getPermitType(HttpServletRequest request);
 }

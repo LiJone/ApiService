@@ -36,4 +36,18 @@ public class DepositoryController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/getDepositoryStatisticMsgList", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getDepositoryStatisticMsgList(HttpServletRequest request) {
+        ReturnMsg<Object> returnMsg = null;
+        try {
+            returnMsg = depositoryService.getDepositoryStatisticMsgList(request);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取倉庫統計列表異常...");
+            logger.info("/app/depository/getDepositoryStatisticMsgList/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

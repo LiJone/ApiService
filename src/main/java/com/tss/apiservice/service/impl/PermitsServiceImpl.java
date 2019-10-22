@@ -123,7 +123,7 @@ public class PermitsServiceImpl implements PermitsService {
                         PermitsPo permitsPo = new PermitsPo();
                         permitsPo.setPermitid(permitsDto.getPermitid());
                         permitsPo.setName(permitsDto.getName());
-                        permitsPo.setTypename(permitsDto.getTypeName());
+                        permitsPo.setTypeid(permitsDto.getTypeid());
                         permitsPo.setStartdate(permitsDto.getStartDate());
                         permitsPo.setEnddate(permitsDto.getEndDate());
                         permitsPo.setOrgid(orgid);
@@ -358,7 +358,7 @@ public class PermitsServiceImpl implements PermitsService {
                     PermitsPo permitsPo = new PermitsPo();
                     permitsPo.setPermitid(permitsDto.getPermitid());
                     permitsPo.setName(permitsDto.getName());
-                    permitsPo.setTypename(permitsDto.getTypeName());
+                    permitsPo.setTypeid(permitsDto.getTypeid());
                     permitsPo.setStartdate(permitsDto.getStartDate());
                     permitsPo.setEnddate(permitsDto.getEndDate());
                     permitsPo.setOrgid(orgid);
@@ -472,5 +472,11 @@ public class PermitsServiceImpl implements PermitsService {
             }
         }
         return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getPermitType(HttpServletRequest request) {
+        List<PermitTypePO> arrayList = permitsPoMapper.getPermitType();
+        return new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
     }
 }

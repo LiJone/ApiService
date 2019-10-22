@@ -535,4 +535,52 @@ public class ExcelFileController {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping(value = "/depositoryStatisticExcel", method = RequestMethod.GET)
+    public void depositoryStatisticExcel(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            request.setAttribute("excel", "1");
+            ReturnMsg returnMsg = depositoryService.getDepositoryStatisticMsgList(request);
+            if (returnMsg.getCode() == 1) {
+                String userid = request.getParameter("userid");
+                String username = usersService.getUserNameById(Integer.valueOf(userid));
+                String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                String sheetName = "倉庫統計信息表格";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(new Date());
+                String titleName = "倉庫統計信息報表 (" + now + ")";
+                String titleName2 = "打印人："+username+"                  打印時間：" + date;
+                String fileName = "倉庫統計信息表格";
+                int columnNumber = 7;
+                int[] columnWidth = {8, 20, 18, 18, 15, 18, 8};
+                String[] columnName = {"No.", "日期", "倉庫編號", "倉庫名稱", "工具編號", "工具名稱", "數量"};
+                String[][] dataList = new String[arrayList.size() + 1][7];
+                for (int i = 0; i < arrayList.size(); i++) {
+                    HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
+                    DepositoryPO depositoryPo = (DepositoryPO) retMap.get("depositoryPo");
+                    dataList[i][0] = ((i + 1) + "");
+                    dataList[i][1] = depositoryPo.getTime();
+                    dataList[i][2] = depositoryPo.getOsdid();
+                    dataList[i][3] = depositoryPo.getOsdname();
+                    dataList[i][4] = depositoryPo.getToolid();
+                    dataList[i][5] = depositoryPo.getToolname();
+                    dataList[i][6] = "1";
+                }
+                dataList[arrayList.size()][0] = ("合計");
+                dataList[arrayList.size()][1] = ("");
+                dataList[arrayList.size()][2] = ("");
+                dataList[arrayList.size()][3] = ("");
+                dataList[arrayList.size()][4] = ("");
+                dataList[arrayList.size()][5] = ("");
+                dataList[arrayList.size()][6] = arrayList.size() + "个";
+                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+            } else {
+                logger.error("获取倉庫統計数据失败");
+            }
+        } catch (Exception e) {
+            logger.info("/app/excel/depositoryStatisticExcel 异常");
+            e.printStackTrace();
+        }
+    }
 }

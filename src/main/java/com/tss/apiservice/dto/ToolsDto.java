@@ -18,7 +18,7 @@ public class ToolsDto implements Serializable {
     private String toolid;
 
     /**
-     * 工具類型
+     * 工具類型id
      */
     private Integer typeid;
 
@@ -98,6 +98,7 @@ public class ToolsDto implements Serializable {
     public String toString() {
         return "ToolsDto{" +
                 "toolid='" + toolid + '\'' +
+                ", typeid=" + typeid +
                 ", name='" + name + '\'' +
                 ", tag=" + tag +
                 ", valiDity='" + valiDity + '\'' +

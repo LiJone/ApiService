@@ -163,4 +163,17 @@ public class PermitsController {
         return returnMsg;
     }
 
+    @RequestMapping(value = "/app/permits/getPermitType" , method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getToolType(HttpServletRequest request){
+        ReturnMsg returnMsg = null;
+        try {
+            returnMsg = permitsService.getPermitType(request);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取許可證類型異常...");
+            logger.info("/app/permits/getPermitType/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

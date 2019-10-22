@@ -1,5 +1,6 @@
 package com.tss.apiservice.common.utils;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;

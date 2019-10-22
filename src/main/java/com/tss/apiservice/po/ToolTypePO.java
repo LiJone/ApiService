@@ -6,7 +6,7 @@ import lombok.Data;
  * @author 壮Jone
  */
 @Data
-public class ToolType {
+public class ToolTypePO {
 
     /**
      * 工具种类id
@@ -19,9 +19,9 @@ public class ToolType {
     private String type;
 
     /**
-     * 工具种类編號
+     * 工具种类缩写
      */
-    private String typenum;
+    private String abbreviation;
 
     /**
      * 工具种类名称

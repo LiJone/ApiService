@@ -30,7 +30,7 @@ public class CommonCotroller {
     @RequestMapping(value = "/app/common/getBase64ByPath", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getBase64ByPath(String filePathTmp, String fileName) {
-        ReturnMsg returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = commonService.getBase64ByPath(filePath, filePathTmp, fileName);
         } catch (Exception e) {
@@ -53,7 +53,7 @@ public class CommonCotroller {
             in = new FileInputStream(file);
             out = response.getOutputStream();
             byte[] bytes = new byte[1024 * 10];
-            int len = 0;
+            int len;
             while ((len = in.read(bytes)) != -1) {
                 out.write(bytes, 0, len);
             }
@@ -62,7 +62,9 @@ public class CommonCotroller {
             e.printStackTrace();
         } finally {
             try {
+                assert in != null;
                 in.close();
+                assert out != null;
                 out.close();
             } catch (IOException e) {
                 e.printStackTrace();

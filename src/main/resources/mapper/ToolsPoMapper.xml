@@ -12,10 +12,10 @@
         <result column="validity" jdbcType="TIMESTAMP" property="validity"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.ToolType">
+    <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.ToolTypePO">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="type" jdbcType="VARCHAR" property="type"/>
-        <result column="typenum" jdbcType="VARCHAR" property="typenum"/>
+        <result column="abbreviation" jdbcType="VARCHAR" property="abbreviation"/>
         <result column="typename" jdbcType="VARCHAR" property="typename"/>
         <result column="spec" jdbcType="VARCHAR" property="spec"/>
         <result column="weight" jdbcType="FLOAT" property="weight"/>
@@ -25,7 +25,7 @@
   </sql>
 
     <sql id="Base_Column_List_type">
-    id, type, typenum, typename, spec, weight
+    id, type, abbreviation, typename, spec, weight
   </sql>
 
     <select id="getToolType" resultMap="BaseResultMapType">
@@ -35,20 +35,18 @@
     </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-<!--        c.typename as name,-->
-        t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
+        c.typename,t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
         from tools t left join tooltype c on t.typeid = c.id
         where t.toolid = #{toolid,jdbcType=VARCHAR}
     </select>
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
-        <!--        c.typename as name,-->
-        t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
+        c.typename, t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
         from tools t left join tooltype c on t.typeid = c.id
         where 1 = 1
         <if test="name != null">
-            and c.typename like '%${name}%'
+            and (c.typename like '%${name}%' or t.name like '%${name}%')
         </if>
         <if test="numberBegin != null">
             and t.toolid &gt;= #{numberBegin}
