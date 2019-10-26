@@ -540,13 +540,13 @@ public class ExcelFileController {
     @RequestMapping(value = "/depositoryStatisticExcel", method = RequestMethod.GET)
     public void depositoryStatisticExcel(HttpServletRequest request, HttpServletResponse response) {
         try {
-            request.setAttribute("excel", "1");
             ReturnMsg<Object> returnMsg = depositoryService.getDepositoryStatisticMsgList(request);
             if (returnMsg.getCode() == 1) {
                 String userid = request.getParameter("userid");
                 String username = usersService.getUserNameById(Integer.valueOf(userid));
                 String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                 ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
+                int allCount = Integer.parseInt(returnMsg.getMsgbox());
                 String sheetName = "倉庫統計信息表格";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String date = sdf.format(new Date());
@@ -556,9 +556,8 @@ public class ExcelFileController {
                 int columnNumber = 6;
                 int[] columnWidth = {8, 20, 18, 18, 15, 8};
                 String[] columnName = {"No.", "日期", "倉庫編號", "倉庫名稱", "工具種類名稱", "數量"};
-                String[][] dataList = new String[arrayList.size() + 1][6];
+                String[][] dataList = new String[allCount + 1][6];
                 int number = 0;
-                int allCount = 0;
                 for (int i = 0; i < arrayList.size(); i++) {
                     HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
                     List<DepositoryStatisticDTO> dtoList = (List<DepositoryStatisticDTO>) retMap.get("statistic");
@@ -584,16 +583,13 @@ public class ExcelFileController {
                     dataList[number][3] = ("");
                     dataList[number][4] = ("");
                     dataList[number][5] = (count + "個");
-                    if (count != null) {
-                        allCount = allCount + count;
-                    }
                 }
-                dataList[number + 1][0] = ("全倉統計");
-                dataList[number + 1][1] = ("");
-                dataList[number + 1][2] = ("");
-                dataList[number + 1][3] = ("");
-                dataList[number + 1][4] = ("");
-                dataList[number + 1][5] = (allCount + "個");
+                dataList[allCount + 1][0] = ("全倉統計");
+                dataList[allCount + 1][1] = ("");
+                dataList[allCount + 1][2] = ("");
+                dataList[allCount + 1][3] = ("");
+                dataList[allCount + 1][4] = ("");
+                dataList[allCount + 1][5] = (allCount + "個");
                 ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取倉庫統計数据失败");

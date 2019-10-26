@@ -105,6 +105,7 @@ public class DepositoryServiceImpl implements DepositoryService {
         String numberEnd = request.getParameter("numberEnd");
         String osdname = request.getParameter("osdname");
         String osdid = request.getParameter("osdid");
+        String typename = request.getParameter("typename");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -125,9 +126,13 @@ public class DepositoryServiceImpl implements DepositoryService {
             if (!StringUtils.isEmpty(osdid)) {
                 map.put("osdid", osdid);
             }
+            if (!StringUtils.isEmpty(typename)) {
+                map.put("toolname", typename);
+            }
             List<DepositoryPO> depositoryPoList = depositoryMapper.selectStatisticListByMap(map);
             Map<String, List<DepositoryPO>> collect = depositoryPoList.stream().collect(Collectors.groupingBy(DepositoryPO::getOsdid));
             ArrayList<Object> list = new ArrayList<>();
+            int allCount = 0;
             for (String osdId : collect.keySet()) {
                 List<DepositoryPO> depositoryPOS = collect.get(osdId);
                 if (depositoryPOS != null && depositoryPOS.size() > 0) {
@@ -147,11 +152,12 @@ public class DepositoryServiceImpl implements DepositoryService {
                     map.put("statistic", dtoList);
                     map.put("count", dtoList.size());
                     list.add(map);
+                    allCount = allCount + dtoList.size();
                 }
-
+                allCount = allCount + 1;
             }
             returnMsg.setCode(ReturnMsg.SUCCESS);
-            returnMsg.setMsgbox("成功");
+            returnMsg.setMsgbox("" + allCount);
             returnMsg.setData(list);
         }
         return returnMsg;
