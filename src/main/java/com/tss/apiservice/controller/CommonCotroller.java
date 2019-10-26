@@ -20,6 +20,7 @@ import java.io.IOException;
 @Controller
 public class CommonCotroller {
     private static Logger logger = LoggerFactory.getLogger(CommonCotroller.class);
+    private static final String THUMBNAIL = "_thumbnail";
 
     @Value("${filePath}")
     private String filePath;
@@ -42,7 +43,6 @@ public class CommonCotroller {
     }
 
 
-    //localhost:8989/apiservice/app/common/getImage?filePathTmp=2019/05/25/&fileName=155876190727932092262.png
     @ResponseBody
     @RequestMapping(value = "/app/common/getImage", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public void getImage(String filePathTmp, String fileName, HttpServletResponse response) {
@@ -50,6 +50,41 @@ public class CommonCotroller {
         ServletOutputStream out = null;
         try {
             File file = new File(filePath + filePathTmp + fileName);
+            in = new FileInputStream(file);
+            out = response.getOutputStream();
+            byte[] bytes = new byte[1024 * 10];
+            int len;
+            while ((len = in.read(bytes)) != -1) {
+                out.write(bytes, 0, len);
+            }
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                assert in != null;
+                in.close();
+                assert out != null;
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/app/common/getThumbnailImage", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    public void getThumbnailImage(String filePathTmp, String fileName, HttpServletResponse response) {
+        FileInputStream in = null;
+        ServletOutputStream out = null;
+        try {
+            File file;
+            if (fileName.contains(THUMBNAIL)) {
+                fileName = fileName.replace(THUMBNAIL,"");
+                file = new File(filePath + filePathTmp + fileName);
+            } else {
+                file = new File(filePath + filePathTmp + fileName);
+            }
             in = new FileInputStream(file);
             out = response.getOutputStream();
             byte[] bytes = new byte[1024 * 10];

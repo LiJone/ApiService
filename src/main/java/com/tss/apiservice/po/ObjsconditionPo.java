@@ -11,6 +11,16 @@ public class ObjsconditionPo {
 
     private String jobnum;
 
+    private Integer permittypeid;
+
+    public Integer getPermittypeid() {
+        return permittypeid;
+    }
+
+    public void setPermittypeid(Integer permittypeid) {
+        this.permittypeid = permittypeid;
+    }
+
     public String getPermitname() {
         return permitname;
     }

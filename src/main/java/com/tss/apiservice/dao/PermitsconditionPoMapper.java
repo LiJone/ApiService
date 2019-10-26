@@ -7,14 +7,7 @@ import java.util.List;
 
 @Repository
 public interface PermitsconditionPoMapper {
-    int deleteByPrimaryKey(Integer id);
-
-    int insertSelective(PermitsconditionPo record);
-
     PermitsconditionPo selectByPrimaryKey(Integer id);
 
-    List<PermitsconditionPo> selectByPermitname(String permitname);
-
-    int updateByPrimaryKeySelective(PermitsconditionPo record);
-
+    List<PermitsconditionPo> selectByPermitTypeId(Integer permittypeid);
 }

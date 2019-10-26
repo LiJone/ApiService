@@ -42,4 +42,9 @@ public class DepositoryPO {
      * 机构id
      */
     private String orgid;
+
+    /**
+     * 工具類型id
+     */
+    private Integer typeid;
 }

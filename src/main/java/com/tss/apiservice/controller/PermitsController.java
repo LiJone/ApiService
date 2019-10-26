@@ -4,6 +4,7 @@ import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.common.utils.FilesUtils;
 import com.tss.apiservice.dto.PermitsDto;
 import com.tss.apiservice.service.PermitsService;
+import net.coobird.thumbnailator.Thumbnails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import java.util.Map;
 @Controller
 public class PermitsController {
     private static Logger logger = LoggerFactory.getLogger(ToolsController.class);
-
+    private static final String THUMBNAIL = "_thumbnail";
     @Autowired
     PermitsService permitsService;
 
@@ -32,8 +33,10 @@ public class PermitsController {
     public ReturnMsg addPermitsMsg(@PathVariable("userid") String userid, @RequestBody PermitsDto permitsDto) {
         ReturnMsg<Object> returnMsg = null;
 
-        StringBuffer fileNameStr = new StringBuffer();
+        StringBuilder fileNameStr = new StringBuilder();
         String filePathStr = null;
+        String thumbnailPath;
+        StringBuilder thumbnailHeadNameSb = new StringBuilder();
         List filesDataArr = null;
         try {
             //保存文件
@@ -42,26 +45,30 @@ public class PermitsController {
             filesDataArr = permitsDto.getFilesDataArr();
             Map map = null;
             if (filesDataArr != null && filesDataArr.size() > 0) {
-                for (int i = 0; i < filesDataArr.size(); i++) {
-                    map = (HashMap) filesDataArr.get(i);
-                    if (StringUtils.isEmpty(map.get("base64").toString()) || StringUtils.isEmpty(map.get("type").toString())) {
-
-                    } else {
+                for (Object o : filesDataArr) {
+                    map = (HashMap) o;
+                    if (!StringUtils.isEmpty(map.get("base64").toString()) && !StringUtils.isEmpty(map.get("type").toString())) {
                         fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
-                        if (fileAllPath == null) {
+                        String[] split = fileAllPath.split("\\.");
+                        String thumbnail = split[0] + THUMBNAIL;
+                        thumbnailPath = thumbnail + "." + split[1];
+                        //生成缩略图
+                        Thumbnails.of(filePath + fileAllPath).size(300, 300).toFile(filePath + thumbnailPath);
+                        if ("".equals(fileAllPath)) {
                             status = false;
                             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "图片上传失敗...");
                         } else {
                             filePathStr = fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1);
                             String fileName = fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1);
                             fileNameStr.append(fileName).append(";");
+                            thumbnailHeadNameSb.append(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1)).append(";");
                         }
                     }
 
                 }
             }
             if (status) {
-                returnMsg = permitsService.addPermits(userid, permitsDto, filePathStr, fileNameStr.toString());
+                returnMsg = permitsService.addPermits(userid, permitsDto, filePathStr, thumbnailHeadNameSb.toString());
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證錄入異常...");
@@ -70,6 +77,7 @@ public class PermitsController {
         }
         if (returnMsg.getCode() == ReturnMsg.FAIL) {
             FilesUtils.deleteFile(fileNameStr.toString(), filePath + filePathStr);
+            FilesUtils.deleteFile(thumbnailHeadNameSb.toString(), filePath + filePathStr);
         }
         return returnMsg;
     }
@@ -105,10 +113,12 @@ public class PermitsController {
     @RequestMapping(value = "/app/permits/updatePermitsMsg/{userid}", method = RequestMethod.PUT)
     @ResponseBody
     public ReturnMsg updatePermitsMsg(@PathVariable("userid") String userid, @RequestBody PermitsDto permitsDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg = null;
 
-        StringBuffer fileNameStr = new StringBuffer();
+        StringBuilder fileNameStr = new StringBuilder();
         String filePathStr = null;
+        String thumbnailPath;
+        StringBuilder thumbnailHeadNameSb = new StringBuilder();
         List filesDataArr = null;
         try {
             //保存文件
@@ -119,24 +129,28 @@ public class PermitsController {
             if (filesDataArr != null && filesDataArr.size() > 0) {
                 for (int i = 0; i < filesDataArr.size(); i++) {
                     map = (HashMap) filesDataArr.get(i);
-                    if (StringUtils.isEmpty(map.get("base64").toString()) || StringUtils.isEmpty(map.get("type").toString())) {
-
-                    } else {
+                    if (!StringUtils.isEmpty(map.get("base64").toString()) && !StringUtils.isEmpty(map.get("type").toString())) {
                         fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
-                        if (fileAllPath == null) {
+                        String[] split = fileAllPath.split("\\.");
+                        String thumbnail = split[0] + THUMBNAIL;
+                        thumbnailPath = thumbnail + "." + split[1];
+                        //生成缩略图
+                        Thumbnails.of(filePath + fileAllPath).size(300, 300).toFile(filePath + thumbnailPath);
+                        if ("".equals(fileAllPath)) {
                             status = false;
                             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "圖片上傳失敗...");
                         } else {
                             filePathStr = fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1);
-                            String fileName = fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1, fileAllPath.length());
+                            String fileName = fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1);
                             fileNameStr.append(fileName).append(";");
+                            thumbnailHeadNameSb.append(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1)).append(";");
                         }
                     }
 
                 }
             }
             if (status) {
-                returnMsg = permitsService.updatePermitsMsg(userid, permitsDto, filePathStr, fileNameStr.toString());
+                returnMsg = permitsService.updatePermitsMsg(userid, permitsDto, filePathStr, thumbnailHeadNameSb.toString());
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證修改異常...");
@@ -145,6 +159,7 @@ public class PermitsController {
         }
         if (returnMsg.getCode() == ReturnMsg.FAIL) {
             FilesUtils.deleteFile(fileNameStr.toString(), filePath + filePathStr);
+            FilesUtils.deleteFile(thumbnailHeadNameSb.toString(), filePath + filePathStr);
         }
         return returnMsg;
     }

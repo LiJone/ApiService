@@ -11,6 +11,16 @@ public class PermitsconditionPo {
 
     private Integer type;
 
+    private Integer permittypeid;
+
+    public Integer getPermittypeid() {
+        return permittypeid;
+    }
+
+    public void setPermittypeid(Integer permittypeid) {
+        this.permittypeid = permittypeid;
+    }
+
     public Integer getCerttypeid() {
         return certtypeid;
     }

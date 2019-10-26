@@ -41,6 +41,8 @@ public class StaffsController {
         ReturnMsg returnMsg = new ReturnMsg();
         String headImagePath;
         StringBuilder headNameSb = new StringBuilder();
+        String thumbnailPath;
+        StringBuilder thumbnailHeadNameSb = new StringBuilder();
         String headPath = null;
         ArrayList<Object> filesList = new ArrayList<>();
         try {
@@ -53,12 +55,18 @@ public class StaffsController {
                     map = headImageDatum;
                     if (!StringUtils.isEmpty(map.get("base64")) && !StringUtils.isEmpty(map.get("type"))) {
                         headImagePath = FilesUtils.base64StringToFile(map.get("base64"), filePath, map.get("type"));
-                        if (headImagePath == null) {
+                        String[] split = headImagePath.split("\\.");
+                        String thumbnail = split[0] + THUMBNAIL;
+                        thumbnailPath = thumbnail + "." + split[1];
+                        //生成缩略图
+                        Thumbnails.of(filePath + headImagePath).size(300, 300).toFile(filePath + thumbnailPath);
+                        if ("".equals(headImagePath)) {
                             fileUploadStatus = false;
                             returnMsg.setMsgbox("頭像上傳失敗...");
                         } else {
                             headNameSb.append(headImagePath.substring(headImagePath.lastIndexOf("/") + 1)).append(";");
                             headPath = headImagePath.substring(0, headImagePath.lastIndexOf("/") + 1);
+                            thumbnailHeadNameSb.append(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1)).append(";");
                         }
                     }
                 }
@@ -86,7 +94,7 @@ public class StaffsController {
             }
             //添加员工信息
             if (fileUploadStatus) {
-                returnMsg = staffsService.addStaffsMsg(userid, staffsDto, hashMap, headNameSb.toString(), headPath);
+                returnMsg = staffsService.addStaffsMsg(userid, staffsDto, hashMap, thumbnailHeadNameSb.toString(), headPath);
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工添加異常...");
@@ -97,7 +105,7 @@ public class StaffsController {
             String filePathTmp = headPath;
             String fileNameTmp = headNameSb.toString();
             FilesUtils.deleteFile(fileNameTmp, filePath + filePathTmp);
-
+            FilesUtils.deleteFile(thumbnailHeadNameSb.toString(), filePath + filePathTmp);
             String files;
             for (Object o : filesList) {
                 files = o.toString();
@@ -145,6 +153,7 @@ public class StaffsController {
         String thumbnailPath;
         StringBuilder headNameSb = new StringBuilder();
         String headPath = null;
+        StringBuilder thumbnailHeadNameSb = new StringBuilder();
         ArrayList<Object> filesList = new ArrayList<>();
         try {
             //上传头像
@@ -156,17 +165,18 @@ public class StaffsController {
                     map = headImageDatum;
                     if (!StringUtils.isEmpty(map.get("base64")) && !StringUtils.isEmpty(map.get("type"))) {
                         headImagePath = FilesUtils.base64StringToFile(map.get("base64"), filePath, map.get("type"));
-                        String[] split = headImagePath.split(".");
+                        String[] split = headImagePath.split("\\.");
                         String thumbnail = split[0] + THUMBNAIL;
                         thumbnailPath = thumbnail + "." + split[1];
                         //生成缩略图
-                        Thumbnails.of(headImagePath).size(300, 300).toFile(thumbnailPath);
+                        Thumbnails.of(filePath + headImagePath).size(300, 300).toFile(filePath + thumbnailPath);
                         if ("".equals(headImagePath)) {
                             fileUploadStatus = false;
                             returnMsg.setMsgbox("頭像上傳失敗...");
                         } else {
                             headNameSb.append(headImagePath.substring(headImagePath.lastIndexOf("/") + 1)).append(";");
                             headPath = headImagePath.substring(0, headImagePath.lastIndexOf("/") + 1);
+                            thumbnailHeadNameSb.append(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1)).append(";");
                         }
                     }
                 }
@@ -193,7 +203,7 @@ public class StaffsController {
                 }
             }
             if (fileUploadStatus) {
-                returnMsg = staffsService.updateStaffsMsg(userid, staffsDto, hashMap, headNameSb.toString(), headPath);
+                returnMsg = staffsService.updateStaffsMsg(userid, staffsDto, hashMap, thumbnailHeadNameSb.toString(), headPath);
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工修改異常...");
@@ -204,7 +214,7 @@ public class StaffsController {
             String filePathTmp = headPath;
             String fileNameTmp = headNameSb.toString();
             FilesUtils.deleteFile(fileNameTmp, filePath + filePathTmp);
-
+            FilesUtils.deleteFile(thumbnailHeadNameSb.toString(), filePath + filePathTmp);
             String files;
             for (Object o : filesList) {
                 files = o.toString();
@@ -258,12 +268,5 @@ public class StaffsController {
             e.printStackTrace();
         }
         return returnMsg;
-    }
-
-    public static void main(String[] args) throws IOException {
-        String s1 = "D:\\Download\\微信图片_20190902200333.png";
-        String s2 = "D:\\Download\\微信图片_20190902200333_thumbnail.png";
-        Thumbnails.of(s1).size(200, 200).toFile(s2);
-
     }
 }

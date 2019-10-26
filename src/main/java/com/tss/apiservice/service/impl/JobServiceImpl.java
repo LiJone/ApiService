@@ -137,17 +137,17 @@ public class JobServiceImpl implements JobService {
                 Map<String, List<Map<String, Object>>> staffs = jobDto.getStaffs();
                 List<Map<String, Object>> staffsArr = staffs.get("staffsArr");
 
-                List objsConditionArr = null;
-                String number = null;
-                String permitname = null;
-                Map<String, String> map = null;
+                List objsConditionArr;
+                String permitname;
+                String permittypeid;
+                Map<String, String> map;
 
-                ObjsconditionPo objsconditionPo = null;
+                ObjsconditionPo objsconditionPo;
                 ArrayList<ObjsconditionPo> ObjsconditionPoList = new ArrayList<>();
-                for (int i = 0; i < staffsArr.size(); i++) {
-                    objnum = staffsArr.get(i).get("objnum").toString();
-                    objname = staffsArr.get(i).get("objname").toString();
-                    isleave = staffsArr.get(i).get("isleave").toString();
+                for (Map<String, Object> stringObjectMap : staffsArr) {
+                    objnum = stringObjectMap.get("objnum").toString();
+                    objname = stringObjectMap.get("objname").toString();
+                    isleave = stringObjectMap.get("isleave").toString();
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 1);
                     if (safeobjsPo != null) {
                         returnMsg.setMsgbox("員工 {" + objname + "} 已在工程中使用...");
@@ -163,16 +163,17 @@ public class JobServiceImpl implements JobService {
                     safeobjsPo.setObjname(objname);
                     list.add(safeobjsPo);
 
-                    objsConditionArr = (List) staffsArr.get(i).get("objsConditionArr");
-                    for (int j = 0; j < objsConditionArr.size(); j++) {
+                    objsConditionArr = (List) stringObjectMap.get("objsConditionArr");
+                    for (Object o : objsConditionArr) {
                         objsconditionPo = new ObjsconditionPo();
-                        map = (Map<String, String>) objsConditionArr.get(j);
+                        map = (Map<String, String>) o;
                         permitname = map.get("permitname");
-
+                        permittypeid = map.get("permittypeid");
                         objsconditionPo.setJobnum(jobDto.getJobnum());
                         objsconditionPo.setStaffid(objnum);
                         objsconditionPo.setOsdid(jobDto.getOsdid());
                         objsconditionPo.setPermitname(permitname);
+                        objsconditionPo.setPermittypeid(Integer.parseInt(permittypeid));
                         ObjsconditionPoList.add(objsconditionPo);
                     }
                 }

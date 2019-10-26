@@ -4,19 +4,14 @@
   <resultMap id="BaseResultMap" type="com.tss.apiservice.po.ObjsconditionPo">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="permitname" jdbcType="VARCHAR" property="permitname" />
+    <result column="permittypeid" jdbcType="INTEGER" property="permittypeid"/>
     <result column="staffid" jdbcType="VARCHAR" property="staffid" />
     <result column="osdid" jdbcType="VARCHAR" property="osdid" />
     <result column="jobnum" jdbcType="VARCHAR" property="jobnum" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, permitname, staffid, osdid, jobnum
+    id, permitname, permittypeid, staffid, osdid, jobnum
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from objscondition
-    where id = #{id,jdbcType=INTEGER}
-  </select>
 
   <select id="selectByOsdid" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
@@ -32,10 +27,6 @@
     where staffid = #{staffid,jdbcType=VARCHAR}
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from objscondition
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
 
   <delete id="deleteByOsdid" parameterType="java.lang.String">
     delete from objscondition
@@ -56,6 +47,9 @@
       <if test="permitname != null">
         permitname,
       </if>
+      <if test="permittypeid != null">
+        permittypeid,
+      </if>
       <if test="staffid != null">
         staffid,
       </if>
@@ -73,6 +67,9 @@
       <if test="permitname != null">
         #{permitname,jdbcType=VARCHAR},
       </if>
+      <if test="permittypeid != null">
+        #{permittypeid,jdbcType=INTEGER},
+      </if>
       <if test="staffid != null">
         #{staffid,jdbcType=VARCHAR},
       </if>
@@ -84,22 +81,4 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.tss.apiservice.po.ObjsconditionPo">
-    update objscondition
-    <set>
-      <if test="permitname != null">
-        permitname = #{permitname,jdbcType=VARCHAR},
-      </if>
-      <if test="staffid != null">
-        staffid = #{staffid,jdbcType=VARCHAR},
-      </if>
-      <if test="osdid != null">
-        osdid = #{osdid,jdbcType=VARCHAR},
-      </if>
-      <if test="jobnum != null">
-        jobnum = #{jobnum,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
 </mapper>

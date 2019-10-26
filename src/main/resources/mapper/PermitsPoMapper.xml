@@ -59,7 +59,7 @@
             and DATE_FORMAT(p.enddate,'%Y-%m-%d') &lt;= DATE_FORMAT(#{expireNumber},'%Y-%m-%d')
             and DATE_FORMAT(p.enddate,'%Y-%m-%d') &gt;= DATE_FORMAT(now(),'%Y-%m-%d')
         </if>
-        and p.orgid = #{p.orgid}
+        and p.orgid = #{orgid}
         order by p.permitid
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
@@ -80,8 +80,8 @@
             <if test="name != null">
                 name,
             </if>
-            <if test="typename != null">
-                typename,
+            <if test="typeid != null">
+                typeid,
             </if>
             <if test="startdate != null">
                 startdate,
@@ -109,8 +109,8 @@
             <if test="name != null">
                 #{name,jdbcType=VARCHAR},
             </if>
-            <if test="typename != null">
-                #{typename,jdbcType=VARCHAR},
+            <if test="typeid != null">
+                #{typeid,jdbcType=VARCHAR},
             </if>
             <if test="startdate != null">
                 #{startdate,jdbcType=TIMESTAMP},
@@ -138,8 +138,8 @@
             <if test="name != null">
                 name = #{name,jdbcType=VARCHAR},
             </if>
-            <if test="typename != null">
-                typename = #{typename,jdbcType=VARCHAR},
+            <if test="typeid != null">
+                typeid = #{typeid,jdbcType=VARCHAR},
             </if>
             <if test="startdate != null">
                 startdate = #{startdate,jdbcType=TIMESTAMP},

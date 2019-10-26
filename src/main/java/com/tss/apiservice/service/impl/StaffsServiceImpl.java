@@ -397,17 +397,17 @@ public class StaffsServiceImpl implements StaffsService {
                     //员工存在工程中，查看是否添加的员工证件条件是否和以前一样，不一样则不给修改，
                     List<ObjsconditionPo> objsconditionPos = objsconditionPoMapper.selectByStaffid(staffsDto.getStaffid());
                     //保存需要满足员工个人的证件
-                    StringBuffer sb1 = new StringBuffer();
+                    StringBuilder sb1 = new StringBuilder();
                     List<Map<String, String>> carDataArr = staffsDto.getCarDataArr();
-                    for (int i = 0; i < carDataArr.size(); i++) {
-                        sb1.append(carDataArr.get(i).get("typeid")).append(";");
+                    for (Map<String, String> stringStringMap : carDataArr) {
+                        sb1.append(stringStringMap.get("typeid")).append(";");
                     }
-                    List<PermitsconditionPo> permitsconditionPos = null;
-                    int i1 = 0;
-                    for (int i = 0; i < objsconditionPos.size(); i++) {
-                        permitsconditionPos = permitsconditionPoMapper.selectByPermitname(objsconditionPos.get(i).getPermitname());
-                        for (int j = 0; j < permitsconditionPos.size(); j++) {
-                            i1 = sb1.indexOf(permitsconditionPos.get(j).getCerttypeid().toString());
+                    List<PermitsconditionPo> permitsconditionPos;
+                    int i1;
+                    for (ObjsconditionPo objsconditionPo : objsconditionPos) {
+                        permitsconditionPos = permitsconditionPoMapper.selectByPermitTypeId(objsconditionPo.getPermittypeid());
+                        for (PermitsconditionPo permitsconditionPo : permitsconditionPos) {
+                            i1 = sb1.indexOf(permitsconditionPo.getCerttypeid().toString());
                             if (i1 < 0) {
                                 returnMsg.setMsgbox("工程已綁定用戶，修改用戶證件需要滿足工程中要求...");
                                 return returnMsg;
@@ -427,8 +427,8 @@ public class StaffsServiceImpl implements StaffsService {
 
                 //2.删除标签表和证件表
                 staffscertPosOld = staffscertPoMapper.selectByStaffid(staffsDto.getStaffid());
-                for (int i = 0; i < staffscertPosOld.size(); i++) {
-                    staffscertPoMapper.deleteByPrimaryKey(staffscertPosOld.get(i).getCertid());
+                for (StaffscertPo value : staffscertPosOld) {
+                    staffscertPoMapper.deleteByPrimaryKey(value.getCertid());
                 }
                 TagInfosPo tagInfosPo = new TagInfosPo();
                 tagInfosPo.setType(1);
@@ -438,12 +438,12 @@ public class StaffsServiceImpl implements StaffsService {
 
                 //3.新加标签表和证件表
                 List<Map<String, String>> tag = staffsDto.getTag();
-                List<TagInfosPo> tagInfosPoList = new ArrayList();
+                List<TagInfosPo> tagInfosPoList = new ArrayList<>();
                 boolean tagExist = true;
-                Map map = null;
-                for (int i = 0; i < tag.size(); i++) {
+                Map map;
+                for (Map<String, String> stringMap : tag) {
                     tagInfosPo = new TagInfosPo();
-                    map = (HashMap) tag.get(i);
+                    map = stringMap;
                     tagInfosPo.setTagid(map.get("tagCode").toString());
                     TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
                     if (tagInfo == null) {
@@ -480,18 +480,18 @@ public class StaffsServiceImpl implements StaffsService {
                     }
                 }
 
-                StaffscertPo staffscertPo = null;
+                StaffscertPo staffscertPo;
                 List<Map<String, String>> carDataArr = staffsDto.getCarDataArr();
                 List<StaffscertPo> staffscertPoList = new ArrayList<>();
-                String certid = null;
-                String typeid = null;
-                String validity = null;
-                String filePathTmp = null;
-                StaffscertPo staffscertPoTmp = null;
+                String certid;
+                String typeid;
+                String validity;
+                String filePathTmp;
+                StaffscertPo staffscertPoTmp;
                 if (carDataArr != null && carDataArr.size() > 0) {
-                    for (int i = 0; i < carDataArr.size(); i++) {
+                    for (Map<String, String> stringStringMap : carDataArr) {
                         staffscertPo = new StaffscertPo();
-                        map = (HashMap) carDataArr.get(i);
+                        map = stringStringMap;
                         staffscertPo.setStaffid(staffsDto.getStaffid());
                         certid = map.get("certid").toString();
                         staffscertPoTmp = staffscertPoMapper.selectByPrimaryKey(certid);
@@ -513,7 +513,7 @@ public class StaffsServiceImpl implements StaffsService {
                             staffscertPoList.add(staffscertPo);
                             filePathTmp = hashMap.get(certid);
                             if (filePathTmp != null) {
-                                staffscertPo.setImagename(filePathTmp.substring(filePathTmp.lastIndexOf("/") + 1, filePathTmp.length()));
+                                staffscertPo.setImagename(filePathTmp.substring(filePathTmp.lastIndexOf("/") + 1));
                                 staffscertPo.setImagepath(filePathTmp.substring(0, filePathTmp.lastIndexOf("/") + 1));
                             }
 
@@ -522,8 +522,8 @@ public class StaffsServiceImpl implements StaffsService {
                 }
 
                 if (tagExist) {
-                    for (int i = 0; i < tagInfosPoList.size(); i++) {
-                        tagInfosPoMapper.insertSelective(tagInfosPoList.get(i));
+                    for (TagInfosPo infosPo : tagInfosPoList) {
+                        tagInfosPoMapper.insertSelective(infosPo);
                     }
                     //添加员工信息表
                     StaffsPo staffsPo = new StaffsPo();
@@ -542,8 +542,8 @@ public class StaffsServiceImpl implements StaffsService {
                     staffsPo.setEffdate(staffsDto.getEffdate());
                     staffsPoMapper.updateByPrimaryKeySelective(staffsPo);
                     //添加员工证件表
-                    for (int i = 0; i < staffscertPoList.size(); i++) {
-                        staffscertPoMapper.insertSelective(staffscertPoList.get(i));
+                    for (StaffscertPo po : staffscertPoList) {
+                        staffscertPoMapper.insertSelective(po);
                     }
 
                     returnMsg.setCode(ReturnMsg.SUCCESS);
@@ -554,18 +554,18 @@ public class StaffsServiceImpl implements StaffsService {
                     //1.删除以前的文件
                     //删除以前的图片
                     FilesUtils.deleteFile(staffsPoOld.getImagename(), filePath + staffsPoOld.getImagepath());
-                    for (int i = 0; i < staffscertPosOld.size(); i++) {
-                        FilesUtils.deleteFile(staffscertPosOld.get(i).getImagename(), filePath + staffscertPosOld.get(i).getImagepath());
+                    for (StaffscertPo po : staffscertPosOld) {
+                        FilesUtils.deleteFile(po.getImagename(), filePath + po.getImagepath());
                     }
 
                 } else if (returnMsg.getCode() == ReturnMsg.FAIL) {
                     //操作失败
                     //1.还原删除的标签表，员工证件表，删除上传的文件
-                    for (int i = 0; i < tagInfosPosOld.size(); i++) {
-                        tagInfosPoMapper.insertSelective(tagInfosPosOld.get(i));
+                    for (TagInfosPo infosPo : tagInfosPosOld) {
+                        tagInfosPoMapper.insertSelective(infosPo);
                     }
-                    for (int i = 0; i < staffscertPosOld.size(); i++) {
-                        staffscertPoMapper.insertSelective(staffscertPosOld.get(i));
+                    for (StaffscertPo po : staffscertPosOld) {
+                        staffscertPoMapper.insertSelective(po);
                     }
                     //照片删除，返回给controller操作
                 }
@@ -596,42 +596,39 @@ public class StaffsServiceImpl implements StaffsService {
 //            }
 
             List<StaffsPo> staffsPos = staffsPoMapper.selectListByOrgid(usersPo.getOrgid());
-            HashMap<String, Object> map = null;
+            HashMap<String, Object> map;
             ArrayList<Object> list = new ArrayList<>();
-            List<StaffscertPo> staffscertPos = null;
+            List<StaffscertPo> staffscertPos;
             //查询满足证件的员工,更具许可证条件表
-            String[] split = new String[1];
-            if (typeNameStr == null || StringUtils.isEmpty(typeNameStr)) {
-                split[0] = null;
-            } else {
+            String[] split = new String[0];
+            if (typeNameStr != null && !StringUtils.isEmpty(typeNameStr)) {
                 split = typeNameStr.split(";");
             }
-
             List<Integer> certnameArr = new ArrayList<>();
-            List<PermitsconditionPo> permitsconditionPo = null;
-            for (int i = 0; i < split.length; i++) {
-                permitsconditionPo = permitsconditionPoMapper.selectByPermitname(split[i]);
-                for (int j = 0; j < permitsconditionPo.size(); j++) {
-                    if (!certnameArr.contains(permitsconditionPo.get(j).getCerttypeid())) {
-                        certnameArr.add(permitsconditionPo.get(j).getCerttypeid());
+            List<PermitsconditionPo> permitsconditionPo;
+            for (String s : split) {
+                permitsconditionPo = permitsconditionPoMapper.selectByPermitTypeId(Integer.parseInt(s));
+                for (PermitsconditionPo po : permitsconditionPo) {
+                    if (!certnameArr.contains(po.getPermittypeid())) {
+                        certnameArr.add(po.getPermittypeid());
                     }
                 }
             }
             //获取到了员工证件类型
-            boolean status = true;
-            StringBuffer sb1 = null;
+            boolean status;
+            StringBuffer sb1;
             if (staffsPos != null && staffsPos.size() > 0) {
                 //循环每一个员工
-                for (int i = 0; i < staffsPos.size(); i++) {
+                for (StaffsPo staffsPo : staffsPos) {
                     if (type != null && !"".equals(type)) {
                         map = new HashMap<>(1);
-                        map.put("staffsPo", staffsPos.get(i));
-                        map.put("staffscertPo", staffscertPos);
+                        map.put("staffsPo", staffsPo);
+//                        map.put("staffscertPo", staffscertPos);
                         list.add(map);
                     } else {
                         status = true;
                         //获取员工编号的所有员工证件记录
-                        staffscertPos = staffscertPoMapper.selectByStaffidValid(staffsPos.get(i).getStaffid());
+                        staffscertPos = staffscertPoMapper.selectByStaffidValid(staffsPo.getStaffid());
                         if (staffscertPos.size() < certnameArr.size()) {
                             continue;
                         }
@@ -639,12 +636,12 @@ public class StaffsServiceImpl implements StaffsService {
                         //比较
                         if (certnameArr.size() > 0) {
                             sb1 = new StringBuffer();
-                            for (int j = 0; j < staffscertPos.size(); j++) {
-                                sb1.append(staffscertPos.get(j).getTypeid()).append(";");
+                            for (StaffscertPo staffscertPo : staffscertPos) {
+                                sb1.append(staffscertPo.getTypeid()).append(";");
                             }
 
-                            for (int y = 0; y < certnameArr.size(); y++) {
-                                int i1 = sb1.toString().indexOf(certnameArr.get(y).toString());
+                            for (Integer integer : certnameArr) {
+                                int i1 = sb1.toString().indexOf(integer.toString());
                                 if (i1 < 0) {
                                     status = false;
                                     break;
@@ -654,7 +651,7 @@ public class StaffsServiceImpl implements StaffsService {
 
                         if (status) {
                             map = new HashMap<>(2);
-                            map.put("staffsPo", staffsPos.get(i));
+                            map.put("staffsPo", staffsPo);
                             map.put("staffscertPo", staffscertPos);
                             list.add(map);
                         }

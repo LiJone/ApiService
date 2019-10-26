@@ -23,7 +23,7 @@ public class JobController {
     @RequestMapping(value = "/app/job/addJobMsg/{userid}", method = RequestMethod.POST)
     @ResponseBody
     public ReturnMsg addJobMsg(@PathVariable("userid") String userid, @RequestBody JobDto jobDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg = null;
         try {
             returnMsg = jobService.addJobMsg(userid, jobDto);
         } catch (Exception e) {
@@ -37,7 +37,7 @@ public class JobController {
     @RequestMapping(value = "/app/job/getJobList", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getJobList(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg = null;
         try {
             returnMsg = jobService.getJobList(request);
         } catch (Exception e) {
@@ -51,7 +51,7 @@ public class JobController {
     @RequestMapping(value = "/app/job/updateJobMsg/{userid}", method = RequestMethod.PUT)
     @ResponseBody
     public ReturnMsg updateJobMsg(@PathVariable("userid") String userid, @RequestBody JobDto jobDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg = null;
         try {
             returnMsg = jobService.updateJobMsg(userid, jobDto);
         } catch (Exception e) {
@@ -65,7 +65,7 @@ public class JobController {
     @RequestMapping(value = "/app/job/setJobObjLeavtime/{userid}", method = RequestMethod.PUT)
     @ResponseBody
     public ReturnMsg setJobObjLeavtime(@PathVariable("userid") String userid, @RequestBody SafeobjsDto safeobjsDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg = null;
         try {
             returnMsg = jobService.setJobObjLeavtime(userid, safeobjsDto);
         } catch (Exception e) {
@@ -79,7 +79,7 @@ public class JobController {
     @RequestMapping(value = "/app/job/deleteJobMsg/{userid}", method = RequestMethod.DELETE)
     @ResponseBody
     public ReturnMsg deleteJobMsg(@PathVariable("userid") String userid, @RequestBody JobDto jobDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg = null;
         try {
             returnMsg = jobService.deleteJobMsg(userid, jobDto);
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class JobController {
     @RequestMapping(value = "/app/job/setJobRunStatus/{userid}", method = RequestMethod.PUT)
     @ResponseBody
     public ReturnMsg setJobRunStatus (@PathVariable("userid") String userid, @RequestBody JobDto jobDto) {
-            ReturnMsg<Object> returnMsg = null;
+            ReturnMsg returnMsg = null;
             try {
                 returnMsg = jobService.setJobRunStatus(userid, jobDto);
             } catch (Exception e) {
