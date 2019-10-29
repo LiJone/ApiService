@@ -28,4 +28,6 @@ public interface StaffsPoMapper {
     int updateByPrimaryKeySelective(StaffsPo record);
 
     List<CertTypePO> getCerType();
+
+    List<StaffsPo> selectCpListByOrgid(String orgid);
 }

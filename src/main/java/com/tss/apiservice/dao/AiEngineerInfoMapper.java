@@ -194,4 +194,11 @@ public interface AiEngineerInfoMapper {
      * @return 工具集合
      */
     List<ToolBindInfoForm> selectToolFormByFuncNum(String funcNum);
+
+    /**
+     * 根据cp编号查询是否符合条件
+     * @param cpNum cp编号
+     * @return
+     */
+    Integer getCpCountByCpNum(String cpNum);
 }

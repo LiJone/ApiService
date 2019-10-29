@@ -519,4 +519,11 @@
         from toolbindinfo
         where funcnum = #{funcNum,jdbcType=VARCHAR}
     </select>
+
+    <select id="getCpCountByCpNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select
+        count(w.id)
+        from wswpinfo w left join aiengineerinfo a on w.jobnum = a.jobnum
+        where w.cpnum = #{cpNum,jdbcType=VARCHAR} and a.schedule = 1
+    </select>
 </mapper>

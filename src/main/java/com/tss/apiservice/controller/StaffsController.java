@@ -269,4 +269,18 @@ public class StaffsController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/staffs/getCpStaffs", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getCpStaffs(HttpServletRequest request) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = staffsService.getCpStaffs(request);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取員工異常...");
+            logger.info("/app/staffs/getCpStaffs/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

@@ -132,9 +132,9 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
                 }
                 List<WSWPInfoForm> wswpInfoFormList = aiEngineerInfoForm.getWswpInfoFormList();
                 for (WSWPInfoForm wswpInfoForm : wswpInfoFormList) {
-                    WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(wswpInfoForm.getCpNum());
-                    if (wswpInfo != null) {
-                        throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfo.getCpNum() + "已綁定...");
+                    Integer count = aiEngineerInfoMapper.getCpCountByCpNum(wswpInfoForm.getCpNum());
+                    if (count != null && count > 3) {
+                        throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他運行中工程3個以上");
                     } else {
                         WSWPInfoPO wswpBindInfo = new WSWPInfoPO();
                         wswpBindInfo.setCpNum(wswpInfoForm.getCpNum());
@@ -336,9 +336,9 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             }
             List<WSWPInfoForm> wswpInfoFormList = aiEngineerInfoForm.getWswpInfoFormList();
             for (WSWPInfoForm wswpInfoForm : wswpInfoFormList) {
-                WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(wswpInfoForm.getCpNum());
-                if (wswpInfo != null) {
-                    throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfo.getCpNum() + "已綁定...");
+                Integer count = aiEngineerInfoMapper.getCpCountByCpNum(wswpInfoForm.getCpNum());
+                if (count != null && count > 3) {
+                    throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他運行中工程3個以上");
                 } else {
                     WSWPInfoPO wswpBindInfo = new WSWPInfoPO();
                     wswpBindInfo.setCpNum(wswpInfoForm.getCpNum());

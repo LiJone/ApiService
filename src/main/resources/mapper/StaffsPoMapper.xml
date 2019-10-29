@@ -50,6 +50,14 @@
         order by staffid
     </select>
 
+    <select id="selectCpListByOrgid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        s.staffid, s.chname, s.enname, s.ensurname, s.imagepath, s.imagename, s.type, s.orgid, s.treatment, s.altersalary, s.effdate
+        from staffs s left join staffscert c on s.staffid = c.staffid
+        where s.orgid = #{orgid,jdbcType=VARCHAR} and c.certid = 9
+        order by s.staffid
+    </select>
+
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         <if test="expire == null and expireNumber == null">
             select

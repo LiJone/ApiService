@@ -62,6 +62,9 @@ public class StaffsServiceImpl implements StaffsService {
     @Autowired
     PermitsPoMapper permitsPoMapper;
 
+    @Autowired
+    private AiEngineerInfoMapper aiEngineerInfoMapper;
+
     @Override
     @Transactional
     public ReturnMsg addStaffsMsg(String userid, StaffsDto staffsDto, HashMap<String, String> hashMap,
@@ -755,5 +758,29 @@ public class StaffsServiceImpl implements StaffsService {
     public ReturnMsg getCertType(HttpServletRequest request) {
         List<CertTypePO> arrayList = staffsPoMapper.getCerType();
         return new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
+    }
+
+    @Override
+    public ReturnMsg getCpStaffs(HttpServletRequest request) {
+        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        String userid = request.getParameter("userid");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<StaffsPo> staffsPos = staffsPoMapper.selectCpListByOrgid(orgid);
+            List<StaffsPo> staffsPoList = new ArrayList<>();
+            for (StaffsPo staffsPo : staffsPos) {
+                Integer count =  aiEngineerInfoMapper.getCpCountByCpNum(staffsPo.getStaffid());
+                if (count == null || count <= 3) {
+                    staffsPoList.add(staffsPo);
+                }
+            }
+            returnMsg.setData(staffsPoList);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return null;
     }
 }
