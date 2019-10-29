@@ -7,7 +7,6 @@ import lombok.Data;
  */
 @Data
 public class WSWPInfoForm {
-    private Integer id;
 
     /**
      * cp编号

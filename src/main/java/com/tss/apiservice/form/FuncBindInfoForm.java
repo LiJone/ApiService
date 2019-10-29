@@ -9,7 +9,6 @@ import java.util.List;
  */
 @Data
 public class FuncBindInfoForm {
-    private Integer id;
 
     /**
      * 功能编号

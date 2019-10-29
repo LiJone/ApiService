@@ -86,17 +86,17 @@ public class JobServiceImpl implements JobService {
 
                 //保存安全对象信息,分别为员工，许可证，工具
                 ArrayList<SafeobjsPo> list = new ArrayList<>();
-                SafeobjsPo safeobjsPo = null;
+                SafeobjsPo safeobjsPo;
                 Map<String, List<Map<String, String>>> permits = jobDto.getPermits();
                 List<Map<String, String>> permitsArr = permits.get("permitsArr");
-                String objnum = null;
-                String objname = null;
-                String isleave = null;
+                String objnum;
+                String objname;
+                String isleave;
 
-                for (int i = 0; i < permitsArr.size(); i++) {
-                    objnum = permitsArr.get(i).get("objnum");
-                    objname = permitsArr.get(i).get("objname");
-                    isleave = permitsArr.get(i).get("isleave");
+                for (Map<String, String> stringMap : permitsArr) {
+                    objnum = stringMap.get("objnum");
+                    objname = stringMap.get("objname");
+                    isleave = stringMap.get("isleave");
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 0);
                     if (safeobjsPo != null) {
                         returnMsg.setMsgbox("許可證 {" + objname + "} 已在工程中使用...");
@@ -114,10 +114,10 @@ public class JobServiceImpl implements JobService {
 
                 Map<String, List<Map<String, String>>> tools = jobDto.getTools();
                 List<Map<String, String>> toolsArr = tools.get("toolsArr");
-                for (int i = 0; i < toolsArr.size(); i++) {
-                    objnum = toolsArr.get(i).get("objnum");
-                    objname = toolsArr.get(i).get("objname");
-                    isleave = toolsArr.get(i).get("isleave");
+                for (Map<String, String> stringStringMap : toolsArr) {
+                    objnum = stringStringMap.get("objnum");
+                    objname = stringStringMap.get("objname");
+                    isleave = stringStringMap.get("isleave");
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 2);
                     if (safeobjsPo != null) {
                         returnMsg.setMsgbox("工具 {" + objname + "} 已在工程中使用...");
@@ -180,12 +180,12 @@ public class JobServiceImpl implements JobService {
 
                 //插入所有数据
                 engineerinfoPoMapper.insertSelective(engineerinfoPo);
-                for (int i = 0; i < list.size(); i++) {
-                    safeobjsPoMapper.insertSelective(list.get(i));
+                for (SafeobjsPo value : list) {
+                    safeobjsPoMapper.insertSelective(value);
                 }
 
-                for (int i = 0; i < ObjsconditionPoList.size(); i++) {
-                    objsconditionPoMapper.insertSelective(ObjsconditionPoList.get(i));
+                for (ObjsconditionPo po : ObjsconditionPoList) {
+                    objsconditionPoMapper.insertSelective(po);
                 }
 
                 returnMsg.setMsgbox("成功");
@@ -241,23 +241,23 @@ public class JobServiceImpl implements JobService {
             if (engineerinfoPos.size() < 1) {
                 returnMsg.setMsgbox("找不到符合條件數據...");
             } else {
-                PageUtil pageUtil = new PageUtil(engineerinfoPos.size(), Integer.valueOf(pageSize), Integer.valueOf(currentPage), 5);
+                PageUtil pageUtil = new PageUtil(engineerinfoPos.size(), Integer.parseInt(pageSize), Integer.parseInt(currentPage), 5);
                 int startrow = pageUtil.getStartrow();
                 int pagesize = pageUtil.getPagesize();
                 hashMap.put("startrow", startrow);
                 hashMap.put("pagesize", pagesize);
                 List<EngineerinfoPo> engineerinfoPosList = engineerinfoPoMapper.selectListByMap(hashMap);
-                HashMap<String, Object> retMap = null;
+                HashMap<String, Object> retMap;
                 ArrayList<Object> arrayList = new ArrayList<>();
                 //每一个list还要获取对应的，安全对象和安全对象条件
-                List<SafeobjsPo> safeobjsPoList = null;
-                List<ObjsconditionPo> objsconditionPoList = null;
-                for (int i = 0; i < engineerinfoPosList.size(); i++) {
+                List<SafeobjsPo> safeobjsPoList;
+                List<ObjsconditionPo> objsconditionPoList;
+                for (EngineerinfoPo engineerinfoPo : engineerinfoPosList) {
                     retMap = new HashMap<>();
-                    retMap.put("engineerinfoPo", engineerinfoPosList.get(i));
-                    safeobjsPoList = safeobjsPoMapper.selectByOsdid(engineerinfoPosList.get(i).getOsdid());
+                    retMap.put("engineerinfoPo", engineerinfoPo);
+                    safeobjsPoList = safeobjsPoMapper.selectByOsdid(engineerinfoPo.getOsdid());
                     retMap.put("safeobjsPoList", safeobjsPoList);
-                    objsconditionPoList = objsconditionPoMapper.selectByOsdid(engineerinfoPosList.get(i).getOsdid());
+                    objsconditionPoList = objsconditionPoMapper.selectByOsdid(engineerinfoPo.getOsdid());
                     retMap.put("objsconditionPoList", objsconditionPoList);
                     arrayList.add(retMap);
                 }
@@ -311,14 +311,14 @@ public class JobServiceImpl implements JobService {
                 SafeobjsPo safeobjsPo = null;
                 Map<String, List<Map<String, String>>> permits = jobDto.getPermits();
                 List<Map<String, String>> permitsArr = permits.get("permitsArr");
-                String objnum = null;
-                String objname = null;
-                String isleave = null;
+                String objnum;
+                String objname;
+                String isleave;
 
-                for (int i = 0; i < permitsArr.size(); i++) {
-                    objnum = permitsArr.get(i).get("objnum");
-                    objname = permitsArr.get(i).get("objname");
-                    isleave = permitsArr.get(i).get("isleave");
+                for (Map<String, String> stringMap : permitsArr) {
+                    objnum = stringMap.get("objnum");
+                    objname = stringMap.get("objname");
+                    isleave = stringMap.get("isleave");
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 0);
                     if (safeobjsPo != null) {
                         if (StringUtils.isEmpty(safeobjsPo.getJobnum())) {
@@ -352,10 +352,10 @@ public class JobServiceImpl implements JobService {
 
                 Map<String, List<Map<String, String>>> tools = jobDto.getTools();
                 List<Map<String, String>> toolsArr = tools.get("toolsArr");
-                for (int i = 0; i < toolsArr.size(); i++) {
-                    objnum = toolsArr.get(i).get("objnum");
-                    objname = toolsArr.get(i).get("objname");
-                    isleave = toolsArr.get(i).get("isleave");
+                for (Map<String, String> stringStringMap : toolsArr) {
+                    objnum = stringStringMap.get("objnum");
+                    objname = stringStringMap.get("objname");
+                    isleave = stringStringMap.get("isleave");
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 2);
                     if (safeobjsPo != null) {
                         if (StringUtils.isEmpty(safeobjsPo.getJobnum())) {
@@ -389,16 +389,16 @@ public class JobServiceImpl implements JobService {
                 Map<String, List<Map<String, Object>>> staffs = jobDto.getStaffs();
                 List<Map<String, Object>> staffsArr = staffs.get("staffsArr");
 
-                List objsConditionArr = null;
-                String permitname = null;
-                Map<String, String> map = null;
+                List objsConditionArr;
+                String permitname;
+                Map<String, String> map;
 
-                ObjsconditionPo objsconditionPo = null;
+                ObjsconditionPo objsconditionPo;
                 ArrayList<ObjsconditionPo> ObjsconditionPoList = new ArrayList<>();
-                for (int i = 0; i < staffsArr.size(); i++) {
-                    objnum = staffsArr.get(i).get("objnum").toString();
-                    objname = staffsArr.get(i).get("objname").toString();
-                    isleave = staffsArr.get(i).get("isleave").toString();
+                for (Map<String, Object> stringObjectMap : staffsArr) {
+                    objnum = stringObjectMap.get("objnum").toString();
+                    objname = stringObjectMap.get("objname").toString();
+                    isleave = stringObjectMap.get("isleave").toString();
                     safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(objnum, 1);
                     if (safeobjsPo != null) {
                         if (StringUtils.isEmpty(safeobjsPo.getJobnum())) {
@@ -428,10 +428,10 @@ public class JobServiceImpl implements JobService {
                         safeobjsPo.setObjname(objname);
                         list.add(safeobjsPo);
                     }
-                    objsConditionArr = (List) staffsArr.get(i).get("objsConditionArr");
-                    for (int j = 0; j < objsConditionArr.size(); j++) {
+                    objsConditionArr = (List) stringObjectMap.get("objsConditionArr");
+                    for (Object o : objsConditionArr) {
                         objsconditionPo = new ObjsconditionPo();
-                        map = (Map<String, String>) objsConditionArr.get(j);
+                        map = (Map<String, String>) o;
 
                         permitname = map.get("permitname");
 
@@ -449,17 +449,17 @@ public class JobServiceImpl implements JobService {
                 //插入所有数据
                 //engineerinfoPo.setOrgid(engineerinfoPoOld.getOrgid());
                 engineerinfoPoMapper.insertSelective(engineerinfoPo);
-                for (int i = 0; i < list.size(); i++) {
-                    safeobjsPoMapper.insertSelective(list.get(i));
+                for (SafeobjsPo value : list) {
+                    safeobjsPoMapper.insertSelective(value);
                 }
 
-                for (int i = 0; i < ObjsconditionPoList.size(); i++) {
-                    objsconditionPoMapper.insertSelective(ObjsconditionPoList.get(i));
+                for (ObjsconditionPo po : ObjsconditionPoList) {
+                    objsconditionPoMapper.insertSelective(po);
                 }
 
                 returnMsg.setMsgbox("成功");
                 returnMsg.setCode(ReturnMsg.SUCCESS);
-                if (engineerinfoPoOld != null && engineerinfoPoOld.getSchedule() == 1) {
+                if (engineerinfoPoOld.getSchedule() == 1) {
                     MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                 }
             }
@@ -526,8 +526,8 @@ public class JobServiceImpl implements JobService {
                 // 0 不允许离开，才可以进行授权，1是可以离开，不用授权
                 returnMsg.setMsgbox("安全對象可離開，不用授權。...");
             } else {
-                Date leavetime = safeobjsPo.getLeavetime();
-                leavetime = new Date(new Date().getTime() + Integer.valueOf(safeobjsDto.getLeavetime()) * 60000);
+                Date leavetime;
+                leavetime = new Date(new Date().getTime() + Integer.parseInt(safeobjsDto.getLeavetime()) * 60000);
 
                 safeobjsPo.setLeavetime(leavetime);
                 String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(leavetime);

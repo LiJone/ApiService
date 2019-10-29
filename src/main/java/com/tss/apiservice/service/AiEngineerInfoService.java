@@ -5,6 +5,9 @@ import com.tss.apiservice.form.AiEngineerInfoForm;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author 壮Jone
+ */
 public interface AiEngineerInfoService {
     /**
      * 添加智能工程
@@ -24,19 +27,17 @@ public interface AiEngineerInfoService {
 
     /**
      * 修改智能工程
-     * @param userid 用戶id
      * @param aiEngineerInfoForm 智能工程信息
      * @return
      * @throws Exception
      */
-    ReturnMsg updateEngineerMsg(String userid, AiEngineerInfoForm aiEngineerInfoForm);
+    ReturnMsg updateEngineerMsg(AiEngineerInfoForm aiEngineerInfoForm) throws Exception;
 
     /**
      * 刪除智能工程
-     * @param userid 用戶id
-     * @param aiEngineerInfoForm 智能工程信息
+     * @param jobNum 智能工程编号
      * @return
      * @throws Exception
      */
-    ReturnMsg deleteEngineerMsg(String userid, AiEngineerInfoForm aiEngineerInfoForm);
+    ReturnMsg deleteEngineerMsg(String jobNum) throws Exception;
 }

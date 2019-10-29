@@ -584,12 +584,12 @@ public class ExcelFileController {
                     dataList[number][4] = ("");
                     dataList[number][5] = (count + "個");
                 }
-                dataList[allCount + 1][0] = ("全倉統計");
-                dataList[allCount + 1][1] = ("");
-                dataList[allCount + 1][2] = ("");
-                dataList[allCount + 1][3] = ("");
-                dataList[allCount + 1][4] = ("");
-                dataList[allCount + 1][5] = (allCount + "個");
+                dataList[allCount][0] = ("全倉統計");
+                dataList[allCount][1] = ("");
+                dataList[allCount][2] = ("");
+                dataList[allCount][3] = ("");
+                dataList[allCount][4] = ("");
+                dataList[allCount][5] = ((allCount - 1) + "個");
                 ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取倉庫統計数据失败");

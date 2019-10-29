@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tss.apiservice.dao.AiEngineerInfoMapper">
-    <resultMap id="BaseResultMap_ai" type="com.tss.apiservice.po.AiEngineerInfoPO">
+    <resultMap id="BaseResultMap_AI" type="com.tss.apiservice.po.AiEngineerInfoPO">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="jobnum" jdbcType="VARCHAR" property="jobNum"/>
         <result column="jobname" jdbcType="VARCHAR" property="jobName"/>
@@ -11,12 +11,27 @@
         <result column="orgid" jdbcType="VARCHAR" property="orgId"/>
     </resultMap>
 
+    <resultMap id="BaseResultMap_AI_Form" type="com.tss.apiservice.form.AiEngineerInfoForm">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="jobnum" jdbcType="VARCHAR" property="jobNum"/>
+        <result column="jobname" jdbcType="VARCHAR" property="jobName"/>
+        <result column="starttime" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="endtime" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="schedule" jdbcType="INTEGER" property="schedule"/>
+    </resultMap>
+
     <resultMap id="BaseResultMap_Osd" type="com.tss.apiservice.po.OsdBindInfoPO">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="osdnum" jdbcType="VARCHAR" property="osdNum"/>
         <result column="osdname" jdbcType="VARCHAR" property="osdName"/>
         <result column="bindtype" jdbcType="INTEGER" property="bindType"/>
         <result column="bindnum" jdbcType="VARCHAR" property="bindNum"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap_Osd_Form" type="com.tss.apiservice.form.OsdBindInfoForm">
+        <result column="osdnum" jdbcType="VARCHAR" property="osdNum"/>
+        <result column="osdname" jdbcType="VARCHAR" property="osdName"/>
+        <result column="bindtype" jdbcType="INTEGER" property="bindType"/>
     </resultMap>
 
     <resultMap id="BaseResultMap_Func" type="com.tss.apiservice.po.FuncBindInfoPO">
@@ -30,11 +45,25 @@
         <result column="jobnum" jdbcType="VARCHAR" property="jobNum"/>
     </resultMap>
 
+    <resultMap id="BaseResultMap_Func_Form" type="com.tss.apiservice.form.FuncBindInfoForm">
+        <result column="funcnum" jdbcType="VARCHAR" property="funcNum"/>
+        <result column="funcname" jdbcType="VARCHAR" property="funcName"/>
+        <result column="starttime" jdbcType="VARCHAR" property="startTime"/>
+        <result column="endtime" jdbcType="VARCHAR" property="endTime"/>
+        <result column="functype" jdbcType="INTEGER" property="funcType"/>
+        <result column="funcstatus" jdbcType="INTEGER" property="funcStatus"/>
+    </resultMap>
+
     <resultMap id="BaseResultMap_WSWP" type="com.tss.apiservice.po.WSWPInfoPO">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="cpnum" jdbcType="VARCHAR" property="cpNum"/>
         <result column="captain_count" jdbcType="INTEGER" property="captainCount"/>
         <result column="jobnum" jdbcType="VARCHAR" property="jobNum"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap_WSWP_Form" type="com.tss.apiservice.form.WSWPInfoForm">
+        <result column="cpnum" jdbcType="VARCHAR" property="cpNum"/>
+        <result column="captain_count" jdbcType="INTEGER" property="captainCount"/>
     </resultMap>
 
     <resultMap id="BaseResultMap_Permit" type="com.tss.apiservice.po.PermitBindInfoPO">
@@ -44,12 +73,23 @@
         <result column="bindnum" jdbcType="VARCHAR" property="bindNum"/>
     </resultMap>
 
+    <resultMap id="BaseResultMap_Permit_Form" type="com.tss.apiservice.form.PermitBindInfoForm">
+        <result column="permitnum" jdbcType="VARCHAR" property="permitNum"/>
+        <result column="bindtype" jdbcType="INTEGER" property="bindType"/>
+    </resultMap>
+
     <resultMap id="BaseResultMap_Tool" type="com.tss.apiservice.po.ToolBindInfoPO">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="typeid" jdbcType="INTEGER" property="typeId"/>
         <result column="typename" jdbcType="VARCHAR" property="typeName"/>
         <result column="count" jdbcType="INTEGER" property="count"/>
         <result column="funcnum" jdbcType="VARCHAR" property="funcNum"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap_Tool_Form" type="com.tss.apiservice.form.ToolBindInfoForm">
+        <result column="typeid" jdbcType="INTEGER" property="typeId"/>
+        <result column="typename" jdbcType="VARCHAR" property="typeName"/>
+        <result column="count" jdbcType="INTEGER" property="count"/>
     </resultMap>
 
     <sql id="Base_Column_List_ai">
@@ -160,8 +200,71 @@
         </trim>
     </insert>
 
+    <select id="selectByFuncNum" parameterType="java.lang.String" resultMap="BaseResultMap_Func">
+        select
+        <include refid="Base_Column_List_Func"/>
+        from funcbindinfo
+        where funcnum = #{funcNum,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertFuncInfo" parameterType="com.tss.apiservice.po.FuncBindInfoPO">
+        insert into funcbindinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="funcNum != null">
+                funcnum,
+            </if>
+            <if test="funcName != null">
+                funcname,
+            </if>
+            <if test="startTime != null">
+                starttime,
+            </if>
+            <if test="endTime != null">
+                endtime,
+            </if>
+            <if test="funcType != null">
+                functype,
+            </if>
+            <if test="funcStatus != null">
+                funcstatus,
+            </if>
+            <if test="jobNum != null">
+                jobnum,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="funcNum != null">
+                #{funcNum,jdbcType=VARCHAR},
+            </if>
+            <if test="funcName != null">
+                #{funcName,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=VARCHAR},
+            </if>
+            <if test="funcType != null">
+                #{funcType,jdbcType=INTEGER},
+            </if>
+            <if test="funcStatus != null">
+                #{funcStatus,jdbcType=INTEGER},
+            </if>
+            <if test="jobNum != null">
+                #{jobNum,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
     <insert id="insertToolInfo" parameterType="com.tss.apiservice.po.ToolBindInfoPO">
-        insert into osdbindinfo
+        insert into toolbindinfo
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -198,7 +301,14 @@
         </trim>
     </insert>
 
-    <insert id="insertWSWPInfo" parameterType="com.tss.apiservice.po.WSWPInfoPO">
+    <select id="selectByWswpNum" parameterType="java.lang.String" resultMap="BaseResultMap_WSWP">
+        select
+        <include refid="Base_Column_List_WSWP"/>
+        from wswpinfo
+        where cpnum = #{cpNum,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertWswpInfo" parameterType="com.tss.apiservice.po.WSWPInfoPO">
         insert into wswpinfo
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -230,19 +340,16 @@
         </trim>
     </insert>
 
-    <select id="selectListByMap" parameterType="java.lang.String" resultMap="BaseResultMap_ai">
+    <select id="selectListByMap" parameterType="java.lang.String" resultMap="BaseResultMap_AI_Form">
         select
-        <include refid="Base_Column_List_ai"/>
+        id, jobnum, jobname, starttime, endtime, schedule
         from aiengineerinfo
         where 1 = 1
-        <if test="name != null">
-            and Jobname like '%${name}%'
+        <if test="jobName != null">
+            and jobname like '%${jobName}%'
         </if>
-        <if test="numberBegin != null">
-            and jobnum &gt;= #{numberBegin}
-        </if>
-        <if test="numberEnd != null">
-            and jobnum &lt;= #{numberEnd}
+        <if test="jobNum != null">
+            and jobnum = #{jobNum}
         </if>
         and orgid = #{orgId}
         <if test="startrow != null and pagesize != null">
@@ -250,7 +357,11 @@
         </if>
     </select>
 
-    <select id="selectByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_ai">
+    <delete id="deleteByAiNum" parameterType="java.lang.String">
+        delete from aiengineerinfo where jobnum = #{jobNum,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="selectByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_AI">
         select
         <include refid="Base_Column_List_ai"/>
         from aiengineerinfo
@@ -329,4 +440,83 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
 
+    <delete id="deleteOsdByAiNum" parameterType="java.lang.String">
+        delete from osdbindinfo where bindnum = #{jobNum,jdbcType=VARCHAR} and bindtype = 0
+    </delete>
+
+    <delete id="deletePermitByAiNum" parameterType="java.lang.String">
+        delete from permitbindinfo where bindnum = #{jobNum,jdbcType=VARCHAR} and bindtype = 0
+    </delete>
+
+    <delete id="deleteWswpByAiNum" parameterType="java.lang.String">
+        delete from wswpinfo where where jobnum = #{jobNum,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="selectFuncByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_Func">
+        select
+        <include refid="Base_Column_List_Func"/>
+        from funcbindinfo
+        where jobnum = #{jobNum,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteOsdByFuncNum" parameterType="java.lang.String">
+        delete from osdbindinfo where bindnum = #{funcNum,jdbcType=VARCHAR} and bindtype = 1
+    </delete>
+
+    <delete id="deletePermitByFuncNum" parameterType="java.lang.String">
+        delete from permitbindinfo where bindnum = #{funcNum,jdbcType=VARCHAR} and bindtype = 1
+    </delete>
+
+    <delete id="deleteToolByFuncNum" parameterType="java.lang.String">
+        delete from toolbindinfo where funcnum = #{funcNum,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="selectFuncFormByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_Func_Form">
+        select
+        funcnum, funcname, starttime, endtime, functype, funcstatus
+        from funcbindinfo
+        where jobnum = #{jobNum,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectPermitFormByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_Permit_Form">
+        select
+        permitnum, bindtype
+        from permitbindinfo
+        where bindnum = #{jobNum,jdbcType=VARCHAR} and bindtype = 0
+    </select>
+
+    <select id="selectOsdFormByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_Osd_Form">
+        select
+        osdnum, osdname, bindtype
+        from osdbindinfo
+        where bindnum = #{jobNum,jdbcType=VARCHAR} and bindtype = 0
+    </select>
+
+    <select id="selectWswpFormByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_WSWP_Form">
+        select
+        cpnum, captain_count
+        from wswpinfo
+        where jobnum = #{jobnum,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectOsdFormByFuncNum" parameterType="java.lang.String" resultMap="BaseResultMap_Osd_Form">
+        select
+        osdnum, osdname, bindtype
+        from osdbindinfo
+        where bindnum = #{funcNum,jdbcType=VARCHAR} and bindtype = 1
+    </select>
+
+    <select id="selectPermitFormByFuncNum" parameterType="java.lang.String" resultMap="BaseResultMap_Permit_Form">
+        select
+        permitnum, bindtype
+        from permitbindinfo
+        where bindnum = #{funcNum,jdbcType=VARCHAR} and bindtype = 1
+    </select>
+
+    <select id="selectToolFormByFuncNum" parameterType="java.lang.String" resultMap="BaseResultMap_Tool_Form">
+        select
+        typeid, typename, count
+        from toolbindinfo
+        where funcnum = #{funcNum,jdbcType=VARCHAR}
+    </select>
 </mapper>
