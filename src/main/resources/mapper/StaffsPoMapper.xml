@@ -54,7 +54,7 @@
         select
         s.staffid, s.chname, s.enname, s.ensurname, s.imagepath, s.imagename, s.type, s.orgid, s.treatment, s.altersalary, s.effdate
         from staffs s left join staffscert c on s.staffid = c.staffid
-        where s.orgid = #{orgid,jdbcType=VARCHAR} and c.certid = 9
+        where s.orgid = #{orgid,jdbcType=VARCHAR} and c.typeid in (16,17,18,19,20)
         order by s.staffid
     </select>
 

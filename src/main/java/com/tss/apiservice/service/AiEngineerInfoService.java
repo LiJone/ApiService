@@ -40,4 +40,11 @@ public interface AiEngineerInfoService {
      * @throws Exception
      */
     ReturnMsg deleteEngineerMsg(String jobNum) throws Exception;
+
+    /**
+     * 修改智能工程状态
+     * @param jobNum 工程编号
+     * @return
+     */
+    ReturnMsg setJobRunStatus(String jobNum);
 }

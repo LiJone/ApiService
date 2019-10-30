@@ -2,6 +2,7 @@ package com.tss.apiservice.controller;
 
 
 import com.tss.apiservice.common.ReturnMsg;
+import com.tss.apiservice.dto.JobDto;
 import com.tss.apiservice.form.*;
 import com.tss.apiservice.service.AiEngineerInfoService;
 import org.slf4j.Logger;
@@ -78,6 +79,20 @@ public class AiEngineerInfoController {
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程刪除異常...");
             logger.info("/app/engineer/deleteEngineerMsg/{userid} 异常" + e.getMessage(), e);
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/engineer/setEngineerRunStatus/{jobNum}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg setEngineerRunStatus (@PathVariable("jobNum") String jobNum) {
+        ReturnMsg returnMsg = null;
+        try {
+            returnMsg = aiEngineerInfoService.setJobRunStatus(jobNum);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程狀態修改異常...");
+            logger.info("/app/engineer/setEngineerRunStatus /{jobNum} 异常");
+            e.printStackTrace();
         }
         return returnMsg;
     }

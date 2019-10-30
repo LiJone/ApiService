@@ -2,6 +2,8 @@ package com.tss.apiservice.service.impl;
 
 import com.tss.apiservice.common.PageUtil;
 import com.tss.apiservice.common.ReturnMsg;
+import com.tss.apiservice.common.utils.MQAllSendMessage;
+import com.tss.apiservice.common.utils.MQCode;
 import com.tss.apiservice.dao.*;
 import com.tss.apiservice.form.*;
 import com.tss.apiservice.po.*;
@@ -389,6 +391,25 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             //删除工程
             aiEngineerInfoMapper.deleteByAiNum(jobNum);
             returnMsg.setMsgbox("刪除成功");
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg setJobRunStatus(String jobNum) {
+        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(jobNum)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+            if ("1".equals(aiEngineerInfo.getSchedule())) {
+                aiEngineerInfo.setSchedule("0");
+            } else {
+                aiEngineerInfo.setSchedule("1");
+            }
+            aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineerInfo);
+            returnMsg.setMsgbox("成功");
             returnMsg.setCode(ReturnMsg.SUCCESS);
         }
         return returnMsg;
