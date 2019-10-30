@@ -83,6 +83,7 @@
         <result column="typeid" jdbcType="INTEGER" property="typeId"/>
         <result column="typename" jdbcType="VARCHAR" property="typeName"/>
         <result column="count" jdbcType="INTEGER" property="count"/>
+        <result column="valid" jdbcType="INTEGER" property="valid"/>
         <result column="funcnum" jdbcType="VARCHAR" property="funcNum"/>
     </resultMap>
 
@@ -90,6 +91,7 @@
         <result column="typeid" jdbcType="INTEGER" property="typeId"/>
         <result column="typename" jdbcType="VARCHAR" property="typeName"/>
         <result column="count" jdbcType="INTEGER" property="count"/>
+        <result column="valid" jdbcType="INTEGER" property="valid"/>
     </resultMap>
 
     <sql id="Base_Column_List_ai">
@@ -113,7 +115,7 @@
   </sql>
 
     <sql id="Base_Column_List_Tool">
-    id, typeid, typename, count, funcnum
+    id, typeid, typename, count, valid, funcnum
   </sql>
 
     <select id="selectByOsdNum" parameterType="java.lang.String" resultMap="BaseResultMap_Osd">
@@ -163,7 +165,7 @@
 
     <select id="selectByPermitNum" parameterType="java.lang.String" resultMap="BaseResultMap_Permit">
         select
-        <include refid="Base_Column_List_Osd"/>
+        <include refid="Base_Column_List_Permit"/>
         from permitbindinfo
         where permitnum = #{permitNum,jdbcType=VARCHAR}
     </select>
@@ -318,7 +320,7 @@
                 cpnum,
             </if>
             <if test="captainCount != null">
-                captain_ount,
+                captain_count,
             </if>
             <if test="jobNum != null">
                 jobnum,
@@ -449,7 +451,7 @@
     </delete>
 
     <delete id="deleteWswpByAiNum" parameterType="java.lang.String">
-        delete from wswpinfo where where jobnum = #{jobNum,jdbcType=VARCHAR}
+        delete from wswpinfo where jobnum = #{jobNum,jdbcType=VARCHAR}
     </delete>
 
     <select id="selectFuncByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_Func">

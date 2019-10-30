@@ -26,6 +26,11 @@ public class ToolBindInfoPO implements Serializable {
     private Integer count;
 
     /**
+     * 是否需要
+     */
+    private Integer valid;
+
+    /**
      * 功能编号
      */
     private String funcNum;
@@ -48,6 +53,14 @@ public class ToolBindInfoPO implements Serializable {
 
     public String getTypeName() {
         return typeName;
+    }
+
+    public Integer getValid() {
+        return valid;
+    }
+
+    public void setValid(Integer valid) {
+        this.valid = valid;
     }
 
     public void setTypeName(String typeName) {
@@ -77,6 +90,7 @@ public class ToolBindInfoPO implements Serializable {
                 ", typeId=" + typeId +
                 ", typeName='" + typeName + '\'' +
                 ", count=" + count +
+                ", valid=" + valid +
                 ", funcNum='" + funcNum + '\'' +
                 '}';
     }

@@ -23,4 +23,9 @@ public class ToolBindInfoForm {
      */
     private Integer count;
 
+    /**
+     * 是否需要
+     */
+    private Integer valid;
+
 }

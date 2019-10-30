@@ -116,6 +116,7 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
                             toolInfo.setTypeId(toolBindInfoForm.getTypeId());
                             toolInfo.setTypeName(toolBindInfoForm.getTypeName());
                             toolInfo.setCount(toolBindInfoForm.getCount());
+                            toolInfo.setValid(toolBindInfoForm.getValid());
                             toolInfo.setFuncNum(funcBindInfoForm.getFuncNum());
                             aiEngineerInfoMapper.insertToolInfo(toolInfo);
                         }
@@ -320,6 +321,7 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
                         toolInfo.setTypeId(toolBindInfoForm.getTypeId());
                         toolInfo.setTypeName(toolBindInfoForm.getTypeName());
                         toolInfo.setCount(toolBindInfoForm.getCount());
+                        toolInfo.setValid(toolBindInfoForm.getValid());
                         toolInfo.setFuncNum(funcBindInfoForm.getFuncNum());
                         aiEngineerInfoMapper.insertToolInfo(toolInfo);
                     }
