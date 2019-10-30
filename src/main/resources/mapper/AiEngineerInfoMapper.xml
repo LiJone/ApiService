@@ -427,7 +427,7 @@
                 jobnum = #{jobNum,jdbcType=VARCHAR},
             </if>
             <if test="jobName != null">
-                name = #{jobName,jdbcType=VARCHAR},
+                jobname = #{jobName,jdbcType=VARCHAR},
             </if>
             <if test="startTime != null">
                 starttime = #{startTime,jdbcType=TIMESTAMP},
