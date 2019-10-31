@@ -280,6 +280,9 @@
             <if test="count != null">
                 count,
             </if>
+            <if test="valid != null">
+                valid,
+            </if>
             <if test="funcNum != null">
                 funcnum,
             </if>
@@ -296,6 +299,9 @@
             </if>
             <if test="count != null">
                 #{count,jdbcType=INTEGER},
+            </if>
+            <if test="valid != null">
+                #{valid,jdbcType=INTEGER},
             </if>
             <if test="funcNum != null">
                 #{funcNum,jdbcType=VARCHAR},
@@ -454,6 +460,11 @@
         delete from wswpinfo where jobnum = #{jobNum,jdbcType=VARCHAR}
     </delete>
 
+
+    <delete id="deleteFuncByAiNum" parameterType="java.lang.String">
+        delete from funcbindinfo where jobnum = #{jobNum,jdbcType=VARCHAR}
+    </delete>
+
     <select id="selectFuncByAiNum" parameterType="java.lang.String" resultMap="BaseResultMap_Func">
         select
         <include refid="Base_Column_List_Func"/>
@@ -517,7 +528,7 @@
 
     <select id="selectToolFormByFuncNum" parameterType="java.lang.String" resultMap="BaseResultMap_Tool_Form">
         select
-        typeid, typename, count
+        typeid, typename, count, valid
         from toolbindinfo
         where funcnum = #{funcNum,jdbcType=VARCHAR}
     </select>

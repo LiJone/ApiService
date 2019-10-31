@@ -122,6 +122,12 @@ public interface AiEngineerInfoMapper {
     void deleteWswpByAiNum(String jobNum);
 
     /**
+     * 根据工程编号删除功能
+     * @param jobNum 工程编号
+     */
+    void deleteFuncByAiNum(String jobNum);
+
+    /**
      * 根据工程编号获取所有功能
      * @param jobNum 工程编号
      * @return 功能集合

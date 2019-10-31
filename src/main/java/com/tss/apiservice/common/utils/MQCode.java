@@ -31,4 +31,19 @@ public class MQCode {
      */
     public final static int JOB_OBJ_UPDATE = 12110;
 
+    /**
+     * 添加启用智能工程
+     */
+    public final static int ENGINEER_RUN_ADD = 12300;
+
+    /**
+     * 删除启用智能工程
+     */
+    public final static int ENGINEER_RUN_DELETE = 12301;
+
+    /**
+     * 修改启用智能工程
+     */
+    public final static int ENGINEER_RUN_UPDATE = 12302;
+
 }

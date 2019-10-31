@@ -31,6 +31,9 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
     @Autowired
     private UsersPoMapper usersPoMapper;
 
+    @Autowired
+    private ApiServiceMQImpl apiServiceMq;
+
     @Override
     @Transactional(propagation= Propagation.REQUIRED,rollbackFor= Exception.class)
     public ReturnMsg addEngineerMsg(String userid, AiEngineerInfoForm aiEngineerInfoForm) throws Exception {
@@ -250,6 +253,8 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
                 //删除原先工程功能绑定工具
                 aiEngineerInfoMapper.deleteToolByFuncNum(bindInfo.getFuncNum());
             }
+            //删除原先工程绑定功能
+            aiEngineerInfoMapper.deleteFuncByAiNum(aiEngineerInfoForm.getJobNum());
             //判斷工程綁定盒子
             List<OsdBindInfoForm> osdBindInfoFormList = aiEngineerInfoForm.getOsdBindInfoFormList();
             for (OsdBindInfoForm osdBindInfoForm : osdBindInfoFormList) {
@@ -351,12 +356,14 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
                     aiEngineerInfoMapper.insertWswpInfo(wswpBindInfo);
                 }
             }
-            AiEngineerInfoPO aiEngineer = new AiEngineerInfoPO();
-            aiEngineer.setId(aiEngineerInfoForm.getId());
-            aiEngineer.setJobName(aiEngineerInfoForm.getJobName());
-            aiEngineer.setStartTime(aiEngineerInfoForm.getStartTime());
-            aiEngineer.setEndTime(aiEngineerInfoForm.getEndTime());
-            aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineer);
+            AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(aiEngineerInfoForm.getJobNum());
+            aiEngineerInfo.setJobName(aiEngineerInfoForm.getJobName());
+            aiEngineerInfo.setStartTime(aiEngineerInfoForm.getStartTime());
+            aiEngineerInfo.setEndTime(aiEngineerInfoForm.getEndTime());
+            aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineerInfo);
+            if (aiEngineerInfo.getSchedule() == 1) {
+                MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMq);
+            }
             returnMsg.setMsgbox("修改成功");
             returnMsg.setCode(ReturnMsg.SUCCESS);
         }
@@ -365,7 +372,7 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
 
     @Override
     @Transactional(propagation= Propagation.REQUIRED,rollbackFor= Exception.class)
-    public ReturnMsg deleteEngineerMsg(String jobNum) throws Exception{
+    public ReturnMsg deleteEngineerMsg(String jobNum) {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(jobNum)) {
             returnMsg.setMsgbox("參數異常...");
@@ -403,10 +410,12 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             returnMsg.setMsgbox("參數異常...");
         } else {
             AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
-            if ("1".equals(aiEngineerInfo.getSchedule())) {
-                aiEngineerInfo.setSchedule("0");
+            if (aiEngineerInfo.getSchedule() == 1) {
+                aiEngineerInfo.setSchedule(0);
+                MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_DELETE, apiServiceMq);
             } else {
-                aiEngineerInfo.setSchedule("1");
+                aiEngineerInfo.setSchedule(1);
+                MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_ADD, apiServiceMq);
             }
             aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineerInfo);
             returnMsg.setMsgbox("成功");

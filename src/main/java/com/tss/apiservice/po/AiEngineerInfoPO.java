@@ -34,7 +34,7 @@ public class AiEngineerInfoPO implements Serializable {
     /**
      * 使用进度
      */
-    private String schedule;
+    private Integer schedule;
 
     /**
      * 机构编码
@@ -81,11 +81,11 @@ public class AiEngineerInfoPO implements Serializable {
         this.endTime = endTime;
     }
 
-    public String getSchedule() {
+    public Integer getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(String schedule) {
+    public void setSchedule(Integer schedule) {
         this.schedule = schedule;
     }
 

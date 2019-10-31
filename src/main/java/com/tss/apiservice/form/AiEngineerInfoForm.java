@@ -34,7 +34,7 @@ public class AiEngineerInfoForm {
     /**
      * 使用进度
      */
-    private String schedule;
+    private Integer schedule;
 
     private List<OsdBindInfoForm> osdBindInfoFormList;
     private List<PermitBindInfoForm> permitBindInfoFormList;
