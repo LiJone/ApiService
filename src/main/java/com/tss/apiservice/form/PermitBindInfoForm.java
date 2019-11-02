@@ -2,6 +2,9 @@ package com.tss.apiservice.form;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
  * @author 壮Jone
  */
@@ -10,6 +13,7 @@ public class PermitBindInfoForm {
     /**
      * 许可证编号
      */
+    @NotBlank(message = "許可證編號不能為空")
     private String permitNum;
 
     /**

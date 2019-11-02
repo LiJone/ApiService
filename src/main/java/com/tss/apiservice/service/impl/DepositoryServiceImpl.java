@@ -147,7 +147,7 @@ public class DepositoryServiceImpl implements DepositoryService {
                         statisticDTO.setOsdName(depositoryPOS.get(0).getOsdname());
                         statisticDTO.setTypeName(typeId.get(0).getToolname());
                         statisticDTO.setCount(typeId.size());
-                        count = typeId.size();
+                        count = count + typeId.size();
                         dtoList.add(statisticDTO);
                     }
                     map = new HashMap<>();
