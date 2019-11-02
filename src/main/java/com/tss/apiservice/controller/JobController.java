@@ -27,7 +27,7 @@ public class JobController {
         try {
             returnMsg = jobService.addJobMsg(userid, jobDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程錄入異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程錄入失敗...");
             logger.info("/app/job/addJobMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ public class JobController {
         try {
             returnMsg = jobService.getJobList(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程列表異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/job/getJobList 异常");
             e.printStackTrace();
         }
@@ -55,7 +55,7 @@ public class JobController {
         try {
             returnMsg = jobService.updateJobMsg(userid, jobDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程修改異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程修改失敗...");
             logger.info("/app/job/updateJobMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -69,7 +69,7 @@ public class JobController {
         try {
             returnMsg = jobService.setJobObjLeavtime(userid, safeobjsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "授權時間異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "授權時間失敗...");
             logger.info("/app/job/setJobObjLeavtime/{userid} 异常");
             e.printStackTrace();
         }
@@ -83,7 +83,7 @@ public class JobController {
         try {
             returnMsg = jobService.deleteJobMsg(userid, jobDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程刪除異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程刪除失敗...");
             logger.info("/app/job/deleteJobMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -97,7 +97,7 @@ public class JobController {
             try {
                 returnMsg = jobService.setJobRunStatus(userid, jobDto);
             } catch (Exception e) {
-                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程狀態修改異常...");
+                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程狀態修改失敗...");
                 logger.info("/app/job/setJobRunStatus /{userid} 异常");
                 e.printStackTrace();
             }

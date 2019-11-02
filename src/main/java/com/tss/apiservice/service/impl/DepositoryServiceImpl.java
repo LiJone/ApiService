@@ -132,12 +132,13 @@ public class DepositoryServiceImpl implements DepositoryService {
             List<DepositoryPO> depositoryPoList = depositoryMapper.selectStatisticListByMap(map);
             Map<String, List<DepositoryPO>> collect = depositoryPoList.stream().collect(Collectors.groupingBy(DepositoryPO::getOsdid));
             ArrayList<Object> list = new ArrayList<>();
-            int allCount = 0;
+            int allRow = 0;
             for (String osdId : collect.keySet()) {
                 List<DepositoryPO> depositoryPOS = collect.get(osdId);
                 if (depositoryPOS != null && depositoryPOS.size() > 0) {
                     Map<Integer, List<DepositoryPO>> collect1 = depositoryPOS.stream().collect(Collectors.groupingBy(DepositoryPO::getTypeid));
                     List<DepositoryStatisticDTO> dtoList = new ArrayList<>();
+                    int count = 0;
                     for (List<DepositoryPO> typeId : collect1.values()) {
                         String[] s = typeId.get(0).getTime().split(" ");
                         DepositoryStatisticDTO statisticDTO = new DepositoryStatisticDTO();
@@ -146,18 +147,19 @@ public class DepositoryServiceImpl implements DepositoryService {
                         statisticDTO.setOsdName(depositoryPOS.get(0).getOsdname());
                         statisticDTO.setTypeName(typeId.get(0).getToolname());
                         statisticDTO.setCount(typeId.size());
+                        count = typeId.size();
                         dtoList.add(statisticDTO);
                     }
                     map = new HashMap<>();
                     map.put("statistic", dtoList);
-                    map.put("count", dtoList.size());
+                    map.put("count", count);
                     list.add(map);
-                    allCount = allCount + dtoList.size();
+                    allRow = allRow + count;
                 }
-                allCount = allCount + 1;
+                allRow = allRow + 1;
             }
             returnMsg.setCode(ReturnMsg.SUCCESS);
-            returnMsg.setMsgbox("" + allCount);
+            returnMsg.setMsgbox("" + allRow);
             returnMsg.setData(list);
         }
         return returnMsg;

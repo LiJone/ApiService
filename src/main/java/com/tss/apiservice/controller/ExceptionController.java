@@ -25,7 +25,7 @@ public class ExceptionController {
         try {
             returnMsg = exceptionSerive.getExceptionLog(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "異常日誌...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/exception/getExceptionLog 异常");
             e.printStackTrace();
         }

@@ -34,7 +34,7 @@ public class CommonCotroller {
         try {
             returnMsg = commonService.getBase64ByPath(filePath, filePathTmp, fileName);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取文件數據異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據......");
             logger.info("/app/common/getBase64ByPath 异常");
             e.printStackTrace();
         }
@@ -48,7 +48,7 @@ public class CommonCotroller {
         try {
             returnMsg = commonService.getThumbnailImage(filePath, filePathTmp, fileName);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取文件數據異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據......");
             logger.info("/app/common/getThumbnailImage 异常");
             e.printStackTrace();
         }

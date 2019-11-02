@@ -27,7 +27,7 @@ public class ReportController {
         try {
             returnMsg = reportService.getAttendanceCollect(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取員工考勤匯總異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/report/getAttendanceCollect/{userid} 异常");
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ public class ReportController {
         try {
             returnMsg = reportService.getOneStaffAttendance(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取員工考勤異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/report /getOneStaffAttendance/{userid} 异常");
             e.printStackTrace();
         }

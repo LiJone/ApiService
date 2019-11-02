@@ -30,7 +30,7 @@ public class DepositoryController {
         try {
             returnMsg = depositoryService.getDepositoryMsgList(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取倉庫列表異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據......");
             logger.info("/app/depository/getDepositoryMsgList/{userid} 异常");
             e.printStackTrace();
         }
@@ -44,7 +44,7 @@ public class DepositoryController {
         try {
             returnMsg = depositoryService.getDepositoryStatisticMsgList(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取倉庫統計列表異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據......");
             logger.info("/app/depository/getDepositoryStatisticMsgList/{userid} 异常");
             e.printStackTrace();
         }

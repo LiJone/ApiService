@@ -33,6 +33,10 @@ public class ToolsController {
     @ResponseBody
     public ReturnMsg addToolsMsg(@PathVariable("userid") String userid, @RequestBody ToolsDto toolsDto) {
         ReturnMsg returnMsg = null;
+        if (toolsDto.getTypeid() == null) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具類型id為空");
+            return returnMsg;
+        }
         //证件表名字
         StringBuilder fileNameStr = new StringBuilder();
         //证件表路径
@@ -40,14 +44,14 @@ public class ToolsController {
         String thumbnailPath;
         StringBuilder thumbnailHeadNameSb = new StringBuilder();
         boolean status = true;
-        Map map = null;
-        String fileAllPath = null;
+        Map map;
+        String fileAllPath;
         try {
             //保存文件
             List filesDataArr = toolsDto.getFilesDataArr();
             if (filesDataArr != null && filesDataArr.size() > 0) {
-                for (int i = 0; i < filesDataArr.size(); i++) {
-                    map = (HashMap) filesDataArr.get(i);
+                for (Object o : filesDataArr) {
+                    map = (HashMap) o;
                     if (!StringUtils.isEmpty(map.get("base64").toString()) && !StringUtils.isEmpty(map.get("type").toString())) {
                         fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
                         String[] split = fileAllPath.split("\\.");
@@ -72,7 +76,7 @@ public class ToolsController {
                 returnMsg = toolsService.addToolsMsg(userid, toolsDto, filePathStr, thumbnailHeadNameSb.toString());
             }
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具添加異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具添加失敗...");
             logger.info("/app/tools/addToolsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -86,11 +90,11 @@ public class ToolsController {
     @RequestMapping(value = "/app/tools/getToolsMsgList", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getToolsMsgList(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = toolsService.getToolsMsgList(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取工具列表異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/tools/getToolsMsgList/{userid} 异常");
             e.printStackTrace();
         }
@@ -100,11 +104,11 @@ public class ToolsController {
     @RequestMapping(value = "/app/tools/deleteToolsMsg/{userid}", method = RequestMethod.DELETE)
     @ResponseBody
     public ReturnMsg deleteToolsMsg(@PathVariable("userid") String userid, @RequestBody ToolsDto toolsDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = toolsService.deleteToolsMsg(userid, toolsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具刪除異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具刪除失敗...");
             logger.info("/app/tools/deleteToolsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -115,6 +119,10 @@ public class ToolsController {
     @ResponseBody
     public ReturnMsg updateToolsMsg(@PathVariable("userid") String userid, @RequestBody ToolsDto toolsDto) {
         ReturnMsg returnMsg = null;
+        if (toolsDto.getTypeid() == null) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具類型id為空");
+            return returnMsg;
+        }
         //证件表名字
         StringBuilder fileNameStr = new StringBuilder();
         //证件表路径
@@ -122,15 +130,15 @@ public class ToolsController {
         String thumbnailPath;
         StringBuilder thumbnailHeadNameSb = new StringBuilder();
         boolean status = true;
-        Map map = null;
-        String fileAllPath = null;
+        Map map;
+        String fileAllPath;
         try {
 
             //保存文件
             List filesDataArr = toolsDto.getFilesDataArr();
             if (filesDataArr != null && filesDataArr.size() > 0) {
-                for (int i = 0; i < filesDataArr.size(); i++) {
-                    map = (HashMap) filesDataArr.get(i);
+                for (Object o : filesDataArr) {
+                    map = (HashMap) o;
                     if (!StringUtils.isEmpty(map.get("base64").toString()) && !StringUtils.isEmpty(map.get("type").toString())) {
                         fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
                         String[] split = fileAllPath.split("\\.");
@@ -155,7 +163,7 @@ public class ToolsController {
                 returnMsg = toolsService.updateToolsMsg(userid, toolsDto, filePathStr, thumbnailHeadNameSb.toString());
             }
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具修改異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具修改失敗...");
             logger.info("/app/tools/updateToolsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -169,11 +177,11 @@ public class ToolsController {
     @RequestMapping(value = "/app/tools/getToolsMsg" , method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getToolsMsg(HttpServletRequest request){
-        ReturnMsg returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = toolsService.getToolsMsg(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取工具異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/tools/getToolsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -183,11 +191,11 @@ public class ToolsController {
     @RequestMapping(value = "/app/tools/getToolType" , method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getToolType(HttpServletRequest request){
-        ReturnMsg returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = toolsService.getToolType(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取工具類型異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/tools/getToolType/{userid} 异常");
             e.printStackTrace();
         }

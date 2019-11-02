@@ -29,11 +29,13 @@ public class AiEngineerInfoController {
         ReturnMsg returnMsg;
         try {
             returnMsg = aiEngineerInfoService.addEngineerMsg(userid, aiEngineerInfoForm);
-        } catch (Exception e) {
+        } catch (NullPointerException n) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "數據庫參數存在空值");
+        }  catch (Exception e) {
             if (e.getMessage().contains("已綁定") || e.getMessage().contains("已存在")) {
-                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程錄入異常..." + e.getMessage());
+                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程錄入失敗..." + e.getMessage());
             } else {
-                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程錄入異常...");
+                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程錄入失敗...");
             }
             logger.info("/app/engineer/addEngineerMsg/{userid} 异常{}" + e.getMessage(), e);
         }
@@ -46,8 +48,10 @@ public class AiEngineerInfoController {
         ReturnMsg returnMsg;
         try {
             returnMsg = aiEngineerInfoService.getEngineerList(request);
-        } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程列表異常...");
+        } catch (NullPointerException n) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "數據庫參數存在空值");
+        }  catch (Exception e) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/engineer/getEngineerList 异常" + e.getMessage(), e);
         }
         return returnMsg;
@@ -59,11 +63,14 @@ public class AiEngineerInfoController {
         ReturnMsg returnMsg;
         try {
             returnMsg = aiEngineerInfoService.updateEngineerMsg(aiEngineerInfoForm);
+
+        } catch (NullPointerException n) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "數據庫參數存在空值");
         } catch (Exception e) {
             if (e.getMessage().contains("已綁定") || e.getMessage().contains("已存在")) {
-                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程修改異常..." + e.getMessage());
+                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程修改失敗..." + e.getMessage());
             } else {
-                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程修改異常...");
+                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程修改失敗...");
             }
             logger.info("/app/engineer/updateEngineerMsg/{userid} 异常" + e.getMessage(), e);
         }
@@ -76,8 +83,10 @@ public class AiEngineerInfoController {
         ReturnMsg returnMsg;
         try {
             returnMsg = aiEngineerInfoService.deleteEngineerMsg(jobNum);
-        } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程刪除異常...");
+        } catch (NullPointerException n) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "數據庫參數存在空值");
+        }  catch (Exception e) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程刪除失敗...");
             logger.info("/app/engineer/deleteEngineerMsg/{userid} 异常" + e.getMessage(), e);
         }
         return returnMsg;
@@ -89,8 +98,10 @@ public class AiEngineerInfoController {
         ReturnMsg returnMsg = null;
         try {
             returnMsg = aiEngineerInfoService.setJobRunStatus(jobNum);
-        } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程狀態修改異常...");
+        } catch (NullPointerException n) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "數據庫參數存在空值");
+        }  catch (Exception e) {
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "智能工程狀態修改失敗...");
             logger.info("/app/engineer/setEngineerRunStatus /{jobNum} 异常");
             e.printStackTrace();
         }

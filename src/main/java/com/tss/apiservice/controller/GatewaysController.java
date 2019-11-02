@@ -27,7 +27,7 @@ public class GatewaysController {
         try {
             returnMsg = gatewaysService.addGateways(userid, gatewaysDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關錄入異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關錄入失敗...");
             logger.info("/app/tools/addGateWaysMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ public class GatewaysController {
         try {
             returnMsg = gatewaysService.getGateWaysMsgList(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取網關列表異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/gateWays/getGateWaysMsgList 异常");
             e.printStackTrace();
         }
@@ -55,7 +55,7 @@ public class GatewaysController {
         try {
             returnMsg = gatewaysService.reloadGateWay(number);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "重啟網關異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "重啟網關失敗...");
             logger.info("/app/gateWays/reloadGateWay 异常");
             e.printStackTrace();
         }
@@ -69,7 +69,7 @@ public class GatewaysController {
         try {
             returnMsg = gatewaysService.deleteGateWaysMsg(userid , gatewaysDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關刪除異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關刪除失敗...");
             logger.info("/app/gateWays/deleteGateWaysMsg 异常");
             e.printStackTrace();
         }
@@ -83,7 +83,7 @@ public class GatewaysController {
         try {
             returnMsg = gatewaysService.updateGateWaysMsg(userid , gatewaysDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關修改異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關修改失敗...");
             logger.info("/app/gateWays/updateGateWaysMsg 异常");
             e.printStackTrace();
         }
@@ -98,7 +98,7 @@ public class GatewaysController {
         try {
             returnMsg = gatewaysService.addGateWaysSetting(userid , gatewaysDto.getNumber(), gatewaysDto.getDistance());
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關設置異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關設置失敗...");
             logger.info("/app/gateWays/addGateWaysSetting 异常");
             e.printStackTrace();
         }
@@ -112,7 +112,7 @@ public class GatewaysController {
         try {
             returnMsg = gatewaysService.getGateWaysSetting(number);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "获取網關設置異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/gateWays/getGateWaysSetting 异常");
             e.printStackTrace();
         }

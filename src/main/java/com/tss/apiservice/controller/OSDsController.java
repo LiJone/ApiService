@@ -28,7 +28,7 @@ public class OSDsController {
         try {
             returnMsg = osdInfosService.addOSDinfos(userid, osDsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "OSD盒子錄入異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "OSD盒子錄入失敗...");
             logger.info("/app/tools/addOSDsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -42,7 +42,7 @@ public class OSDsController {
         try {
             returnMsg = osdInfosService.updateOSDsMsg(userid, osDsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "OSD盒子修改異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "OSD盒子修改失敗...");
             logger.info("/app/OSDs/updateOSDsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -55,7 +55,7 @@ public class OSDsController {
         try {
             returnMsg = osdInfosService.deleteOSDsMsg(userid, osDsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "OSD盒子刪除異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "OSD盒子刪除失敗...");
             logger.info("/app/OSDs/updateOSDsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -68,7 +68,7 @@ public class OSDsController {
         try {
             returnMsg = osdInfosService.getOSDsMsgList(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取OSD列表異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/OSDs/updateOSDsMsg/{userid} 异常");
             e.printStackTrace();
         }

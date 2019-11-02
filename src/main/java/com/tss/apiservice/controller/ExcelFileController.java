@@ -546,7 +546,7 @@ public class ExcelFileController {
                 String username = usersService.getUserNameById(Integer.valueOf(userid));
                 String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                 ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
-                int allCount = Integer.parseInt(returnMsg.getMsgbox());
+                int allRow = Integer.parseInt(returnMsg.getMsgbox());
                 String sheetName = "倉庫統計信息表格";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String date = sdf.format(new Date());
@@ -556,8 +556,9 @@ public class ExcelFileController {
                 int columnNumber = 6;
                 int[] columnWidth = {8, 20, 18, 18, 15, 8};
                 String[] columnName = {"No.", "日期", "倉庫編號", "倉庫名稱", "工具種類名稱", "數量"};
-                String[][] dataList = new String[allCount + 1][6];
+                String[][] dataList = new String[allRow + 1][6];
                 int number = 0;
+                int allCount = 0;
                 for (int i = 0; i < arrayList.size(); i++) {
                     HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
                     List<DepositoryStatisticDTO> dtoList = (List<DepositoryStatisticDTO>) retMap.get("statistic");
@@ -583,13 +584,14 @@ public class ExcelFileController {
                     dataList[number][3] = ("");
                     dataList[number][4] = ("");
                     dataList[number][5] = (count + "個");
+                    allCount = allCount + count;
                 }
-                dataList[allCount][0] = ("全倉統計");
-                dataList[allCount][1] = ("");
-                dataList[allCount][2] = ("");
-                dataList[allCount][3] = ("");
-                dataList[allCount][4] = ("");
-                dataList[allCount][5] = ((allCount - 1) + "個");
+                dataList[allRow][0] = ("全倉統計");
+                dataList[allRow][1] = ("");
+                dataList[allRow][2] = ("");
+                dataList[allRow][3] = ("");
+                dataList[allRow][4] = ("");
+                dataList[allRow][5] = (allCount + "個");
                 ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取倉庫統計数据失败");

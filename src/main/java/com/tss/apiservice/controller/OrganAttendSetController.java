@@ -29,7 +29,7 @@ public class OrganAttendSetController {
             returnMsg = organAttendSetService.getOrganSetting(request);
         } catch (Exception e) {
             logger.info("/app/organ/getOrganSetting 异常");
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取機構設置異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             e.printStackTrace();
         }
         return returnMsg;
@@ -43,7 +43,7 @@ public class OrganAttendSetController {
             returnMsg = organAttendSetService.setOrganSetting(userid,attendSetDto);
         } catch (Exception e) {
             logger.info("/app/organ/setOrganSetting 异常");
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "設置機構設置異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "設置機構設置失敗...");
             e.printStackTrace();
         }
         return returnMsg;

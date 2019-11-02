@@ -97,7 +97,7 @@ public class StaffsController {
                 returnMsg = staffsService.addStaffsMsg(userid, staffsDto, hashMap, thumbnailHeadNameSb.toString(), headPath);
             }
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工添加異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工添加失敗...");
             logger.info("/app/staffs/addStaffsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -124,7 +124,7 @@ public class StaffsController {
         try {
             returnMsg = staffsService.getStaffsMsgList(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取員工列表異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/staffs/getStaffsMsgList/{userid} 异常");
             e.printStackTrace();
         }
@@ -138,7 +138,7 @@ public class StaffsController {
         try {
             returnMsg = staffsService.deleteStaffsMsg(userid, staffsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工刪除異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工刪除失敗...");
             logger.info("/app/staffs/deleteStaffsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -206,7 +206,7 @@ public class StaffsController {
                 returnMsg = staffsService.updateStaffsMsg(userid, staffsDto, hashMap, thumbnailHeadNameSb.toString(), headPath);
             }
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工修改異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工修改失敗...");
             logger.info("/app/staffs/updateStaffsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -234,7 +234,7 @@ public class StaffsController {
         try {
             returnMsg = staffsService.getStaffsPermitsType(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取員工異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/staffs/getStaffsPermitsType/{userid} 异常");
             e.printStackTrace();
         }
@@ -248,7 +248,7 @@ public class StaffsController {
         try {
             returnMsg = staffsService.getStaffsMsg(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取員工異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/staffs/getStaffsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -263,7 +263,7 @@ public class StaffsController {
         try {
             returnMsg = staffsService.getCertType(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取證件類型異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/staffs/getCerType/{userid} 异常");
             e.printStackTrace();
         }
@@ -277,7 +277,7 @@ public class StaffsController {
         try {
             returnMsg = staffsService.getCpStaffs(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取員工異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/staffs/getCpStaffs/{userid} 异常");
             e.printStackTrace();
         }

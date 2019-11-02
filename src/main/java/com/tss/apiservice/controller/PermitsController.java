@@ -71,7 +71,7 @@ public class PermitsController {
                 returnMsg = permitsService.addPermits(userid, permitsDto, filePathStr, thumbnailHeadNameSb.toString());
             }
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證錄入異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證錄入失敗...");
             logger.info("/app/permits/addPermitsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -89,7 +89,7 @@ public class PermitsController {
         try {
             returnMsg = permitsService.getPermitsMsgList(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "獲取許可證列表異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/permits/getPermitsMsgList/{userid} 异常");
             e.printStackTrace();
         }
@@ -103,7 +103,7 @@ public class PermitsController {
         try {
             returnMsg = permitsService.deletePermitsMsg(userid, permitsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證刪除異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證刪除失敗...");
             logger.info("/app/permits/deletePermitsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -153,7 +153,7 @@ public class PermitsController {
                 returnMsg = permitsService.updatePermitsMsg(userid, permitsDto, filePathStr, thumbnailHeadNameSb.toString());
             }
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證修改異常...");
+            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證修改失敗...");
             logger.info("/app/permits/updatePermitsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -171,7 +171,7 @@ public class PermitsController {
         try {
             returnMsg = permitsService.getPermitsMsg(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取許可證異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/permits/getPermitsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -185,7 +185,7 @@ public class PermitsController {
         try {
             returnMsg = permitsService.getPermitType(request);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "獲取許可證類型異常...");
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/permits/getPermitType/{userid} 异常");
             e.printStackTrace();
         }
