@@ -215,7 +215,7 @@ public class ToolsServiceImpl implements ToolsService {
                     toolsPo.setImagepath(filePathStr);
                     toolsPo.setImagename(fileNameStr);
                     toolsPo.setValidity(toolsDto.getValiDity());
-
+                    toolsPo.setTypeid(toolsDto.getTypeid());
                     toolsPo.setOrgid(orgid);
                     toolsPoMapper.insertSelective(toolsPo);
                     returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
