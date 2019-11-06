@@ -57,8 +57,8 @@ public class GatewaysServiceImpl implements GatewaysService {
 
     @Override
     @Transactional
-    public ReturnMsg<Object> addGateways(String userid, GatewaysDto gatewaysDto) {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+    public ReturnMsg addGateways(String userid, GatewaysDto gatewaysDto) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(gatewaysDto.getNumber()) ||
                 StringUtils.isEmpty(gatewaysDto.getType()) || StringUtils.isEmpty(gatewaysDto.getName())) {
@@ -98,7 +98,7 @@ public class GatewaysServiceImpl implements GatewaysService {
 
     @Override
     public ReturnMsg getGateWaysMsgList(HttpServletRequest request) throws IOException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String pageSize = request.getParameter("pageSize");
         String currentPage = request.getParameter("currentPage");
@@ -179,7 +179,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     @Override
     @Transactional
     public ReturnMsg deleteGateWaysMsg(String userid, GatewaysDto gatewaysDto) {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
         if (StringUtils.isEmpty(gatewaysDto.getNumber()) || StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
@@ -198,7 +198,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     @Override
     @Transactional
     public ReturnMsg updateGateWaysMsg(String userid, GatewaysDto gatewaysDto) {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(gatewaysDto.getNumber()) ||
                 StringUtils.isEmpty(gatewaysDto.getType()) || StringUtils.isEmpty(gatewaysDto.getName())) {
             returnMsg.setMsgbox("參數異常...");
@@ -232,7 +232,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     @Override
     @Transactional
     public ReturnMsg addGateWaysSetting(String userid, String number, Integer distance) throws IOException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(number) || StringUtils.isEmpty(distance)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -264,8 +264,8 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    public ReturnMsg<Object> reloadGateWay(String number) throws IOException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+    public ReturnMsg reloadGateWay(String number) throws IOException {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(number)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -292,8 +292,8 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    public ReturnMsg<Object> getGateWaysSetting(String number) throws IOException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+    public ReturnMsg getGateWaysSetting(String number) throws IOException {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(number)) {
             returnMsg.setMsgbox("參數異常...");
         } else {

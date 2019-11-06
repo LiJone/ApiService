@@ -33,6 +33,7 @@
         select
         <include refid="Base_Column_List_type"/>
         from certtype
+        order by abbreviation
     </select>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

@@ -67,10 +67,10 @@ public class ReportServiceImpl implements ReportService {
 
             ArrayList<Object> arrayList = new ArrayList<>();
             HashMap<Object, Object> retMap = null;
-            for (int i = 0; i < staffsPos.size(); i++) {
+            for (StaffsPo staffsPo : staffsPos) {
                 retMap = new HashMap<>();
-                map.put("staffid", staffsPos.get(i).getStaffid());
-                retMap.put("staffsPo", staffsPos.get(i));
+                map.put("staffid", staffsPo.getStaffid());
+                retMap.put("staffsPo", staffsPo);
                 Double wordDay = (attendancePoMapper.selectCountAmontimeIsNotNull(map) + attendancePoMapper.selectCountPmontimeIsNotNull(map)) * 0.5;
                 retMap.put("workDay", wordDay);
                 //查询所有的考勤记录
@@ -100,10 +100,10 @@ public class ReportServiceImpl implements ReportService {
                 }
                 BigDecimal b = new BigDecimal(workAddSalary);
                 if (excel != null) {
-                    workAddSalary = b.setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue();
+                    workAddSalary = b.setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue();
                     retMap.put("workAddSalary", workAddSalary);
                 } else {
-                    retMap.put("workAddSalary", b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                    retMap.put("workAddSalary", b.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
                 }
                 retMap.put("workAddHour", workAddHour);
                 arrayList.add(retMap);
@@ -141,11 +141,11 @@ public class ReportServiceImpl implements ReportService {
 
             List<AttendancePo> attendancePos = attendancePoMapper.selectListByMap(map);
             ArrayList<Object> arrayList = new ArrayList<>();
-            for (int i = 0; i < attendancePos.size(); i++) {
+            for (AttendancePo po : attendancePos) {
                 //循环每一天，计算出天数
                 Double workDay = 0.0;
                 Double workAddTimes = 0.0;
-                AttendancePo attendancePo = attendancePos.get(i);
+                AttendancePo attendancePo = po;
                 //获取当前考勤该员工加班信息
                 List<AttendOTRecordPo> attendOTRecordPos = attendancePoMapper.selectWorkAddInfo(attendancePo.getId());
                 map = new HashMap<>(6);
@@ -172,10 +172,10 @@ public class ReportServiceImpl implements ReportService {
                 }
                 BigDecimal b = new BigDecimal(realSalary);
                 if (excel != null) {
-                    realSalary = b.setScale(3,BigDecimal.ROUND_HALF_UP).doubleValue();
+                    realSalary = b.setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue();
                     map.put("realSalary", realSalary);
                 } else {
-                    map.put("realSalary", b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+                    map.put("realSalary", b.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
                 }
                 map.put("workDay", workDay);
                 map.put("workAddDay", workAddTimes);

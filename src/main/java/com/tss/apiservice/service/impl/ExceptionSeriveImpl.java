@@ -80,30 +80,30 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
                 map.put("pagesize", pagesize);
             }
             List<AbnormalExceptionVo> abnormalPos = abnormalPoMapper.selectByHashMap(map);
-            StaffsPo staffsPo = null;
-            ToolsPo toolsPo = null;
+            StaffsPo staffsPo;
+            ToolsPo toolsPo;
             PermitsPo permitsPo;
-            String number = null;
+            String number;
             ArrayList<Object> list = new ArrayList<>();
-            for (int i = 0 ; i < abnormalPos.size() ; i++){
+            for (AbnormalExceptionVo abnormalPo : abnormalPos) {
                 map = new HashMap<>();
-                map.put("abnormalPo" ,abnormalPos.get(i) );
-                number = abnormalPos.get(i).getNumber();
-                if (abnormalPos.get(i).getType() == 0){
+                map.put("abnormalPo", abnormalPo);
+                number = abnormalPo.getNumber();
+                if (abnormalPo.getType() == 0) {
                     permitsPo = permitsPoMapper.selectByPrimaryKey(number);
                     if (permitsPo != null) {
-                        map.put("objName" , permitsPo.getName());
+                        map.put("objName", permitsPo.getName());
                     }
-                }else if(abnormalPos.get(i).getType() == 1){
+                } else if (abnormalPo.getType() == 1) {
                     staffsPo = staffsPoMapper.selectByPrimaryKey(number);
                     if (staffsPo != null) {
-                        map.put("objName" , staffsPo.getEnname());
-                        map.put("objNameCh" , staffsPo.getChname());
+                        map.put("objName", staffsPo.getEnname());
+                        map.put("objNameCh", staffsPo.getChname());
                     }
-                }else if(abnormalPos.get(i).getType() == 2){
+                } else if (abnormalPo.getType() == 2) {
                     toolsPo = toolsPoMapper.selectByPrimaryKey(number);
                     if (toolsPo != null) {
-                        map.put("objName" , toolsPo.getName());
+                        map.put("objName", toolsPo.getName());
                     }
                 }
                 list.add(map);

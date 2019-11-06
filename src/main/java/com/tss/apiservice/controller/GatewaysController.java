@@ -23,7 +23,7 @@ public class GatewaysController {
     @RequestMapping(value = "/app/gateWays/addGateWaysMsg/{userid}", method = RequestMethod.POST)
     @ResponseBody
     public ReturnMsg addGateWaysMsg(@PathVariable("userid") String userid, @RequestBody GatewaysDto gatewaysDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = gatewaysService.addGateways(userid, gatewaysDto);
         } catch (Exception e) {
@@ -37,7 +37,7 @@ public class GatewaysController {
     @RequestMapping(value = "/app/gateWays/getGateWaysMsgList", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getGateWaysMsgList(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = gatewaysService.getGateWaysMsgList(request);
         } catch (Exception e) {
@@ -51,7 +51,7 @@ public class GatewaysController {
     @RequestMapping(value = "/app/gateWays/reloadGateWay/{number}", method = RequestMethod.POST)
     @ResponseBody
     public ReturnMsg reloadGateWay(@PathVariable("number") String number) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = gatewaysService.reloadGateWay(number);
         } catch (Exception e) {
@@ -65,7 +65,7 @@ public class GatewaysController {
     @RequestMapping(value = "/app/gateWays/deleteGateWaysMsg/{userid}", method = RequestMethod.DELETE)
     @ResponseBody
     public ReturnMsg deleteGateWaysMsg(@PathVariable("userid") String userid , @RequestBody GatewaysDto gatewaysDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = gatewaysService.deleteGateWaysMsg(userid , gatewaysDto);
         } catch (Exception e) {
@@ -79,7 +79,7 @@ public class GatewaysController {
     @RequestMapping(value = "/app/gateWays/updateGateWaysMsg/{userid}", method = RequestMethod.PUT)
     @ResponseBody
     public ReturnMsg updateGateWaysMsg(@PathVariable("userid") String userid , @RequestBody GatewaysDto gatewaysDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = gatewaysService.updateGateWaysMsg(userid , gatewaysDto);
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class GatewaysController {
     @ResponseBody
     public ReturnMsg addGateWaysSetting(@PathVariable("userid") String userid ,
                                         @RequestBody GatewaysDto gatewaysDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = gatewaysService.addGateWaysSetting(userid , gatewaysDto.getNumber(), gatewaysDto.getDistance());
         } catch (Exception e) {
@@ -108,7 +108,7 @@ public class GatewaysController {
     @RequestMapping(value = "/app/gateWays/getGateWaysSetting/{number}", method = RequestMethod.POST)
     @ResponseBody
     public ReturnMsg getGateWaysSetting(@PathVariable("number") String number ) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg<Object> returnMsg;
         try {
             returnMsg = gatewaysService.getGateWaysSetting(number);
         } catch (Exception e) {

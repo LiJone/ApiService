@@ -26,7 +26,7 @@ public class DepositoryController {
     @RequestMapping(value = "/getDepositoryMsgList", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getDepositoryMsgList(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg<Object> returnMsg;
         try {
             returnMsg = depositoryService.getDepositoryMsgList(request);
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class DepositoryController {
     @RequestMapping(value = "/getDepositoryStatisticMsgList", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getDepositoryStatisticMsgList(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg<Object> returnMsg;
         try {
             returnMsg = depositoryService.getDepositoryStatisticMsgList(request);
         } catch (Exception e) {

@@ -21,7 +21,7 @@ public class ExceptionController {
     @RequestMapping(value = "/app/exception/getExceptionLog", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getExceptionLog(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = exceptionSerive.getExceptionLog(request);
         } catch (Exception e) {

@@ -357,7 +357,7 @@
             and jobname like '%${jobName}%'
         </if>
         <if test="jobNum != null">
-            and jobnum = #{jobNum}
+            and jobnum like '%${jobNum}%'
         </if>
         and orgid = #{orgId}
         <if test="startrow != null and pagesize != null">

@@ -167,5 +167,6 @@
         select
         <include refid="Base_Column_List_type"/>
         from permittype
+        order by abbreviation
     </select>
 </mapper>

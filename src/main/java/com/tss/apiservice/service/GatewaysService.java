@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public interface GatewaysService {
 
-    ReturnMsg<Object> addGateways(String userid, GatewaysDto gatewaysDto);
+    ReturnMsg addGateways(String userid, GatewaysDto gatewaysDto);
 
     ReturnMsg getGateWaysMsgList(HttpServletRequest request) throws IOException;
 
@@ -20,7 +20,7 @@ public interface GatewaysService {
 
     ReturnMsg addGateWaysSetting(String userid , String number, Integer distance) throws IOException;
 
-    ReturnMsg<Object> reloadGateWay(String number) throws IOException;
+    ReturnMsg reloadGateWay(String number) throws IOException;
 
-    ReturnMsg<Object> getGateWaysSetting(String number) throws IOException;
+    ReturnMsg getGateWaysSetting(String number) throws IOException;
 }
