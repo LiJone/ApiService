@@ -23,4 +23,6 @@ public interface PermitsPoMapper {
     int updateByPrimaryKeySelective(PermitsPo record);
 
     List<PermitTypePO> getPermitType();
+
+    List<Integer> getAllNumByOrgId(String orgid);
 }

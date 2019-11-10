@@ -37,6 +37,16 @@ public class PermitsDto implements Serializable {
     private String endDate;
 
     /**
+     * cp类型
+     */
+    private Integer positionid;
+
+    /**
+     * 吊运绳子最低承受重量
+     */
+    private Float ropeweight;
+
+    /**
      * 标签
      */
     private List<Map<String,String>> tag;
@@ -45,6 +55,22 @@ public class PermitsDto implements Serializable {
      * 许可证图片
      */
     private List<Map<String,String>> filesDataArr;
+
+    public Integer getPositionid() {
+        return positionid;
+    }
+
+    public void setPositionid(Integer positionid) {
+        this.positionid = positionid;
+    }
+
+    public Float getRopeweight() {
+        return ropeweight;
+    }
+
+    public void setRopeweight(Float ropeweight) {
+        this.ropeweight = ropeweight;
+    }
 
     public Integer getTypeid() {
         return typeid;
@@ -109,11 +135,13 @@ public class PermitsDto implements Serializable {
     @Override
     public String toString() {
         return "PermitsDto{" +
-                ", permitid='" + permitid + '\'' +
+                "permitid='" + permitid + '\'' +
                 ", name='" + name + '\'' +
                 ", typeid=" + typeid +
                 ", startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
+                ", positionid=" + positionid +
+                ", ropeweight=" + ropeweight +
                 ", tag=" + tag +
                 ", filesDataArr=" + filesDataArr +
                 '}';

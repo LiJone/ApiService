@@ -59,7 +59,7 @@ public class StaffsController {
                         String thumbnail = split[0] + THUMBNAIL;
                         thumbnailPath = thumbnail + "." + split[1];
                         //生成缩略图
-                        Thumbnails.of(filePath + headImagePath).size(300, 300).toFile(filePath + thumbnailPath);
+                        Thumbnails.of(filePath + headImagePath).scale(0.2f).toFile(filePath + thumbnailPath);
                         if ("".equals(headImagePath)) {
                             fileUploadStatus = false;
                             returnMsg.setMsgbox("頭像上傳失敗...");
@@ -169,7 +169,7 @@ public class StaffsController {
                         String thumbnail = split[0] + THUMBNAIL;
                         thumbnailPath = thumbnail + "." + split[1];
                         //生成缩略图
-                        Thumbnails.of(filePath + headImagePath).size(300, 300).toFile(filePath + thumbnailPath);
+                        Thumbnails.of(filePath + headImagePath).scale(0.2f).toFile(filePath + thumbnailPath);
                         if ("".equals(headImagePath)) {
                             fileUploadStatus = false;
                             returnMsg.setMsgbox("頭像上傳失敗...");
@@ -279,6 +279,20 @@ public class StaffsController {
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/staffs/getCpStaffs/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/staffs/getAllNum/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllNum(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = staffsService.getAllNum(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/staffs/getAllNum/{userid} 异常");
             e.printStackTrace();
         }
         return returnMsg;

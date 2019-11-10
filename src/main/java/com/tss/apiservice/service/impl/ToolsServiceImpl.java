@@ -477,4 +477,20 @@ public class ToolsServiceImpl implements ToolsService {
         List<ToolTypePO> arrayList = toolsPoMapper.getToolType();
         return new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
     }
+
+    @Override
+    public ReturnMsg getAllNum(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<Integer> allNum = toolsPoMapper.getAllNumByOrgId(orgid);
+            returnMsg.setData(allNum);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
 }

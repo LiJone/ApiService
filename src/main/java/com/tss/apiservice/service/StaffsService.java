@@ -27,4 +27,6 @@ public interface StaffsService {
     ReturnMsg getCertType(HttpServletRequest request);
 
     ReturnMsg getCpStaffs(HttpServletRequest request);
+
+    ReturnMsg getAllNum(String userid);
 }

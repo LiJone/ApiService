@@ -29,5 +29,7 @@ public interface StaffsPoMapper {
 
     List<CertTypePO> getCerType();
 
-    List<StaffsPo> selectCpListByOrgid(String orgid);
+    List<String> selectCpListByPositionTypeTd(String positionTypeId);
+
+    List<Integer> getAllNumByOrgId(String orgid);
 }

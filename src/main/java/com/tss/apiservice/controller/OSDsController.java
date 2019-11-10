@@ -74,4 +74,18 @@ public class OSDsController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/OSDs/getAllNum/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllNum(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = osdInfosService.getAllNum(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/OSDs/getAllNum/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

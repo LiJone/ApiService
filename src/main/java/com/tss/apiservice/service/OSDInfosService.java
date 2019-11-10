@@ -15,4 +15,5 @@ public interface OSDInfosService {
 
     ReturnMsg getOSDsMsgList(HttpServletRequest request);
 
+    ReturnMsg getAllNum(String userid);
 }

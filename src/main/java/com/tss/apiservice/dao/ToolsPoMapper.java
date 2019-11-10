@@ -21,4 +21,6 @@ public interface ToolsPoMapper {
     int updateByPrimaryKeySelective(ToolsPo record);
 
     List<ToolTypePO> getToolType();
+
+    List<Integer> getAllNumByOrgId(String orgid);
 }

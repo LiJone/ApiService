@@ -14,6 +14,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +55,7 @@ public class PermitsController {
                         String thumbnail = split[0] + THUMBNAIL;
                         thumbnailPath = thumbnail + "." + split[1];
                         //生成缩略图
-                        Thumbnails.of(filePath + fileAllPath).size(300, 300).toFile(filePath + thumbnailPath);
+                        Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
                         if ("".equals(fileAllPath)) {
                             status = false;
                             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "图片上传失敗...");
@@ -123,19 +125,19 @@ public class PermitsController {
         try {
             //保存文件
             boolean status = true;
-            String fileAllPath = null;
+            String fileAllPath;
             filesDataArr = permitsDto.getFilesDataArr();
-            Map map = null;
+            Map map;
             if (filesDataArr != null && filesDataArr.size() > 0) {
-                for (int i = 0; i < filesDataArr.size(); i++) {
-                    map = (HashMap) filesDataArr.get(i);
+                for (Object o : filesDataArr) {
+                    map = (HashMap) o;
                     if (!StringUtils.isEmpty(map.get("base64").toString()) && !StringUtils.isEmpty(map.get("type").toString())) {
                         fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
                         String[] split = fileAllPath.split("\\.");
                         String thumbnail = split[0] + THUMBNAIL;
                         thumbnailPath = thumbnail + "." + split[1];
                         //生成缩略图
-                        Thumbnails.of(filePath + fileAllPath).size(300, 300).toFile(filePath + thumbnailPath);
+                        Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
                         if ("".equals(fileAllPath)) {
                             status = false;
                             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "圖片上傳失敗...");
@@ -187,6 +189,20 @@ public class PermitsController {
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/permits/getPermitType/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/permits/getAllNum/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllNum(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = permitsService.getAllNum(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/permits/getAllNum/{userid} 异常");
             e.printStackTrace();
         }
         return returnMsg;

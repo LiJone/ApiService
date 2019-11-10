@@ -58,7 +58,7 @@ public class ToolsController {
                         String thumbnail = split[0] + THUMBNAIL;
                         thumbnailPath = thumbnail + "." + split[1];
                         //生成缩略图
-                        Thumbnails.of(filePath + fileAllPath).size(300, 300).toFile(filePath + thumbnailPath);
+                        Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
                         if ("".equals(fileAllPath)) {
                             status = false;
                             returnMsg.setMsgbox("圖片上傳失敗...");
@@ -145,7 +145,7 @@ public class ToolsController {
                         String thumbnail = split[0] + THUMBNAIL;
                         thumbnailPath = thumbnail + "." + split[1];
                         //生成缩略图
-                        Thumbnails.of(filePath + fileAllPath).size(300, 300).toFile(filePath + thumbnailPath);
+                        Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
                         if ("".equals(fileAllPath)) {
                             status = false;
                             returnMsg.setMsgbox("圖片上傳失敗...");
@@ -197,6 +197,20 @@ public class ToolsController {
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
             logger.info("/app/tools/getToolType/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/tools/getAllNum/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllNum(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = toolsService.getAllNum(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/tools/getAllNum/{userid} 异常");
             e.printStackTrace();
         }
         return returnMsg;

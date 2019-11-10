@@ -102,8 +102,8 @@ public class FilesUtils {
             logger.info("需要删除图片路径存在null值");
         }else{
             String[] split = fileName.split(";");
-            for (int i = 0; i < split.length; i++) {
-                deleteFile(filePath + split[i]);
+            for (String s : split) {
+                deleteFile(filePath + s);
             }
         }
     }

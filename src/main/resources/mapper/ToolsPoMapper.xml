@@ -157,4 +157,11 @@
         where toolid = #{toolid,jdbcType=VARCHAR}
     </update>
 
+    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select
+        toolid
+        from tools
+        where orgid = #{orgid,jdbcType=VARCHAR}
+        order by toolid
+    </select>
 </mapper>

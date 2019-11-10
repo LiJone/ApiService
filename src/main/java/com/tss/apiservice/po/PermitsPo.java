@@ -54,9 +54,35 @@ public class PermitsPo implements Serializable {
     private Integer type;
 
     /**
+     * cp类型
+     */
+    private Integer positionid;
+
+    /**
+     * 吊运绳子最低承受重量
+     */
+    private Float ropeweight;
+
+    /**
      * 机构id
      */
     private String orgid;
+
+    public Integer getPositionid() {
+        return positionid;
+    }
+
+    public void setPositionid(Integer positionid) {
+        this.positionid = positionid;
+    }
+
+    public Float getRopeweight() {
+        return ropeweight;
+    }
+
+    public void setRopeweight(Float ropeweight) {
+        this.ropeweight = ropeweight;
+    }
 
     public String getPermitid() {
         return permitid;
@@ -144,12 +170,14 @@ public class PermitsPo implements Serializable {
                 "permitid='" + permitid + '\'' +
                 ", name='" + name + '\'' +
                 ", typeid=" + typeid +
-                ", typename=" + typename +
+                ", typename='" + typename + '\'' +
                 ", startdate='" + startdate + '\'' +
                 ", enddate='" + enddate + '\'' +
                 ", filepath='" + filepath + '\'' +
                 ", filename='" + filename + '\'' +
                 ", type=" + type +
+                ", positionid='" + positionid + '\'' +
+                ", ropeweight=" + ropeweight +
                 ", orgid='" + orgid + '\'' +
                 '}';
     }

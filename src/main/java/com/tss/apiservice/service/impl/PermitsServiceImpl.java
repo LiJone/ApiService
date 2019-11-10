@@ -24,34 +24,34 @@ import java.util.*;
 public class PermitsServiceImpl implements PermitsService {
 
     @Autowired
-    PermitsPoMapper permitsPoMapper;
+    private PermitsPoMapper permitsPoMapper;
 
     @Autowired
-    TagInfosPoMapper tagInfosPoMapper;
+    private TagInfosPoMapper tagInfosPoMapper;
 
     @Value("${filePath}")
     private String filePath;
 
     @Autowired
-    EngineerinfoPoMapper engineerinfoPoMapper;
+    private EngineerinfoPoMapper engineerinfoPoMapper;
 
     @Autowired
-    SafeobjsPoMapper safeobjsPoMapper;
+    private SafeobjsPoMapper safeobjsPoMapper;
 
     @Autowired
-    ApiServiceMQImpl apiServiceMQ;
+    private ApiServiceMQImpl apiServiceMQ;
 
     @Autowired
-    UsersPoMapper usersPoMapper;
+    private UsersPoMapper usersPoMapper;
 
     @Autowired
-    AbnormalPoMapper abnormalPoMapper;
+    private AbnormalPoMapper abnormalPoMapper;
 
     @Autowired
-    StaffsPoMapper staffsPoMapper;
+    private StaffsPoMapper staffsPoMapper;
 
     @Autowired
-    ToolsPoMapper toolsPoMapper;
+    private ToolsPoMapper toolsPoMapper;
 
     @Override
     @Transactional
@@ -71,14 +71,14 @@ public class PermitsServiceImpl implements PermitsService {
                     returnMsg.setMsgbox("許可證名稱已存在...");
                 } else {
                     //标签插入
-                    TagInfosPo tagInfosPo = null;
+                    TagInfosPo tagInfosPo;
                     List<Map<String, String>> tag = permitsDto.getTag();
-                    List<TagInfosPo> tagInfosPoList = new ArrayList();
+                    List<TagInfosPo> tagInfosPoList = new ArrayList<>();
                     boolean tagExist = true;
-                    Map map = null;
-                    for (int i = 0; i < tag.size(); i++) {
+                    Map map;
+                    for (Map<String, String> stringStringMap : tag) {
                         tagInfosPo = new TagInfosPo();
-                        map = tag.get(i);
+                        map = stringStringMap;
                         tagInfosPo.setTagid(map.get("tagCode").toString());
                         tagInfosPo.setType(0);
                         tagInfosPo.setObjnum(permitsDto.getPermitid());
@@ -116,8 +116,8 @@ public class PermitsServiceImpl implements PermitsService {
                     }
                     if (tagExist) {
                         //循环添加标签信息
-                        for (int i = 0; i < tagInfosPoList.size(); i++) {
-                            tagInfosPoMapper.insertSelective(tagInfosPoList.get(i));
+                        for (TagInfosPo infosPo : tagInfosPoList) {
+                            tagInfosPoMapper.insertSelective(infosPo);
                         }
                         //许可表插入
                         PermitsPo permitsPo = new PermitsPo();
@@ -129,6 +129,8 @@ public class PermitsServiceImpl implements PermitsService {
                         permitsPo.setOrgid(orgid);
                         permitsPo.setFilepath(filePathStr);
                         permitsPo.setFilename(fileNameStr);
+                        permitsPo.setPositionid(permitsDto.getPositionid());
+                        permitsPo.setRopeweight(permitsDto.getRopeweight());
                         permitsPoMapper.insertSelective(permitsPo);
                         returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
                     }
@@ -200,17 +202,17 @@ public class PermitsServiceImpl implements PermitsService {
                 TagInfosPo tagInfosPo = null;
                 HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();
-                for (int i = 0; i < permitsPoList.size(); i++) {
+                for (PermitsPo permitsPo : permitsPoList) {
                     retMap = new HashMap<>();
                     tagInfosPo = new TagInfosPo();
                     tagInfosPo.setType(0);
-                    tagInfosPo.setObjnum(permitsPoList.get(i).getPermitid());
+                    tagInfosPo.setObjnum(permitsPo.getPermitid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
                     if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
                         retMap.put("permitsStatus", "證正常");
-                        String validity = permitsPoList.get(i).getEnddate();
+                        String validity = permitsPo.getEnddate();
                         Date d1 = formatter.parse(validity);
-                        if (d1.compareTo(new Date()) == -1) {
+                        if (d1.compareTo(new Date()) < 0) {
                             retMap.put("permitsStatus", "證過期");
                         }
                     } else {
@@ -221,7 +223,7 @@ public class PermitsServiceImpl implements PermitsService {
                         }
                     }
                     //再查找工具证件表
-                    retMap.put("permitsPo", permitsPoList.get(i));
+                    retMap.put("permitsPo", permitsPo);
                     retMap.put("tagInfosPos", tagInfosPos);
                     arrayList.add(retMap);
                 }
@@ -258,8 +260,8 @@ public class PermitsServiceImpl implements PermitsService {
                 tagInfosPo.setObjnum(permitsPo.getPermitid());
                 tagInfosPo.setType(0);
                 List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
-                for (int i = 0; i < tagInfosPos.size(); i++) {
-                    tagInfosPoMapper.deleteByPrimaryKey(tagInfosPos.get(i).getTagid());
+                for (TagInfosPo infosPo : tagInfosPos) {
+                    tagInfosPoMapper.deleteByPrimaryKey(infosPo.getTagid());
                 }
                 permitsPoMapper.deleteByPrimaryKey(permitsDto.getPermitid());
                 FilesUtils.deleteFile(permitsPo.getFilename(), filePath + permitsPo.getFilepath());
@@ -285,10 +287,8 @@ public class PermitsServiceImpl implements PermitsService {
     @Transactional
     public ReturnMsg updatePermitsMsg(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-
-        PermitsPo permitsPoOld = null;
-        List<TagInfosPo> tagInfosPosOld = null;
-
+        PermitsPo permitsPoOld;
+        List<TagInfosPo> tagInfosPosOld;
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(permitsDto.getPermitid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -298,9 +298,8 @@ public class PermitsServiceImpl implements PermitsService {
             permitsPoOld = permitsPoMapper.selectByPrimaryKey(permitsDto.getPermitid());
             if (permitsPoOld != null) {
                 //上传图片，删除标签，修改许可证
-                List filesDataArr = null;
                 //删除标签
-                TagInfosPo tagInfosPo = null;
+                TagInfosPo tagInfosPo;
                 tagInfosPo = new TagInfosPo();
                 tagInfosPo.setObjnum(permitsDto.getPermitid());
                 tagInfosPo.setType(0);
@@ -308,12 +307,12 @@ public class PermitsServiceImpl implements PermitsService {
                 tagInfosPoMapper.deleteByTagPo(tagInfosPo);
 
                 List<Map<String, String>> tag = permitsDto.getTag();
-                List<TagInfosPo> tagInfosPoList = new ArrayList();
+                List<TagInfosPo> tagInfosPoList = new ArrayList<>();
                 boolean tagExist = true;
-                Map map = null;
-                for (int i = 0; i < tag.size(); i++) {
+                Map map;
+                for (Map<String, String> stringStringMap : tag) {
                     tagInfosPo = new TagInfosPo();
-                    map = (HashMap) tag.get(i);
+                    map = stringStringMap;
                     tagInfosPo.setTagid(map.get("tagCode").toString());
                     TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
                     if (tagInfo == null) {
@@ -351,8 +350,8 @@ public class PermitsServiceImpl implements PermitsService {
                 }
 
                 if (tagExist) {
-                    for (int i = 0; i < tagInfosPoList.size(); i++) {
-                        tagInfosPoMapper.insertSelective(tagInfosPoList.get(i));
+                    for (TagInfosPo infosPo : tagInfosPoList) {
+                        tagInfosPoMapper.insertSelective(infosPo);
                     }
                     //修改许可证
                     PermitsPo permitsPo = new PermitsPo();
@@ -364,6 +363,8 @@ public class PermitsServiceImpl implements PermitsService {
                     permitsPo.setOrgid(orgid);
                     permitsPo.setFilepath(filePathStr);
                     permitsPo.setFilename(fileNameStr);
+                    permitsPo.setPositionid(permitsDto.getPositionid());
+                    permitsPo.setRopeweight(permitsDto.getRopeweight());
                     permitsPoMapper.updateByPrimaryKeySelective(permitsPo);
                     //删除旧的图片
                     returnMsg.setCode(ReturnMsg.SUCCESS);
@@ -371,10 +372,8 @@ public class PermitsServiceImpl implements PermitsService {
                 }
 
                 if (returnMsg.getCode() == ReturnMsg.SUCCESS) {
-                    //1.删除以前的文件
-                    if (permitsPoOld != null) {
-                        FilesUtils.deleteFile(permitsPoOld.getFilename(), filePath + permitsPoOld.getFilepath());
-                    }
+
+                    FilesUtils.deleteFile(permitsPoOld.getFilename(), filePath + permitsPoOld.getFilepath());
 
                     //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
                     SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid(), 0);
@@ -389,8 +388,8 @@ public class PermitsServiceImpl implements PermitsService {
                     }
                 } else if (returnMsg.getCode() == ReturnMsg.FAIL) {
                     //1.还原删除的标签表，员工证件表，删除上传的文件
-                    for (int i = 0; i < tagInfosPosOld.size(); i++) {
-                        tagInfosPoMapper.insertSelective(tagInfosPosOld.get(i));
+                    for (TagInfosPo infosPo : tagInfosPosOld) {
+                        tagInfosPoMapper.insertSelective(infosPo);
                     }
                 }
             } else {
@@ -478,5 +477,21 @@ public class PermitsServiceImpl implements PermitsService {
     public ReturnMsg getPermitType(HttpServletRequest request) {
         List<PermitTypePO> arrayList = permitsPoMapper.getPermitType();
         return new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
+    }
+
+    @Override
+    public ReturnMsg getAllNum(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<Integer> allNum = permitsPoMapper.getAllNumByOrgId(orgid);
+            returnMsg.setData(allNum);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
     }
 }

@@ -10,6 +10,8 @@
         <result column="filepath" jdbcType="VARCHAR" property="filepath"/>
         <result column="filename" jdbcType="VARCHAR" property="filename"/>
         <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="positionid" jdbcType="INTEGER" property="positionid"/>
+        <result column="ropeweight" jdbcType="FLOAT" property="ropeweight"/>
         <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
     </resultMap>
     <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.PermitTypePO">
@@ -18,7 +20,7 @@
         <result column="typename" jdbcType="VARCHAR" property="typename"/>
     </resultMap>
     <sql id="Base_Column_List">
-    permitid, name, typeid, startdate, enddate, filepath, filename, type, orgid
+    permitid, name, typeid, startdate, enddate, filepath, filename, type, positionid, ropeweight, orgid
   </sql>
 
     <sql id="Base_Column_List_type">
@@ -40,7 +42,7 @@
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
-        p.permitid, p.name, p.typeid, p.startdate, p.enddate, p.filepath, p.filename, p.type, p.orgid
+        p.permitid, p.name, p.typeid, p.startdate, p.enddate, p.filepath, p.filename, p.type, p.positionid, p.ropeweight p.orgid
         from permits p left join permittype c on p.typeid = c.id
         where 1 = 1
         <if test="name != null">
@@ -98,6 +100,12 @@
             <if test="type != null">
                 type,
             </if>
+            <if test="positionid != null">
+                positionid,
+            </if>
+            <if test="ropeweight != null">
+                ropeweight,
+            </if>
             <if test="orgid != null">
                 orgid,
             </if>
@@ -126,6 +134,12 @@
             </if>
             <if test="type != null">
                 #{type,jdbcType=INTEGER},
+            </if>
+            <if test="positionid != null">
+                #{positionid,jdbcType=INTEGER},
+            </if>
+            <if test="ropeweight != null">
+                #{ropeweight,jdbcType=FLOAT},
             </if>
             <if test="orgid != null">
                 #{orgid,jdbcType=VARCHAR},
@@ -156,6 +170,12 @@
             <if test="type != null">
                 type = #{type,jdbcType=INTEGER},
             </if>
+            <if test="positionid != null">
+                positionid = #{positionid,jdbcType=VARCHAR},
+            </if>
+            <if test="ropeweight != null">
+                ropeweight = #{ropeweight,jdbcType=FLOAT},
+            </if>
             <if test="orgid != null">
                 orgid = #{orgid,jdbcType=VARCHAR},
             </if>
@@ -168,5 +188,13 @@
         <include refid="Base_Column_List_type"/>
         from permittype
         order by abbreviation
+    </select>
+
+    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select
+        permitid
+        from permits
+        where orgid = #{orgid,jdbcType=VARCHAR}
+        order by permitid
     </select>
 </mapper>

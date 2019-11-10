@@ -762,22 +762,52 @@ public class StaffsServiceImpl implements StaffsService {
 
     @Override
     public ReturnMsg getCpStaffs(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
+        String positionTypeId = request.getParameter("positionTypeId");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
-            List<StaffsPo> staffsPos = staffsPoMapper.selectCpListByOrgid(orgid);
+            List<String> ids = staffsPoMapper.selectCpListByPositionTypeTd(positionTypeId);
+            List<Integer> typeIds = new ArrayList<>();
+            for (String id: ids) {
+                String[] split = id.split(",");
+                for (String s : split) {
+                    typeIds.add(Integer.valueOf(s));
+                }
+            }
+            List<StaffsPo> staffsPos = staffsPoMapper.selectListByOrgid(orgid);
             List<StaffsPo> staffsPoList = new ArrayList<>();
             for (StaffsPo staffsPo : staffsPos) {
-                Integer count =  aiEngineerInfoMapper.getCpCountByCpNum(staffsPo.getStaffid());
-                if (count == null || count <= 3) {
-                    staffsPoList.add(staffsPo);
+                List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffsPo.getStaffid());
+                for (StaffscertPo staffscertPo : staffscertPos) {
+                    if (typeIds.contains(staffscertPo.getTypeid())) {
+                        Integer count =  aiEngineerInfoMapper.getCpCountByCpNum(staffsPo.getStaffid());
+                        if (count == null || count <= 3) {
+                            staffsPoList.add(staffsPo);
+                        }
+                    }
                 }
             }
             returnMsg.setData(staffsPoList);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getAllNum(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<Integer> allNum = staffsPoMapper.getAllNumByOrgId(orgid);
+            returnMsg.setData(allNum);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
         }

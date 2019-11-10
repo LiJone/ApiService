@@ -19,4 +19,5 @@ public interface OSDInfosPoMapper {
 
     int updateByPrimaryKeySelective(OSDInfosPo record);
 
+    List<Integer> getAllNumByOrgId(String orgid);
 }

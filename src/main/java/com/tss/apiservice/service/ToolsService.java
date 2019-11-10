@@ -20,4 +20,6 @@ public interface ToolsService {
     ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException;
 
     ReturnMsg getToolType(HttpServletRequest request);
+
+    ReturnMsg getAllNum(String userid);
 }

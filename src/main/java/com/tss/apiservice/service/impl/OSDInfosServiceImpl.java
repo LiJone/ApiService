@@ -22,13 +22,13 @@ import java.util.List;
 public class OSDInfosServiceImpl implements OSDInfosService {
 
     @Autowired
-    OSDInfosPoMapper osdInfosPoMapper;
+    private OSDInfosPoMapper osdInfosPoMapper;
 
     @Autowired
-    EngineerinfoPoMapper engineerinfoPoMapper;
+    private EngineerinfoPoMapper engineerinfoPoMapper;
 
     @Autowired
-    UsersPoMapper usersPoMapper;
+    private UsersPoMapper usersPoMapper;
 
     @Override
     public ReturnMsg<Object> addOSDinfos(String userid, OSDsDto osDsDto) {
@@ -152,4 +152,19 @@ public class OSDInfosServiceImpl implements OSDInfosService {
         return returnMsg;
     }
 
+    @Override
+    public ReturnMsg getAllNum(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<Integer> allNum = osdInfosPoMapper.getAllNumByOrgId(orgid);
+            returnMsg.setData(allNum);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
 }

@@ -73,4 +73,11 @@
         where osdid = #{osdid,jdbcType=VARCHAR}
     </update>
 
+    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select
+        osdid
+        from osdinfos
+        where orgid = #{orgid,jdbcType=VARCHAR}
+        order by osdid
+    </select>
 </mapper>
