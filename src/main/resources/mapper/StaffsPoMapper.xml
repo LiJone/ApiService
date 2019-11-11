@@ -59,11 +59,11 @@
         order by staffid
     </select>
 
-    <select id="selectCpListByPositionTypeTd" parameterType="java.lang.String" resultType="java.lang.String">
+    <select id="selectCpListByPositionTypeId" parameterType="java.lang.String" resultType="java.lang.String">
         select
         certtypeid
         from positioncondition
-        where positiontypeid = #{positionTypeId,jdbcType=INTEGER}
+        where positiontypeid in(select positionid from permits where permitid = #{positionTypeId,jdbcType=VARCHAR})
     </select>
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">

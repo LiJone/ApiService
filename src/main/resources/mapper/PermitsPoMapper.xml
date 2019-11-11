@@ -42,7 +42,7 @@
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
-        p.permitid, p.name, p.typeid, p.startdate, p.enddate, p.filepath, p.filename, p.type, p.positionid, p.ropeweight p.orgid
+        p.permitid, p.name, p.typeid, p.startdate, p.enddate, p.filepath, p.filename, p.type, p.positionid, p.ropeweight, p.orgid
         from permits p left join permittype c on p.typeid = c.id
         where 1 = 1
         <if test="name != null">
@@ -56,6 +56,12 @@
         </if>
         <if test="expire != null">
             and DATE_FORMAT(p.enddate,'%Y-%m-%d') &lt; DATE_FORMAT(now(),'%Y-%m-%d')
+        </if>
+        <if test="type != null">
+            and p.typeid in
+            <foreach collection="type" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
         </if>
         <if test="expireNumber != null">
             and DATE_FORMAT(p.enddate,'%Y-%m-%d') &lt;= DATE_FORMAT(#{expireNumber},'%Y-%m-%d')

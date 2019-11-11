@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,5 +215,9 @@ public class ToolsController {
             e.printStackTrace();
         }
         return returnMsg;
+    }
+
+    public static void main(String[] args) throws IOException {
+        Thumbnails.of("D:\\Download\\WeChat Files\\微信图片_20191110205104.jpg").scale(1.00f).outputQuality(0.05f).toFile("D:\\Download\\WeChat Files\\1.jpg");
     }
 }

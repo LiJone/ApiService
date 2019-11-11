@@ -183,7 +183,7 @@ public class PermitsController {
     @RequestMapping(value = "/app/permits/getPermitType" , method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getToolType(HttpServletRequest request){
-        ReturnMsg returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = permitsService.getPermitType(request);
         } catch (Exception e) {

@@ -770,7 +770,7 @@ public class StaffsServiceImpl implements StaffsService {
         } else {
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
-            List<String> ids = staffsPoMapper.selectCpListByPositionTypeTd(positionTypeId);
+            List<String> ids = staffsPoMapper.selectCpListByPositionTypeId(positionTypeId);
             List<Integer> typeIds = new ArrayList<>();
             for (String id: ids) {
                 String[] split = id.split(",");

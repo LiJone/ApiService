@@ -154,6 +154,8 @@ public class PermitsServiceImpl implements PermitsService {
         String name = request.getParameter("name");
         String expire = request.getParameter("expire");
         String expireNumber = request.getParameter("expireNumber");
+        String type = request.getParameter("type");
+        String effective = request.getParameter("effective");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
@@ -168,6 +170,14 @@ public class PermitsServiceImpl implements PermitsService {
             }
             if (!StringUtils.isEmpty(numberEnd)) {
                 hashMap.put("numberEnd", numberEnd);
+            }
+            if (!StringUtils.isEmpty(type)) {
+                List<Integer> typeIds = new ArrayList<>();
+                String[] split = type.split(",");
+                for (String s : split) {
+                    typeIds.add(Integer.valueOf(s));
+                }
+                hashMap.put("type", typeIds);
             }
             if (!StringUtils.isEmpty(name)) {
                 hashMap.put("name", name);
@@ -199,8 +209,8 @@ public class PermitsServiceImpl implements PermitsService {
                 hashMap.put("pagesize", pagesize);
                 List<PermitsPo> permitsPoList = permitsPoMapper.selectListByMap(hashMap);
                 //根据工具信息去查对应的标签表
-                TagInfosPo tagInfosPo = null;
-                HashMap<String, Object> retMap = null;
+                TagInfosPo tagInfosPo;
+                HashMap<String, Object> retMap;
                 ArrayList<Object> arrayList = new ArrayList<>();
                 for (PermitsPo permitsPo : permitsPoList) {
                     retMap = new HashMap<>();
@@ -215,7 +225,14 @@ public class PermitsServiceImpl implements PermitsService {
                         if (d1.compareTo(new Date()) < 0) {
                             retMap.put("permitsStatus", "證過期");
                         }
-                    } else {
+                    } else if (!StringUtils.isEmpty(effective)) {
+                        retMap.put("permitsStatus", "證正常");
+                        String validity = permitsPo.getEnddate();
+                        Date d1 = formatter.parse(validity);
+                        if (d1.compareTo(new Date()) < 0) {
+                           continue;
+                        }
+                    }else {
                         if (!StringUtils.isEmpty(expireNumber)) {
                             retMap.put("permitsStatus", "證正常");
                         } else {
