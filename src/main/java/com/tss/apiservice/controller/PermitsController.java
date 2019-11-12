@@ -33,19 +33,19 @@ public class PermitsController {
     @RequestMapping(value = "/app/permits/addPermitsMsg/{userid}", method = RequestMethod.POST)
     @ResponseBody
     public ReturnMsg addPermitsMsg(@PathVariable("userid") String userid, @RequestBody PermitsDto permitsDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg = null;
 
         StringBuilder fileNameStr = new StringBuilder();
         String filePathStr = null;
         String thumbnailPath;
         StringBuilder thumbnailHeadNameSb = new StringBuilder();
-        List filesDataArr = null;
+        List filesDataArr;
         try {
             //保存文件
             boolean status = true;
-            String fileAllPath = null;
+            String fileAllPath;
             filesDataArr = permitsDto.getFilesDataArr();
-            Map map = null;
+            Map map;
             if (filesDataArr != null && filesDataArr.size() > 0) {
                 for (Object o : filesDataArr) {
                     map = (HashMap) o;
@@ -87,7 +87,7 @@ public class PermitsController {
     @RequestMapping(value = "/app/permits/getPermitsMsgList", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getPermitsMsgList(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = permitsService.getPermitsMsgList(request);
         } catch (Exception e) {
@@ -101,11 +101,15 @@ public class PermitsController {
     @RequestMapping(value = "/app/permits/deletePermitsMsg/{userid}", method = RequestMethod.DELETE)
     @ResponseBody
     public ReturnMsg deletePermitsMsg(@PathVariable("userid") String userid, @RequestBody PermitsDto permitsDto) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = permitsService.deletePermitsMsg(userid, permitsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證刪除失敗...");
+            if (e.getMessage().contains("使用中")) {
+                returnMsg = new ReturnMsg(ReturnMsg.FAIL, e.getMessage());
+            } else {
+                returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證刪除失敗...");
+            }
             logger.info("/app/permits/deletePermitsMsg/{userid} 异常");
             e.printStackTrace();
         }
@@ -121,7 +125,7 @@ public class PermitsController {
         String filePathStr = null;
         String thumbnailPath;
         StringBuilder thumbnailHeadNameSb = new StringBuilder();
-        List filesDataArr = null;
+        List filesDataArr;
         try {
             //保存文件
             boolean status = true;
@@ -169,7 +173,7 @@ public class PermitsController {
     @RequestMapping(value = "/app/permits/getPermitsMsg", method = RequestMethod.GET)
     @ResponseBody
     public ReturnMsg getPermitsMsg(HttpServletRequest request) {
-        ReturnMsg returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = permitsService.getPermitsMsg(request);
         } catch (Exception e) {

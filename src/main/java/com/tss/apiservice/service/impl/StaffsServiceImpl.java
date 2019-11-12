@@ -308,7 +308,7 @@ public class StaffsServiceImpl implements StaffsService {
 
     @Override
     @Transactional
-    public ReturnMsg deleteStaffsMsg(String userid, StaffsDto staffsDto) {
+    public ReturnMsg deleteStaffsMsg(String userid, StaffsDto staffsDto) throws Exception {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         List<StaffscertPo> staffscertPos = null;
         StaffsPo staffsPo = null;
@@ -365,8 +365,17 @@ public class StaffsServiceImpl implements StaffsService {
                     MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                 }
             }
-
-
+            //1.4CP推送
+            WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(staffsDto.getStaffid());
+            if (wswpInfo != null) {
+                String jobNum = wswpInfo.getJobNum();
+                AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+                if (aiEngineerInfo != null) {
+                    if (aiEngineerInfo.getSchedule() == 1) {
+                        throw new Exception("該員工正在使用中！");
+                    }
+                }
+            }
         }
         return returnMsg;
     }
@@ -424,6 +433,16 @@ public class StaffsServiceImpl implements StaffsService {
 
                     if (engineerinfoPo.getSchedule() == 1) {
                         MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+                    }
+                }
+                WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(staffsDto.getStaffid());
+                if (wswpInfo != null) {
+                    String jobNum = wswpInfo.getJobNum();
+                    AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+                    if (aiEngineerInfo != null) {
+                        if (aiEngineerInfo.getSchedule() == 1) {
+                            MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
+                        }
                     }
                 }
                 //end 为了实时修改盒子员工加上

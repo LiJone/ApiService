@@ -12,6 +12,7 @@ import com.tss.apiservice.service.PermitsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -20,6 +21,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * @author 壮Jone
+ */
 @Service
 public class PermitsServiceImpl implements PermitsService {
 
@@ -53,10 +57,13 @@ public class PermitsServiceImpl implements PermitsService {
     @Autowired
     private ToolsPoMapper toolsPoMapper;
 
+    @Autowired
+    private AiEngineerInfoMapper aiEngineerInfoMapper;
+
     @Override
-    @Transactional
-    public ReturnMsg<Object> addPermits(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) throws ParseException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ReturnMsg addPermits(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(permitsDto.getPermitid()) || StringUtils.isEmpty(permitsDto.getName()) ||
                 StringUtils.isEmpty(permitsDto.getStartDate()) || StringUtils.isEmpty(permitsDto.getEndDate())) {
@@ -144,8 +151,8 @@ public class PermitsServiceImpl implements PermitsService {
     }
 
     @Override
-    public ReturnMsg<Object> getPermitsMsgList(HttpServletRequest request) throws ParseException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+    public ReturnMsg getPermitsMsgList(HttpServletRequest request) throws ParseException {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String pageSize = request.getParameter("pageSize");
         String currentPage = request.getParameter("currentPage");
@@ -230,9 +237,9 @@ public class PermitsServiceImpl implements PermitsService {
                         String validity = permitsPo.getEnddate();
                         Date d1 = formatter.parse(validity);
                         if (d1.compareTo(new Date()) < 0) {
-                           continue;
+                            continue;
                         }
-                    }else {
+                    } else {
                         if (!StringUtils.isEmpty(expireNumber)) {
                             retMap.put("permitsStatus", "證正常");
                         } else {
@@ -252,9 +259,9 @@ public class PermitsServiceImpl implements PermitsService {
     }
 
     @Override
-    @Transactional
-    public ReturnMsg deletePermitsMsg(String userid, PermitsDto permitsDto) {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ReturnMsg deletePermitsMsg(String userid, PermitsDto permitsDto) throws Exception {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(permitsDto.getPermitid())) {
             returnMsg.setMsgbox("參數異常...");
@@ -295,15 +302,34 @@ public class PermitsServiceImpl implements PermitsService {
                         MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                     }
                 }
+                //1.4许可证推送
+                PermitBindInfoPO permitBindInfo = aiEngineerInfoMapper.selectByPermitNum(permitsDto.getPermitid());
+                if (permitBindInfo != null) {
+                    String jobNum = null;
+                    if (permitBindInfo.getBindType() == 1) {
+                        FuncBindInfoPO funcBindInfo = aiEngineerInfoMapper.selectByFuncNum(permitBindInfo.getBindNum());
+                        if (funcBindInfo != null) {
+                            jobNum = funcBindInfo.getJobNum();
+                        }
+                    } else {
+                        jobNum = permitBindInfo.getBindNum();
+                    }
+                    AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+                    if (aiEngineerInfo != null) {
+                        if (aiEngineerInfo.getSchedule() == 1) {
+                            throw new Exception("該許可證正在使用中！");
+                        }
+                    }
+                }
             }
         }
         return returnMsg;
     }
 
     @Override
-    @Transactional
-    public ReturnMsg updatePermitsMsg(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) throws ParseException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ReturnMsg updatePermitsMsg(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         PermitsPo permitsPoOld;
         List<TagInfosPo> tagInfosPosOld;
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(permitsDto.getPermitid())) {
@@ -403,6 +429,25 @@ public class PermitsServiceImpl implements PermitsService {
                             MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                         }
                     }
+                    //1.4许可证推送
+                    PermitBindInfoPO permitBindInfo = aiEngineerInfoMapper.selectByPermitNum(permitsDto.getPermitid());
+                    if (permitBindInfo != null) {
+                        String jobNum = null;
+                        if (permitBindInfo.getBindType() == 1) {
+                            FuncBindInfoPO funcBindInfo = aiEngineerInfoMapper.selectByFuncNum(permitBindInfo.getBindNum());
+                            if (funcBindInfo != null) {
+                                jobNum = funcBindInfo.getJobNum();
+                            }
+                        } else {
+                            jobNum = permitBindInfo.getBindNum();
+                        }
+                        AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+                        if (aiEngineerInfo != null) {
+                            if (aiEngineerInfo.getSchedule() == 1) {
+                                MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
+                            }
+                        }
+                    }
                 } else if (returnMsg.getCode() == ReturnMsg.FAIL) {
                     //1.还原删除的标签表，员工证件表，删除上传的文件
                     for (TagInfosPo infosPo : tagInfosPosOld) {
@@ -418,7 +463,7 @@ public class PermitsServiceImpl implements PermitsService {
 
     @Override
     public ReturnMsg getPermitsMsg(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String permitid = request.getParameter("permitid");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(permitid)) {
@@ -443,8 +488,8 @@ public class PermitsServiceImpl implements PermitsService {
     }
 
     @Override
-    public ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException {
-        ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+    public ReturnMsg getExpireDataList(HttpServletRequest request) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String expireNumber = request.getParameter("expireNumber");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

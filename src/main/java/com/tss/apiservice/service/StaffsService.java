@@ -12,7 +12,7 @@ public interface StaffsService {
 
     ReturnMsg getStaffsMsgList(HttpServletRequest request) throws Exception;
 
-    ReturnMsg deleteStaffsMsg(String userid, StaffsDto staffsDto);
+    ReturnMsg deleteStaffsMsg(String userid, StaffsDto staffsDto) throws Exception;
 
     ReturnMsg updateStaffsMsg(String userid, StaffsDto staffsDto, HashMap<String, String> hashMap, String headImageName , String headPath) throws ParseException;
 

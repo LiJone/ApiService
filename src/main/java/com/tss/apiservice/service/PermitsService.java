@@ -8,17 +8,17 @@ import java.text.ParseException;
 
 public interface PermitsService {
 
-    ReturnMsg<Object> addPermits(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) throws ParseException;
+    ReturnMsg addPermits(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr);
 
-    ReturnMsg<Object> getPermitsMsgList(HttpServletRequest request) throws ParseException;
+    ReturnMsg getPermitsMsgList(HttpServletRequest request) throws ParseException;
 
-    ReturnMsg deletePermitsMsg(String userid, PermitsDto permitsDto);
+    ReturnMsg deletePermitsMsg(String userid, PermitsDto permitsDto) throws Exception;
 
-    ReturnMsg updatePermitsMsg(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) throws ParseException;
+    ReturnMsg updatePermitsMsg(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr);
 
     ReturnMsg getPermitsMsg(HttpServletRequest request);
 
-    ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException;
+    ReturnMsg getExpireDataList(HttpServletRequest request);
 
     ReturnMsg getPermitType(HttpServletRequest request);
 

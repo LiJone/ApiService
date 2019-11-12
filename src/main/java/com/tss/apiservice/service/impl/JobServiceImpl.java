@@ -17,6 +17,7 @@ import com.tss.apiservice.po.UsersPo;
 import com.tss.apiservice.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -43,8 +44,8 @@ public class JobServiceImpl implements JobService {
     @Autowired
     UsersPoMapper usersPoMapper;
 
-    @Transactional
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg addJobMsg(String userid, JobDto jobDto) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -268,8 +269,8 @@ public class JobServiceImpl implements JobService {
         return returnMsg;
     }
 
-    @Transactional
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg updateJobMsg(String userid, JobDto jobDto) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -468,8 +469,8 @@ public class JobServiceImpl implements JobService {
         return returnMsg;
     }
 
-    @Transactional
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg deleteJobMsg(String userid, JobDto jobDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 

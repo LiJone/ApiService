@@ -15,6 +15,7 @@ import com.tss.apiservice.po.UsersSetPo;
 import com.tss.apiservice.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -128,7 +129,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg addUser(String userid, UsersDto usersDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -183,8 +184,8 @@ public class UsersServiceImpl implements UsersService {
         return returnMsg;
     }
 
-    @Transactional
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg updateUser(String userid, UsersDto usersDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -235,7 +236,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg deleteUser(String userid, UsersDto usersDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -303,7 +304,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg setUserSetting(String userid, UsersSetDto usersSetDto) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid)) {

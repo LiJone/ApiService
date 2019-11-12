@@ -92,6 +92,7 @@
         <result column="typename" jdbcType="VARCHAR" property="typeName"/>
         <result column="count" jdbcType="INTEGER" property="count"/>
         <result column="valid" jdbcType="INTEGER" property="valid"/>
+        <result column="abbreviation" jdbcType="VARCHAR" property="abbreviation"/>
     </resultMap>
 
     <sql id="Base_Column_List_ai">
@@ -528,9 +529,9 @@
 
     <select id="selectToolFormByFuncNum" parameterType="java.lang.String" resultMap="BaseResultMap_Tool_Form">
         select
-        typeid, typename, count, valid
-        from toolbindinfo
-        where funcnum = #{funcNum,jdbcType=VARCHAR}
+        tb.typeid, tb.typename, tb.count, tb.valid, t.abbreviation
+        from toolbindinfo tb left join tooltype t on tb.typeid = t.id
+        where tb.funcnum = #{funcNum,jdbcType=VARCHAR}
     </select>
 
     <select id="getCpCountByCpNum" parameterType="java.lang.String" resultType="java.lang.Integer">

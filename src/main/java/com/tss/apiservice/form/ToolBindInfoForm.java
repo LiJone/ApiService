@@ -34,4 +34,9 @@ public class ToolBindInfoForm {
     @NotNull(message = "工具是否需要不能為空")
     private Integer valid;
 
+    /**
+     * 工具种类缩写
+     */
+    private String abbreviation;
+
 }

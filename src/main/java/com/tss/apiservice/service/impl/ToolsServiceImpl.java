@@ -12,6 +12,7 @@ import com.tss.apiservice.service.ToolsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -146,11 +147,9 @@ public class ToolsServiceImpl implements ToolsService {
         return returnMsg;
     }
 
-    @Transactional
     @Override
-    public ReturnMsg addToolsMsg(String userid, ToolsDto toolsDto, String filePathStr, String fileNameStr) throws
-            ParseException {
-
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ReturnMsg addToolsMsg(String userid, ToolsDto toolsDto, String filePathStr, String fileNameStr) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(toolsDto.getName()) || StringUtils.isEmpty(toolsDto.getToolid())) {
@@ -228,7 +227,7 @@ public class ToolsServiceImpl implements ToolsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg deleteToolsMsg(String userid, ToolsDto toolsDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -277,8 +276,8 @@ public class ToolsServiceImpl implements ToolsService {
     }
 
     @Override
-    @Transactional
-    public ReturnMsg updateToolsMsg(String userid, ToolsDto toolsDto, String filePathStr, String fileNameStr) throws ParseException {
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ReturnMsg updateToolsMsg(String userid, ToolsDto toolsDto, String filePathStr, String fileNameStr) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
         ToolscertPo toolscertPoOld = null;
@@ -425,7 +424,7 @@ public class ToolsServiceImpl implements ToolsService {
     }
 
     @Override
-    public ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException {
+    public ReturnMsg getExpireDataList(HttpServletRequest request) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String expireNumber =  request.getParameter("expireNumber");

@@ -138,7 +138,11 @@ public class StaffsController {
         try {
             returnMsg = staffsService.deleteStaffsMsg(userid, staffsDto);
         } catch (Exception e) {
-            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工刪除失敗...");
+            if (e.getMessage().contains("使用中")) {
+                returnMsg = new ReturnMsg(ReturnMsg.FAIL, e.getMessage());
+            } else {
+                returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工刪除失敗...");
+            }
             logger.info("/app/staffs/deleteStaffsMsg/{userid} 异常");
             e.printStackTrace();
         }

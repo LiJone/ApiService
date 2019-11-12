@@ -11,6 +11,7 @@ import com.tss.apiservice.po.OSDInfosPo;
 import com.tss.apiservice.service.OSDInfosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -31,6 +32,7 @@ public class OSDInfosServiceImpl implements OSDInfosService {
     private UsersPoMapper usersPoMapper;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg<Object> addOSDinfos(String userid, OSDsDto osDsDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -55,7 +57,7 @@ public class OSDInfosServiceImpl implements OSDInfosService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg updateOSDsMsg(String userid, OSDsDto osDsDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(osDsDto.getOsdid()) || StringUtils.isEmpty(userid)) {
@@ -89,6 +91,7 @@ public class OSDInfosServiceImpl implements OSDInfosService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg deleteOSDsMsg(String userid, OSDsDto osDsDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(osDsDto.getOsdid()) || StringUtils.isEmpty(userid)) {

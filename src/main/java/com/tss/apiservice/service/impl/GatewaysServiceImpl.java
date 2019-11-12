@@ -18,6 +18,7 @@ import com.tss.apiservice.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -56,7 +57,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     private String restartUrl;
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg addGateways(String userid, GatewaysDto gatewaysDto) {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -177,7 +178,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg deleteGateWaysMsg(String userid, GatewaysDto gatewaysDto) {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
@@ -196,7 +197,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg updateGateWaysMsg(String userid, GatewaysDto gatewaysDto) {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(gatewaysDto.getNumber()) ||
@@ -230,7 +231,7 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg addGateWaysSetting(String userid, String number, Integer distance) throws IOException {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(number) || StringUtils.isEmpty(distance)) {
