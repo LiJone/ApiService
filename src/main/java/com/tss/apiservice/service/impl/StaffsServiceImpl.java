@@ -825,7 +825,7 @@ public class StaffsServiceImpl implements StaffsService {
         } else {
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
-            List<Integer> allNum = staffsPoMapper.getAllNumByOrgId(orgid);
+            List<String> allNum = staffsPoMapper.getAllNumByOrgId(orgid);
             returnMsg.setData(allNum);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");

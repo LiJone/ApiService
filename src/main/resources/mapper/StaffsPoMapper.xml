@@ -51,7 +51,7 @@
         order by staffid
     </select>
 
-    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.Integer">
+    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
         staffid
         from staffs

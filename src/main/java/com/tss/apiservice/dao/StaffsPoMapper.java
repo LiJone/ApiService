@@ -31,5 +31,5 @@ public interface StaffsPoMapper {
 
     List<String> selectCpListByPositionTypeId(String positionTypeId);
 
-    List<Integer> getAllNumByOrgId(String orgid);
+    List<String> getAllNumByOrgId(String orgid);
 }

@@ -73,7 +73,7 @@
         where osdid = #{osdid,jdbcType=VARCHAR}
     </update>
 
-    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.Integer">
+    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
         osdid
         from osdinfos

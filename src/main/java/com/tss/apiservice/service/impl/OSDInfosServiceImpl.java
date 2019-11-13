@@ -163,7 +163,7 @@ public class OSDInfosServiceImpl implements OSDInfosService {
         } else {
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
-            List<Integer> allNum = osdInfosPoMapper.getAllNumByOrgId(orgid);
+            List<String> allNum = osdInfosPoMapper.getAllNumByOrgId(orgid);
             returnMsg.setData(allNum);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");

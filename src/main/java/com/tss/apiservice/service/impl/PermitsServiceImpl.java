@@ -549,7 +549,7 @@ public class PermitsServiceImpl implements PermitsService {
         } else {
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
-            List<Integer> allNum = permitsPoMapper.getAllNumByOrgId(orgid);
+            List<String> allNum = permitsPoMapper.getAllNumByOrgId(orgid);
             returnMsg.setData(allNum);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");

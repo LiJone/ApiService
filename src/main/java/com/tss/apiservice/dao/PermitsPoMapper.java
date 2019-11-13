@@ -24,5 +24,5 @@ public interface PermitsPoMapper {
 
     List<PermitTypePO> getPermitType();
 
-    List<Integer> getAllNumByOrgId(String orgid);
+    List<String> getAllNumByOrgId(String orgid);
 }

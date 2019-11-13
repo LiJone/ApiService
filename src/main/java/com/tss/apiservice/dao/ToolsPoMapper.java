@@ -22,5 +22,5 @@ public interface ToolsPoMapper {
 
     List<ToolTypePO> getToolType();
 
-    List<Integer> getAllNumByOrgId(String orgid);
+    List<String> getAllNumByOrgId(String orgid);
 }
