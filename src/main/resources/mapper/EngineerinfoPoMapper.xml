@@ -166,4 +166,11 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
 
+    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        jobnum
+        from engineerinfo
+        where orgid = #{orgid,jdbcType=VARCHAR}
+        order by jobnum
+    </select>
 </mapper>

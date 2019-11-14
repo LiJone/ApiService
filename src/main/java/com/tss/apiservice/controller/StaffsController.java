@@ -3,6 +3,8 @@ package com.tss.apiservice.controller;
 import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.common.utils.FilesUtils;
 import com.tss.apiservice.dto.StaffsDto;
+import com.tss.apiservice.po.StaffsImagePO;
+import com.tss.apiservice.po.ToolsImagePO;
 import com.tss.apiservice.service.StaffsService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.slf4j.Logger;
@@ -39,62 +41,48 @@ public class StaffsController {
     @ResponseBody
     public ReturnMsg addStaffsMsg(@PathVariable("userid") String userid, @RequestBody StaffsDto staffsDto) {
         ReturnMsg returnMsg = new ReturnMsg();
-        String headImagePath;
-        StringBuilder headNameSb = new StringBuilder();
-        String thumbnailPath;
-        StringBuilder thumbnailHeadNameSb = new StringBuilder();
-        String headPath = null;
-        ArrayList<Object> filesList = new ArrayList<>();
+
+        List<StaffsImagePO> staffsImageList = new ArrayList<>();
         try {
             //上传头像
             boolean fileUploadStatus = true;
             List<Map<String, String>> headImageData = staffsDto.getHeadImageData();
             Map<String, String> map;
             if (headImageData != null && headImageData.size() > 0) {
+                int t = 1;
                 for (Map<String, String> headImageDatum : headImageData) {
                     map = headImageDatum;
                     if (!StringUtils.isEmpty(map.get("base64")) && !StringUtils.isEmpty(map.get("type"))) {
-                        headImagePath = FilesUtils.base64StringToFile(map.get("base64"), filePath, map.get("type"));
-                        String[] split = headImagePath.split("\\.");
-                        String thumbnail = split[0] + THUMBNAIL;
-                        thumbnailPath = thumbnail + "." + split[1];
-                        //生成缩略图
-                        Thumbnails.of(filePath + headImagePath).scale(0.2f).toFile(filePath + thumbnailPath);
-                        if ("".equals(headImagePath)) {
+                        String fileAllPath = FilesUtils.base64StringToFile(map.get("base64"), filePath, map.get("type"));
+                        if ("".equals(fileAllPath)) {
                             fileUploadStatus = false;
                             returnMsg.setMsgbox("頭像上傳失敗...");
-                        } else {
-                            headNameSb.append(headImagePath.substring(headImagePath.lastIndexOf("/") + 1)).append(";");
-                            headPath = headImagePath.substring(0, headImagePath.lastIndexOf("/") + 1);
-                            thumbnailHeadNameSb.append(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1)).append(";");
-                        }
-                    }
-                }
-            }
-
-            //上传绿卡
-            List<Map<String, String>> carDataArr = staffsDto.getCarDataArr();
-            String fileAllPath;
-            HashMap<String, String> hashMap = new HashMap<>();
-            if (carDataArr != null && carDataArr.size() > 0) {
-                for (Map<String, String> map1 : carDataArr) {
-                    map = map1;
-                    if (!StringUtils.isEmpty(map.get("base64")) && !StringUtils.isEmpty(map.get("type"))) {
-                        fileAllPath = FilesUtils.base64StringToFile(map.get("base64"), filePath, map.get("type"));
-                        if (fileAllPath == null) {
-                            fileUploadStatus = false;
-                            returnMsg.setMsgbox("員工證件上傳失敗...");
                             break;
                         } else {
-                            hashMap.put(map.get("certid").trim(), fileAllPath);
-                            filesList.add(fileAllPath);
+                            StaffsImagePO staffsImage = new StaffsImagePO();
+                            staffsImage.setStaffId(staffsDto.getStaffid());
+                            staffsImage.setImageIndex(t);
+                            staffsImage.setImageType(map.get("type"));
+                            staffsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            if ("pdf".equals(map.get("type"))) {
+                                staffsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
+                            } else {
+                                String[] split = fileAllPath.split("\\.");
+                                String thumbnail = split[0] + THUMBNAIL;
+                                String thumbnailPath = thumbnail + "." + split[1];
+                                //生成缩略图
+                                Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
+                                staffsImage.setImageName(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1));
+                            }
+                            staffsImageList.add(staffsImage);
+                            t++;
                         }
                     }
                 }
             }
             //添加员工信息
             if (fileUploadStatus) {
-                returnMsg = staffsService.addStaffsMsg(userid, staffsDto, hashMap, thumbnailHeadNameSb.toString(), headPath);
+                returnMsg = staffsService.addStaffsMsg(userid, staffsDto, staffsImageList);
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工添加失敗...");
@@ -102,16 +90,8 @@ public class StaffsController {
             e.printStackTrace();
         }
         if (returnMsg.getCode() == ReturnMsg.FAIL) {
-            String filePathTmp = headPath;
-            String fileNameTmp = headNameSb.toString();
-            FilesUtils.deleteFile(fileNameTmp, filePath + filePathTmp);
-            FilesUtils.deleteFile(thumbnailHeadNameSb.toString(), filePath + filePathTmp);
-            String files;
-            for (Object o : filesList) {
-                files = o.toString();
-                filePathTmp = files.substring(0, files.lastIndexOf("/") + 1);
-                fileNameTmp = files.substring(files.lastIndexOf("/") + 1);
-                FilesUtils.deleteFile(fileNameTmp, filePath + filePathTmp);
+            for (StaffsImagePO staffsImage : staffsImageList) {
+                FilesUtils.deleteFile(staffsImage.getImageName(), filePath + staffsImage.getImageDir());
             }
         }
         return returnMsg;
@@ -153,61 +133,55 @@ public class StaffsController {
     @ResponseBody
     public ReturnMsg updateStaffsMsg(@PathVariable("userid") String userid, @RequestBody StaffsDto staffsDto) {
         ReturnMsg returnMsg = new ReturnMsg();
-        String headImagePath;
-        String thumbnailPath;
-        StringBuilder headNameSb = new StringBuilder();
-        String headPath = null;
-        StringBuilder thumbnailHeadNameSb = new StringBuilder();
-        ArrayList<Object> filesList = new ArrayList<>();
+
+        List<StaffsImagePO> staffsImageList = new ArrayList<>();
+        List<Integer> notDelIds = new ArrayList<>();
         try {
             //上传头像
             boolean fileUploadStatus = true;
             List<Map<String, String>> headImageData = staffsDto.getHeadImageData();
             Map<String, String> map;
             if (headImageData != null && headImageData.size() > 0) {
+                int t = 1;
                 for (Map<String, String> headImageDatum : headImageData) {
                     map = headImageDatum;
                     if (!StringUtils.isEmpty(map.get("base64")) && !StringUtils.isEmpty(map.get("type"))) {
-                        headImagePath = FilesUtils.base64StringToFile(map.get("base64"), filePath, map.get("type"));
-                        String[] split = headImagePath.split("\\.");
-                        String thumbnail = split[0] + THUMBNAIL;
-                        thumbnailPath = thumbnail + "." + split[1];
-                        //生成缩略图
-                        Thumbnails.of(filePath + headImagePath).scale(0.2f).toFile(filePath + thumbnailPath);
-                        if ("".equals(headImagePath)) {
+                        String fileAllPath = FilesUtils.base64StringToFile(map.get("base64"), filePath, map.get("type"));
+                        if ("".equals(fileAllPath)) {
                             fileUploadStatus = false;
                             returnMsg.setMsgbox("頭像上傳失敗...");
-                        } else {
-                            headNameSb.append(headImagePath.substring(headImagePath.lastIndexOf("/") + 1)).append(";");
-                            headPath = headImagePath.substring(0, headImagePath.lastIndexOf("/") + 1);
-                            thumbnailHeadNameSb.append(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1)).append(";");
-                        }
-                    }
-                }
-            }
-
-            //上传绿卡
-            List<Map<String, String>> carDataArr = staffsDto.getCarDataArr();
-            String fileAllPath;
-            HashMap<String, String> hashMap = new HashMap<>();
-            if (carDataArr != null && carDataArr.size() > 0) {
-                for (Map<String, String> stringStringMap : carDataArr) {
-                    map = stringStringMap;
-                    if (!StringUtils.isEmpty(map.get("base64")) && !StringUtils.isEmpty(map.get("type"))) {
-                        fileAllPath = FilesUtils.base64StringToFile(map.get("base64"), filePath, map.get("type"));
-                        if (fileAllPath == null) {
-                            fileUploadStatus = false;
-                            returnMsg.setMsgbox("員工證件上傳失敗...");
                             break;
                         } else {
-                            hashMap.put(map.get("certid").trim(), fileAllPath);
-                            filesList.add(fileAllPath);
+                            StaffsImagePO staffsImage = new StaffsImagePO();
+                            staffsImage.setStaffId(staffsDto.getStaffid());
+                            staffsImage.setImageIndex(t);
+                            staffsImage.setImageType(map.get("type"));
+                            staffsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            if ("pdf".equals(map.get("type"))) {
+                                staffsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
+                            } else {
+                                String[] split = fileAllPath.split("\\.");
+                                String thumbnail = split[0] + THUMBNAIL;
+                                String thumbnailPath = thumbnail + "." + split[1];
+                                //生成缩略图
+                                Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
+                                staffsImage.setImageName(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1));
+                            }
+                            staffsImageList.add(staffsImage);
+                            t++;
                         }
+                    } else if (!StringUtils.isEmpty(map.get("id"))) {
+                        StaffsImagePO staffsImage = new StaffsImagePO();
+                        staffsImage.setId(Integer.parseInt(map.get("id")));
+                        staffsImage.setImageIndex(t);
+                        staffsImageList.add(staffsImage);
+                        t++;
+                        notDelIds.add(Integer.parseInt(map.get("id")));
                     }
                 }
             }
             if (fileUploadStatus) {
-                returnMsg = staffsService.updateStaffsMsg(userid, staffsDto, hashMap, thumbnailHeadNameSb.toString(), headPath);
+                returnMsg = staffsService.updateStaffsMsg(userid, staffsDto, staffsImageList, notDelIds);
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工修改失敗...");
@@ -215,16 +189,10 @@ public class StaffsController {
             e.printStackTrace();
         }
         if (returnMsg.getCode() == ReturnMsg.FAIL) {
-            String filePathTmp = headPath;
-            String fileNameTmp = headNameSb.toString();
-            FilesUtils.deleteFile(fileNameTmp, filePath + filePathTmp);
-            FilesUtils.deleteFile(thumbnailHeadNameSb.toString(), filePath + filePathTmp);
-            String files;
-            for (Object o : filesList) {
-                files = o.toString();
-                filePathTmp = files.substring(0, files.lastIndexOf("/") + 1);
-                fileNameTmp = files.substring(files.lastIndexOf("/") + 1);
-                FilesUtils.deleteFile(fileNameTmp, filePath + filePathTmp);
+            for (StaffsImagePO staffsImage : staffsImageList) {
+                if (staffsImage.getImageName() != null) {
+                    FilesUtils.deleteFile(staffsImage.getImageName(), filePath + staffsImage.getImageDir());
+                }
             }
         }
         return returnMsg;

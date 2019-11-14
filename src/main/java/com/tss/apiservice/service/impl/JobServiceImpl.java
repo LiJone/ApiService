@@ -528,7 +528,7 @@ public class JobServiceImpl implements JobService {
                 returnMsg.setMsgbox("安全對象可離開，不用授權。...");
             } else {
                 Date leavetime;
-                leavetime = new Date(new Date().getTime() + Integer.parseInt(safeobjsDto.getLeavetime()) * 60000);
+                leavetime = new Date(System.currentTimeMillis() + Integer.parseInt(safeobjsDto.getLeavetime()) * 60000);
 
                 safeobjsPo.setLeavetime(leavetime);
                 String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(leavetime);
@@ -538,6 +538,22 @@ public class JobServiceImpl implements JobService {
                 returnMsg.setMsgbox("成功");
                 returnMsg.setCode(ReturnMsg.SUCCESS);
             }
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getAllNum(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allNum = engineerinfoPoMapper.getAllNumByOrgId(orgid);
+            returnMsg.setData(allNum);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
         }
         return returnMsg;
     }

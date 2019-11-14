@@ -24,4 +24,5 @@ public interface EngineerinfoPoMapper {
 
     int updateByPrimaryKeySelective(EngineerinfoPo record);
 
+    List<String> getAllNumByOrgId(String orgid);
 }

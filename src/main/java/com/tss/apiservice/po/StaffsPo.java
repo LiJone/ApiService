@@ -1,6 +1,7 @@
 package com.tss.apiservice.po;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 员工信息实体类
@@ -30,16 +31,6 @@ public class StaffsPo implements Serializable {
     private String ensurname;
 
     /**
-     * 图像路径
-     */
-    private String imagepath;
-
-    /**
-     * 图像名称
-     */
-    private String imagename;
-
-    /**
      * 检测对象类型
      */
     private Integer type;
@@ -63,6 +54,16 @@ public class StaffsPo implements Serializable {
      * 员工新日薪生效时间
      */
     private String effdate;
+
+    private List<StaffsImagePO> staffsImageList;
+
+    public List<StaffsImagePO> getStaffsImageList() {
+        return staffsImageList;
+    }
+
+    public void setStaffsImageList(List<StaffsImagePO> staffsImageList) {
+        this.staffsImageList = staffsImageList;
+    }
 
     public Integer getAltersalary() {
         return altersalary;
@@ -104,22 +105,6 @@ public class StaffsPo implements Serializable {
         this.ensurname = ensurname == null ? null : ensurname.trim();
     }
 
-    public String getImagepath() {
-        return imagepath;
-    }
-
-    public void setImagepath(String imagepath) {
-        this.imagepath = imagepath == null ? null : imagepath.trim();
-    }
-
-    public String getImagename() {
-        return imagename;
-    }
-
-    public void setImagename(String imagename) {
-        this.imagename = imagename == null ? null : imagename.trim();
-    }
-
     public Integer getType() {
         return type;
     }
@@ -159,13 +144,12 @@ public class StaffsPo implements Serializable {
                 ", chname='" + chname + '\'' +
                 ", enname='" + enname + '\'' +
                 ", ensurname='" + ensurname + '\'' +
-                ", imagepath='" + imagepath + '\'' +
-                ", imagename='" + imagename + '\'' +
                 ", type=" + type +
                 ", orgid='" + orgid + '\'' +
                 ", treatment=" + treatment +
                 ", altersalary=" + altersalary +
                 ", effdate='" + effdate + '\'' +
+                ", staffsImageList=" + staffsImageList +
                 '}';
     }
 }

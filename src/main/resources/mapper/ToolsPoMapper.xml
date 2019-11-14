@@ -5,11 +5,18 @@
         <id column="toolid" jdbcType="VARCHAR" property="toolid"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="typeid" jdbcType="INTEGER" property="typeid"/>
-        <result column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
-        <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
         <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
         <result column="validity" jdbcType="TIMESTAMP" property="validity"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap_Image" type="com.tss.apiservice.po.ToolsImagePO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="imageindex" jdbcType="INTEGER" property="imageIndex"/>
+        <result column="imagedir" jdbcType="VARCHAR" property="imageDir"/>
+        <result column="imagename" jdbcType="VARCHAR" property="imageName"/>
+        <result column="imagetype" jdbcType="VARCHAR" property="imageType"/>
+        <result column="toolid" jdbcType="VARCHAR" property="toolId"/>
     </resultMap>
 
     <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.ToolTypePO">
@@ -21,11 +28,15 @@
         <result column="weight" jdbcType="FLOAT" property="weight"/>
     </resultMap>
     <sql id="Base_Column_List">
-    toolid, name, typeid, imagepath, imagename, type, orgid, validity
+    toolid, name, typeid, type, orgid, validity
   </sql>
 
     <sql id="Base_Column_List_type">
     id, type, abbreviation, typename, spec, weight
+  </sql>
+
+    <sql id="Base_Column_List_Image">
+    id, imageindex, imagedir, imagename, imagetype, toolid
   </sql>
 
     <select id="getToolType" resultMap="BaseResultMapType">
@@ -36,14 +47,14 @@
     </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-        c.typename,t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
+        c.typename,t.toolid, t.name, t.typeid, t.type, t.orgid, t.validity
         from tools t left join tooltype c on t.typeid = c.id
         where t.toolid = #{toolid,jdbcType=VARCHAR}
     </select>
 
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
-        c.typename, t.toolid, t.name, t.typeid, t.imagepath, t.imagename, t.type, t.orgid, t.validity
+        c.typename, t.toolid, t.name, t.typeid, t.type, t.orgid, t.validity
         from tools t left join tooltype c on t.typeid = c.id
         where 1 = 1
         <if test="name != null">
@@ -86,12 +97,6 @@
             <if test="typeid != null">
                 typeid,
             </if>
-            <if test="imagepath != null">
-                imagepath,
-            </if>
-            <if test="imagename != null">
-                imagename,
-            </if>
             <if test="type != null">
                 type,
             </if>
@@ -111,12 +116,6 @@
             </if>
             <if test="typeid != null">
                 #{typeid,jdbcType=INTEGER},
-            </if>
-            <if test="imagepath != null">
-                #{imagepath,jdbcType=VARCHAR},
-            </if>
-            <if test="imagename != null">
-                #{imagename,jdbcType=VARCHAR},
             </if>
             <if test="type != null">
                 #{type,jdbcType=INTEGER},
@@ -138,12 +137,6 @@
             <if test="typeid != null">
                 typeid = #{typeid,jdbcType=INTEGER},
             </if>
-            <if test="imagepath != null">
-                imagepath = #{imagepath,jdbcType=VARCHAR},
-            </if>
-            <if test="imagename != null">
-                imagename = #{imagename,jdbcType=VARCHAR},
-            </if>
             <if test="type != null">
                 type = #{type,jdbcType=INTEGER},
             </if>
@@ -164,4 +157,81 @@
         where orgid = #{orgid,jdbcType=VARCHAR}
         order by toolid
     </select>
+
+    <insert id="insertToolsImage" parameterType="com.tss.apiservice.po.ToolsImagePO">
+        insert into toolsimage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imageIndex != null">
+                imageindex,
+            </if>
+            <if test="imageDir != null">
+                imagedir,
+            </if>
+            <if test="imageName != null">
+                imagename,
+            </if>
+            <if test="imageType != null">
+                imagetype,
+            </if>
+            <if test="toolId != null">
+                toolid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imageIndex != null">
+                #{imageIndex,jdbcType=INTEGER},
+            </if>
+            <if test="imageDir != null">
+                #{imageDir,jdbcType=VARCHAR},
+            </if>
+            <if test="imageName != null">
+                #{imageName,jdbcType=VARCHAR},
+            </if>
+            <if test="imageType != null">
+                #{imageType,jdbcType=VARCHAR},
+            </if>
+            <if test="toolId != null">
+                #{toolId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectToolsImageByToolId" parameterType="java.lang.String" resultMap="BaseResultMap_Image">
+        select
+        <include refid="Base_Column_List_Image"/>
+        from toolsimage
+        where toolid = #{toolId,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteToolsImageByToolId" parameterType="java.util.Map">
+        delete from toolsimage where toolid = #{toolId,jdbcType=VARCHAR}
+        <if test="ids != null and ids.size > 0">
+            and id not in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </delete>
+
+    <update id="updateToolsImage"  parameterType="com.tss.apiservice.po.ToolsImagePO">
+        update permitsimage
+        <set>
+            <if test="imageIndex != null">
+                imageindex = #{imageIndex,jdbcType=INTEGER},
+            </if>
+            <if test="imageDir != null">
+                imagedir = #{imageDir,jdbcType=VARCHAR},
+            </if>
+            <if test="imageName != null">
+                imagename = #{imageName,jdbcType=VARCHAR},
+            </if>
+            <if test="imageType != null">
+                imagetype = #{imageType,jdbcType=VARCHAR},
+            </if>
+            <if test="toolId != null">
+                toolid = #{toolId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

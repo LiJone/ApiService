@@ -62,9 +62,8 @@ public class PermitsServiceImpl implements PermitsService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ReturnMsg addPermits(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) {
+    public ReturnMsg addPermits(String userid, PermitsDto permitsDto, List<PermitsImagePO> permitsImageList) {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(permitsDto.getPermitid()) || StringUtils.isEmpty(permitsDto.getName()) ||
                 StringUtils.isEmpty(permitsDto.getStartDate()) || StringUtils.isEmpty(permitsDto.getEndDate())) {
             returnMsg.setMsgbox("參數異常...");
@@ -134,11 +133,12 @@ public class PermitsServiceImpl implements PermitsService {
                         permitsPo.setStartdate(permitsDto.getStartDate());
                         permitsPo.setEnddate(permitsDto.getEndDate());
                         permitsPo.setOrgid(orgid);
-                        permitsPo.setFilepath(filePathStr);
-                        permitsPo.setFilename(fileNameStr);
                         permitsPo.setPositionid(permitsDto.getPositionid());
                         permitsPo.setRopeweight(permitsDto.getRopeweight());
                         permitsPoMapper.insertSelective(permitsPo);
+                        for (PermitsImagePO permitsImage : permitsImageList) {
+                            permitsPoMapper.insertPermitsImage(permitsImage);
+                        }
                         returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
                     }
                 }
@@ -246,6 +246,8 @@ public class PermitsServiceImpl implements PermitsService {
                             retMap.put("permitsStatus", "證過期");
                         }
                     }
+                    List<PermitsImagePO> permitsImageList = permitsPoMapper.selectPermitsImageByPermitId(permitsPo.getPermitid());
+                    permitsPo.setPermitsImageList(permitsImageList);
                     //再查找工具证件表
                     retMap.put("permitsPo", permitsPo);
                     retMap.put("tagInfosPos", tagInfosPos);
@@ -288,7 +290,9 @@ public class PermitsServiceImpl implements PermitsService {
                     tagInfosPoMapper.deleteByPrimaryKey(infosPo.getTagid());
                 }
                 permitsPoMapper.deleteByPrimaryKey(permitsDto.getPermitid());
-                FilesUtils.deleteFile(permitsPo.getFilename(), filePath + permitsPo.getFilepath());
+                HashMap<String, Object> map = new HashMap<>(1);
+                map.put("permitId", permitsDto.getPermitid());
+                permitsPoMapper.deletePermitsImageByPermitId(map);
                 returnMsg.setCode(ReturnMsg.SUCCESS);
                 returnMsg.setMsgbox("成功");
 
@@ -318,6 +322,11 @@ public class PermitsServiceImpl implements PermitsService {
                     if (aiEngineerInfo != null) {
                         if (aiEngineerInfo.getSchedule() == 1) {
                             throw new Exception("該許可證正在使用中！");
+                        } else {
+                            List<PermitsImagePO> permitsImageList = permitsPoMapper.selectPermitsImageByPermitId(permitsDto.getPermitid());
+                            for (PermitsImagePO permitsImage : permitsImageList) {
+                                FilesUtils.deleteFile(permitsImage.getImageName(), filePath + permitsImage.getImageDir());
+                            }
                         }
                     }
                 }
@@ -328,25 +337,24 @@ public class PermitsServiceImpl implements PermitsService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ReturnMsg updatePermitsMsg(String userid, PermitsDto permitsDto, String filePathStr, String fileNameStr) {
+    public ReturnMsg updatePermitsMsg(String userid, PermitsDto permitsDto, List<PermitsImagePO> permitsImageList, List<Integer> notDelIds) {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-        PermitsPo permitsPoOld;
-        List<TagInfosPo> tagInfosPosOld;
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(permitsDto.getPermitid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             //查到许可证，通过许可证，修改标签和图片
-            permitsPoOld = permitsPoMapper.selectByPrimaryKey(permitsDto.getPermitid());
+            PermitsPo permitsPoOld = permitsPoMapper.selectByPrimaryKey(permitsDto.getPermitid());
             if (permitsPoOld != null) {
+                List<PermitsImagePO> permitsImageOldList = permitsPoMapper.selectPermitsImageByPermitId(permitsDto.getPermitid());
                 //上传图片，删除标签，修改许可证
                 //删除标签
                 TagInfosPo tagInfosPo;
                 tagInfosPo = new TagInfosPo();
                 tagInfosPo.setObjnum(permitsDto.getPermitid());
                 tagInfosPo.setType(0);
-                tagInfosPosOld = tagInfosPoMapper.selectByTagPo(tagInfosPo);
+                List<TagInfosPo> tagInfosPosOld = tagInfosPoMapper.selectByTagPo(tagInfosPo);
                 tagInfosPoMapper.deleteByTagPo(tagInfosPo);
 
                 List<Map<String, String>> tag = permitsDto.getTag();
@@ -404,19 +412,31 @@ public class PermitsServiceImpl implements PermitsService {
                     permitsPo.setStartdate(permitsDto.getStartDate());
                     permitsPo.setEnddate(permitsDto.getEndDate());
                     permitsPo.setOrgid(orgid);
-                    permitsPo.setFilepath(filePathStr);
-                    permitsPo.setFilename(fileNameStr);
                     permitsPo.setPositionid(permitsDto.getPositionid());
                     permitsPo.setRopeweight(permitsDto.getRopeweight());
+                    HashMap<String, Object> param = new HashMap<>(2);
+                    param.put("permitId", permitsDto.getPermitid());
+                    param.put("Ids", notDelIds);
+                    permitsPoMapper.deletePermitsImageByPermitId(param);
+                    for (PermitsImagePO permitsImage : permitsImageList) {
+                        if (permitsImage.getId() == null) {
+                            permitsPoMapper.insertPermitsImage(permitsImage);
+                        } else {
+                            permitsPoMapper.updatePermitsImage(permitsImage);
+                        }
+                    }
                     permitsPoMapper.updateByPrimaryKeySelective(permitsPo);
-                    //删除旧的图片
                     returnMsg.setCode(ReturnMsg.SUCCESS);
                     returnMsg.setMsgbox("成功");
                 }
 
                 if (returnMsg.getCode() == ReturnMsg.SUCCESS) {
-
-                    FilesUtils.deleteFile(permitsPoOld.getFilename(), filePath + permitsPoOld.getFilepath());
+                    //删除旧的图片
+                    for (PermitsImagePO permitsImage : permitsImageOldList) {
+                        if (!notDelIds.contains(permitsImage.getId())) {
+                            FilesUtils.deleteFile(permitsImage.getImageName(), filePath + permitsImage.getImageDir());
+                        }
+                    }
 
                     //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
                     SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid(), 0);

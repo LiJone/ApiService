@@ -67,8 +67,7 @@ public class StaffsServiceImpl implements StaffsService {
 
     @Override
     @Transactional
-    public ReturnMsg addStaffsMsg(String userid, StaffsDto staffsDto, HashMap<String, String> hashMap,
-                                  String headImageName, String headPath) throws ParseException {
+    public ReturnMsg addStaffsMsg(String userid, StaffsDto staffsDto, List<StaffsImagePO> staffsImageList) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(staffsDto.getStaffid()) ||
                 StringUtils.isEmpty(staffsDto.getEnname())) {
@@ -77,15 +76,15 @@ public class StaffsServiceImpl implements StaffsService {
             StaffsPo ret = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
-            Map map = null;
+            Map map;
             if (ret == null) {
                 //添加标签信息表
                 List<Map<String, String>> tag = staffsDto.getTag();
                 List<TagInfosPo> tagInfosPoList = new ArrayList<>();
                 boolean tagExist = true;
-                for (int i = 0; i < tag.size(); i++) {
+                for (Map<String, String> stringStringMap : tag) {
                     TagInfosPo tagInfosPo = new TagInfosPo();
-                    map = tag.get(i);
+                    map = stringStringMap;
                     tagInfosPo.setTagid(map.get("tagCode").toString());
                     TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
                     if (tagInfo == null) {
@@ -122,28 +121,22 @@ public class StaffsServiceImpl implements StaffsService {
                     }
                 }
 
-                StaffscertPo staffscertPo = null;
                 List<Map<String, String>> carDataArr = staffsDto.getCarDataArr();
                 List<StaffscertPo> staffscertPoList = new ArrayList<>();
-                String certid = null;
-                String typeid = null;
-                String validity = null;
-                String filePathTmp = null;
-                StaffscertPo staffscertPoTmp = null;
                 if (carDataArr != null && carDataArr.size() > 0) {
-                    for (int i = 0; i < carDataArr.size(); i++) {
-                        staffscertPo = new StaffscertPo();
-                        map = carDataArr.get(i);
+                    for (Map<String, String> stringStringMap : carDataArr) {
+                        StaffscertPo staffscertPo = new StaffscertPo();
+                        map = stringStringMap;
                         staffscertPo.setStaffid(staffsDto.getStaffid());
-                        certid = map.get("certid").toString();
-                        staffscertPoTmp = staffscertPoMapper.selectByPrimaryKey(certid);
+                        String certid = map.get("certid").toString();
+                        StaffscertPo staffscertPoTmp = staffscertPoMapper.selectByPrimaryKey(certid);
                         if (staffscertPoTmp != null) {
                             returnMsg.setMsgbox(certid + ": 證件編號已存在...");
                             tagExist = false;
                             break;
                         }
-                        typeid = map.get("typeid").toString();
-                        validity = map.get("validity").toString();
+                        String typeid = map.get("typeid").toString();
+                        String validity = map.get("validity").toString();
                         if (StringUtils.isEmpty(certid) || StringUtils.isEmpty(typeid) || StringUtils.isEmpty(validity)) {
                             returnMsg.setMsgbox("證件信息存在空值...");
                             tagExist = false;
@@ -153,38 +146,30 @@ public class StaffsServiceImpl implements StaffsService {
                             staffscertPo.setTypeid(Integer.valueOf(typeid));
                             staffscertPo.setValidity(validity);
                             staffscertPoList.add(staffscertPo);
-                            filePathTmp = hashMap.get(certid);
-                            if (filePathTmp != null) {
-                                staffscertPo.setImagename(filePathTmp.substring(filePathTmp.lastIndexOf("/") + 1, filePathTmp.length()));
-                                staffscertPo.setImagepath(filePathTmp.substring(0, filePathTmp.lastIndexOf("/") + 1));
-                            }
-
                         }
                     }
                 }
 
                 if (tagExist) {
-                    for (int i = 0; i < tagInfosPoList.size(); i++) {
-                        tagInfosPoMapper.insertSelective(tagInfosPoList.get(i));
+                    for (TagInfosPo tagInfosPo : tagInfosPoList) {
+                        tagInfosPoMapper.insertSelective(tagInfosPo);
                     }
                     //添加员工信息表
                     StaffsPo staffsPo = new StaffsPo();
                     staffsPo.setStaffid(staffsDto.getStaffid());
                     staffsPo.setChname(staffsDto.getChname());
                     staffsPo.setEnname(staffsDto.getEnname());
-
                     staffsPo.setOrgid(orgid);
-                    if (!StringUtils.isEmpty(headImageName)) {
-                        staffsPo.setImagepath(headPath);
-                        staffsPo.setImagename(headImageName);
-                    }
                     staffsPo.setTreatment(staffsDto.getTreatment());
                     staffsPo.setEffdate(staffsDto.getEffdate());
                     staffsPo.setAltersalary(staffsDto.getAltersalary());
                     staffsPoMapper.insertSelective(staffsPo);
                     //添加员工证件表
-                    for (int i = 0; i < staffscertPoList.size(); i++) {
-                        staffscertPoMapper.insertSelective(staffscertPoList.get(i));
+                    for (StaffscertPo staffscertPo : staffscertPoList) {
+                        staffscertPoMapper.insertSelective(staffscertPo);
+                    }
+                    for (StaffsImagePO staffsImage : staffsImageList) {
+                        staffsPoMapper.insertStaffsImage(staffsImage);
                     }
                     returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
                 }
@@ -255,32 +240,30 @@ public class StaffsServiceImpl implements StaffsService {
                 hashMap.put("pagesize", pagesize);
                 List<StaffsPo> staffsPoList = staffsPoMapper.selectListByMap(hashMap);
                 //根据员工信息去查对应的 员工证件表和标签表
-                TagInfosPo tagInfosPo = null;
-                HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();
-                for (int i = 0; i < staffsPoList.size(); i++) {
-                    retMap = new HashMap<>();
-                    tagInfosPo = new TagInfosPo();
+                for (StaffsPo staffsPo : staffsPoList) {
+                    HashMap<String, Object> retMap = new HashMap<>();
+                    TagInfosPo tagInfosPo = new TagInfosPo();
                     tagInfosPo.setType(1);
-                    tagInfosPo.setObjnum(staffsPoList.get(i).getStaffid());
+                    tagInfosPo.setObjnum(staffsPo.getStaffid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
-                    String effdate = staffsPoList.get(i).getEffdate();
+                    String effdate = staffsPo.getEffdate();
                     if (effdate != null && !"".equals(effdate)) {
-                        Date d2 =formatter.parse(effdate);
+                        Date d2 = formatter.parse(effdate);
                         if (!d2.after(new Date())) {
-                            staffsPoList.get(i).setTreatment(staffsPoList.get(i).getAltersalary());
+                            staffsPo.setTreatment(staffsPo.getAltersalary());
                         }
                     }
                     //再查找员工证件表
-                    List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffsPoList.get(i).getStaffid());
+                    List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffsPo.getStaffid());
 
                     //循环员工证件表，得到证件是否存在过期
                     retMap.put("staffscertStatus", "證正常");
                     if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
-                        for (int y = 0; y < staffscertPos.size(); y++) {
-                            String validity = staffscertPos.get(y).getValidity();
-                            Date d1 =formatter.parse(validity);
-                            if (d1.compareTo(new Date()) == -1) {
+                        for (StaffscertPo staffscertPo : staffscertPos) {
+                            String validity = staffscertPo.getValidity();
+                            Date d1 = formatter.parse(validity);
+                            if (d1.compareTo(new Date()) < 0) {
                                 retMap.put("staffscertStatus", "證過期");
                                 break;
                             }
@@ -294,7 +277,9 @@ public class StaffsServiceImpl implements StaffsService {
                             }
                         }
                     }
-                    retMap.put("staffsPo", staffsPoList.get(i));
+                    List<StaffsImagePO> staffsImageList = staffsPoMapper.selectStaffsImageByStaffId(staffsPo.getStaffid());
+                    staffsPo.setStaffsImageList(staffsImageList);
+                    retMap.put("staffsPo", staffsPo);
                     retMap.put("tagInfosPos", tagInfosPos);
                     retMap.put("staffscertPos", staffscertPos);
                     arrayList.add(retMap);
@@ -310,8 +295,6 @@ public class StaffsServiceImpl implements StaffsService {
     @Transactional
     public ReturnMsg deleteStaffsMsg(String userid, StaffsDto staffsDto) throws Exception {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-        List<StaffscertPo> staffscertPos = null;
-        StaffsPo staffsPo = null;
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(staffsDto.getStaffid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -324,33 +307,28 @@ public class StaffsServiceImpl implements StaffsService {
                 return returnMsg;
             }
             //删除员工，删除标签，删除员工证件，删除头像
-            staffsPo = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
+            StaffsPo staffsPo = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
             if (staffsPo == null) {
                 returnMsg.setMsgbox("員工不存在...");
             } else {
                 //删除员工，删除员工表，删除标签表，删除员工证件表，删除图片文件
-                staffscertPos = staffscertPoMapper.selectByStaffid(staffsDto.getStaffid());
+                List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffsDto.getStaffid());
                 staffsPoMapper.deleteByPrimaryKey(staffsPo.getStaffid());
-                for (int i = 0; i < staffscertPos.size(); i++) {
-                    staffscertPoMapper.deleteByPrimaryKey(staffscertPos.get(i).getCertid());
+                for (StaffscertPo staffscertPo : staffscertPos) {
+                    staffscertPoMapper.deleteByPrimaryKey(staffscertPo.getCertid());
                 }
                 TagInfosPo tagInfosPo = new TagInfosPo();
                 tagInfosPo.setObjnum(staffsDto.getStaffid());
                 tagInfosPo.setType(1);
                 tagInfosPoMapper.deleteByTagPo(tagInfosPo);
+                HashMap<String, Object> map = new HashMap<>(1);
+                map.put("staffId", staffsDto.getStaffid());
+                staffsPoMapper.deleteStaffsImageByStaffId(map);
                 returnMsg.setCode(ReturnMsg.SUCCESS);
                 returnMsg.setMsgbox("成功");
             }
         }
         if (returnMsg.getCode() == ReturnMsg.SUCCESS) {
-            if (!StringUtils.isEmpty(staffsPo.getImagepath())) {
-                FilesUtils.deleteFile(staffsPo.getImagename(), filePath + staffsPo.getImagepath());
-            }
-            //成功进行删除图片
-            for (int i = 0; i < staffscertPos.size(); i++) {
-                FilesUtils.deleteFile(staffscertPos.get(i).getImagename(), filePath + staffscertPos.get(i).getImagepath());
-            }
-
             //判断员工是否存在工程中，如果存在，则发送mq
 //            trueOrFalseToMQ(staffsDto.getStaffid());
             //删除的话，需要通知MQ的同时，也需要删除安全对象信息表，删除员工证件条件表
@@ -373,6 +351,11 @@ public class StaffsServiceImpl implements StaffsService {
                 if (aiEngineerInfo != null) {
                     if (aiEngineerInfo.getSchedule() == 1) {
                         throw new Exception("該員工正在使用中！");
+                    } else {
+                        List<StaffsImagePO> staffsImageList = staffsPoMapper.selectStaffsImageByStaffId(staffsDto.getStaffid());
+                        for (StaffsImagePO staffsImage : staffsImageList) {
+                            FilesUtils.deleteFile(staffsImage.getImageName(), filePath + staffsImage.getImageDir());
+                        }
                     }
                 }
             }
@@ -382,17 +365,14 @@ public class StaffsServiceImpl implements StaffsService {
 
     @Override
     @Transactional
-    public ReturnMsg updateStaffsMsg(String userid, StaffsDto staffsDto, HashMap<String, String> hashMap, String headImageName, String headPath) throws ParseException {
+    public ReturnMsg updateStaffsMsg(String userid, StaffsDto staffsDto, List<StaffsImagePO> staffsImageList, List<Integer> notDelIds) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
-        StaffsPo staffsPoOld = null;
-        List<StaffscertPo> staffscertPosOld = null;
-        List<TagInfosPo> tagInfosPosOld = null;
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(staffsDto.getStaffid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
             //头像，绿卡图片，标签表，员工表，员工证件表
-            staffsPoOld = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
+            StaffsPo staffsPoOld = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             //1.上传头像和证件图片(前面已经上传了)
@@ -401,6 +381,7 @@ public class StaffsServiceImpl implements StaffsService {
             //4.修改员工表
             //5.删除以前上传的文件
             if (staffsPoOld != null) {
+                List<StaffsImagePO> staffsImageOldList = staffsPoMapper.selectStaffsImageByStaffId(staffsDto.getStaffid());
                 //start 为了实时修改盒子员工加上
                 //判断员工是否存在工程中，如果存在，则发送mq
 //                    trueOrFalseToMQ(staffsDto.getStaffid());
@@ -448,14 +429,14 @@ public class StaffsServiceImpl implements StaffsService {
                 //end 为了实时修改盒子员工加上
 
                 //2.删除标签表和证件表
-                staffscertPosOld = staffscertPoMapper.selectByStaffid(staffsDto.getStaffid());
+                List<StaffscertPo> staffscertPosOld = staffscertPoMapper.selectByStaffid(staffsDto.getStaffid());
                 for (StaffscertPo value : staffscertPosOld) {
                     staffscertPoMapper.deleteByPrimaryKey(value.getCertid());
                 }
                 TagInfosPo tagInfosPo = new TagInfosPo();
                 tagInfosPo.setType(1);
                 tagInfosPo.setObjnum(staffsDto.getStaffid());
-                tagInfosPosOld = tagInfosPoMapper.selectByTagPo(tagInfosPo);
+                List<TagInfosPo> tagInfosPosOld = tagInfosPoMapper.selectByTagPo(tagInfosPo);
                 tagInfosPoMapper.deleteByTagPo(tagInfosPo);
 
                 //3.新加标签表和证件表
@@ -501,29 +482,23 @@ public class StaffsServiceImpl implements StaffsService {
                         break;
                     }
                 }
-
-                StaffscertPo staffscertPo;
                 List<Map<String, String>> carDataArr = staffsDto.getCarDataArr();
                 List<StaffscertPo> staffscertPoList = new ArrayList<>();
-                String certid;
-                String typeid;
-                String validity;
-                String filePathTmp;
-                StaffscertPo staffscertPoTmp;
+
                 if (carDataArr != null && carDataArr.size() > 0) {
                     for (Map<String, String> stringStringMap : carDataArr) {
-                        staffscertPo = new StaffscertPo();
+                        StaffscertPo staffscertPo = new StaffscertPo();
                         map = stringStringMap;
                         staffscertPo.setStaffid(staffsDto.getStaffid());
-                        certid = map.get("certid").toString();
-                        staffscertPoTmp = staffscertPoMapper.selectByPrimaryKey(certid);
+                        String certid = map.get("certid").toString();
+                        StaffscertPo staffscertPoTmp = staffscertPoMapper.selectByPrimaryKey(certid);
                         if (staffscertPoTmp != null) {
                             returnMsg.setMsgbox(certid + ": 證件編號已存在...");
                             tagExist = false;
                             break;
                         }
-                        typeid = map.get("typeid").toString();
-                        validity = map.get("validity").toString();
+                        String typeid = map.get("typeid").toString();
+                        String validity = map.get("validity").toString();
                         if (StringUtils.isEmpty(certid) || StringUtils.isEmpty(typeid) || StringUtils.isEmpty(validity)) {
                             returnMsg.setMsgbox("證件信息存在空值...");
                             tagExist = false;
@@ -533,12 +508,6 @@ public class StaffsServiceImpl implements StaffsService {
                             staffscertPo.setTypeid(Integer.valueOf(typeid));
                             staffscertPo.setValidity(validity);
                             staffscertPoList.add(staffscertPo);
-                            filePathTmp = hashMap.get(certid);
-                            if (filePathTmp != null) {
-                                staffscertPo.setImagename(filePathTmp.substring(filePathTmp.lastIndexOf("/") + 1));
-                                staffscertPo.setImagepath(filePathTmp.substring(0, filePathTmp.lastIndexOf("/") + 1));
-                            }
-
                         }
                     }
                 }
@@ -552,22 +521,27 @@ public class StaffsServiceImpl implements StaffsService {
                     staffsPo.setStaffid(staffsDto.getStaffid());
                     staffsPo.setChname(staffsDto.getChname());
                     staffsPo.setEnname(staffsDto.getEnname());
-
-
                     staffsPo.setOrgid(orgid);
-                    if (!StringUtils.isEmpty(headImageName)) {
-                        staffsPo.setImagepath(headPath);
-                        staffsPo.setImagename(headImageName);
-                    }
                     staffsPo.setTreatment(staffsDto.getTreatment());
                     staffsPo.setAltersalary(staffsDto.getAltersalary());
                     staffsPo.setEffdate(staffsDto.getEffdate());
+                    HashMap<String, Object> param = new HashMap<>(2);
+                    param.put("staffId", staffsDto.getStaffid());
+                    param.put("Ids", notDelIds);
+                    staffsPoMapper.deleteStaffsImageByStaffId(param);
                     staffsPoMapper.updateByPrimaryKeySelective(staffsPo);
+
                     //添加员工证件表
                     for (StaffscertPo po : staffscertPoList) {
                         staffscertPoMapper.insertSelective(po);
                     }
-
+                    for (StaffsImagePO staffsImage : staffsImageList) {
+                        if (staffsImage.getId() == null) {
+                            staffsPoMapper.insertStaffsImage(staffsImage);
+                        } else {
+                            staffsPoMapper.updateStaffsImage(staffsImage);
+                        }
+                    }
                     returnMsg.setCode(ReturnMsg.SUCCESS);
                     returnMsg.setMsgbox("成功");
                 }
@@ -575,7 +549,11 @@ public class StaffsServiceImpl implements StaffsService {
                     //操作成功
                     //1.删除以前的文件
                     //删除以前的图片
-                    FilesUtils.deleteFile(staffsPoOld.getImagename(), filePath + staffsPoOld.getImagepath());
+                    for (StaffsImagePO staffsImage : staffsImageOldList) {
+                        if (!notDelIds.contains(staffsImage.getId())) {
+                            FilesUtils.deleteFile(staffsImage.getImageName(), filePath + staffsImage.getImageDir());
+                        }
+                    }
                     for (StaffscertPo po : staffscertPosOld) {
                         FilesUtils.deleteFile(po.getImagename(), filePath + po.getImagepath());
                     }
@@ -608,14 +586,8 @@ public class StaffsServiceImpl implements StaffsService {
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
         } else {
-
             //企业编码
             UsersPo usersPo = usersPoMapper.selectByPrimaryKey(Integer.valueOf(userid));
-//            if (usersPo.getLevel() == 1) {
-//
-//            } else {
-//                userid = usersPo.getSuperiorid().toString();
-//            }
 
             List<StaffsPo> staffsPos = staffsPoMapper.selectListByOrgid(usersPo.getOrgid());
             HashMap<String, Object> map;

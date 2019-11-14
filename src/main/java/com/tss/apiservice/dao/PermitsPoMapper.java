@@ -1,10 +1,9 @@
 package com.tss.apiservice.dao;
 
-import com.tss.apiservice.po.CertTypePO;
-import com.tss.apiservice.po.PermitTypePO;
-import com.tss.apiservice.po.PermitsPo;
+import com.tss.apiservice.po.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,11 +17,19 @@ public interface PermitsPoMapper {
 
     PermitsPo selectByName(String name);
 
-    List<PermitsPo> selectListByMap(Map HashMap);
+    List<PermitsPo> selectListByMap(HashMap<String, Object> map);
 
     int updateByPrimaryKeySelective(PermitsPo record);
 
     List<PermitTypePO> getPermitType();
 
     List<String> getAllNumByOrgId(String orgid);
+
+    void insertPermitsImage(PermitsImagePO permitsImage);
+
+    List<PermitsImagePO> selectPermitsImageByPermitId(String permitId);
+
+    void deletePermitsImageByPermitId(HashMap<String, Object> map);
+
+    void updatePermitsImage(PermitsImagePO permitsImage);
 }

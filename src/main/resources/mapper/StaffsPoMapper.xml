@@ -6,13 +6,20 @@
         <result column="chname" jdbcType="VARCHAR" property="chname"/>
         <result column="enname" jdbcType="VARCHAR" property="enname"/>
         <result column="ensurname" jdbcType="VARCHAR" property="ensurname"/>
-        <result column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
-        <result column="imagename" jdbcType="VARCHAR" property="imagename"/>
         <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
         <result column="treatment" jdbcType="INTEGER" property="treatment"/>
         <result column="altersalary" jdbcType="INTEGER" property="altersalary"/>
         <result column="effdate" jdbcType="TIME" property="effdate"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap_Image" type="com.tss.apiservice.po.StaffsImagePO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="imageindex" jdbcType="INTEGER" property="imageIndex"/>
+        <result column="imagedir" jdbcType="VARCHAR" property="imageDir"/>
+        <result column="imagename" jdbcType="VARCHAR" property="imageName"/>
+        <result column="imagetype" jdbcType="VARCHAR" property="imageType"/>
+        <result column="staffid" jdbcType="VARCHAR" property="staffId"/>
     </resultMap>
 
     <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.CertTypePO">
@@ -22,11 +29,15 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    staffid, chname, enname, ensurname, imagepath, imagename, type, orgid, treatment, altersalary, effdate
+    staffid, chname, enname, ensurname, type, orgid, treatment, altersalary, effdate
   </sql>
 
     <sql id="Base_Column_List_type">
     id, abbreviation, typename
+  </sql>
+
+    <sql id="Base_Column_List_Image">
+    id, imageindex, imagedir, imagename, imagetype, staffid
   </sql>
 
     <select id="getCerType" resultMap="BaseResultMapType">
@@ -186,12 +197,6 @@
             <if test="ensurname != null">
                 ensurname,
             </if>
-            <if test="imagepath != null">
-                imagepath,
-            </if>
-            <if test="imagename != null">
-                imagename,
-            </if>
             <if test="type != null">
                 type,
             </if>
@@ -220,12 +225,6 @@
             </if>
             <if test="ensurname != null">
                 #{ensurname,jdbcType=VARCHAR},
-            </if>
-            <if test="imagepath != null">
-                #{imagepath,jdbcType=VARCHAR},
-            </if>
-            <if test="imagename != null">
-                #{imagename,jdbcType=VARCHAR},
             </if>
             <if test="type != null">
                 #{type,jdbcType=INTEGER},
@@ -256,12 +255,6 @@
             <if test="ensurname != null">
                 ensurname = #{ensurname,jdbcType=VARCHAR},
             </if>
-            <if test="imagepath != null">
-                imagepath = #{imagepath,jdbcType=VARCHAR},
-            </if>
-            <if test="imagename != null">
-                imagename = #{imagename,jdbcType=VARCHAR},
-            </if>
             <if test="type != null">
                 type = #{type,jdbcType=INTEGER},
             </if>
@@ -279,5 +272,82 @@
             </if>
         </set>
         where staffid = #{staffid,jdbcType=VARCHAR}
+    </update>
+
+    <insert id="insertStaffsImage" parameterType="com.tss.apiservice.po.StaffsImagePO">
+        insert into staffsimage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imageIndex != null">
+                imageindex,
+            </if>
+            <if test="imageDir != null">
+                imagedir,
+            </if>
+            <if test="imageName != null">
+                imagename,
+            </if>
+            <if test="imageType != null">
+                imagetype,
+            </if>
+            <if test="staffId != null">
+                staffid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imageIndex != null">
+                #{imageIndex,jdbcType=INTEGER},
+            </if>
+            <if test="imageDir != null">
+                #{imageDir,jdbcType=VARCHAR},
+            </if>
+            <if test="imageName != null">
+                #{imageName,jdbcType=VARCHAR},
+            </if>
+            <if test="imageType != null">
+                #{imageType,jdbcType=VARCHAR},
+            </if>
+            <if test="staffId != null">
+                #{staffId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectStaffsImageByStaffId" parameterType="java.lang.String" resultMap="BaseResultMap_Image">
+        select
+        <include refid="Base_Column_List_Image"/>
+        from staffsimage
+        where staffid = #{staffId,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteStaffsImageByStaffId" parameterType="java.util.Map">
+        delete from staffsimage where staffid = #{staffId,jdbcType=VARCHAR}
+        <if test="ids != null and ids.size > 0">
+            and id not in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </delete>
+
+    <update id="updateStaffsImage"  parameterType="com.tss.apiservice.po.StaffsImagePO">
+        update permitsimage
+        <set>
+            <if test="imageIndex != null">
+                imageindex = #{imageIndex,jdbcType=INTEGER},
+            </if>
+            <if test="imageDir != null">
+                imagedir = #{imageDir,jdbcType=VARCHAR},
+            </if>
+            <if test="imageName != null">
+                imagename = #{imageName,jdbcType=VARCHAR},
+            </if>
+            <if test="imageType != null">
+                imagetype = #{imageType,jdbcType=VARCHAR},
+            </if>
+            <if test="staffId != null">
+                staffid = #{staffId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
     </update>
 </mapper>

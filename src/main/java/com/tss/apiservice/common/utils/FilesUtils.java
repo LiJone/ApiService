@@ -14,6 +14,8 @@ import java.util.Date;
 public class FilesUtils {
     private static Logger logger = LoggerFactory.getLogger(FilesUtils.class);
 
+    private static final String THUMBNAIL = "_thumbnail";
+
     /*
      * filesData为 base64
      * filePath 为 d：//picture
@@ -104,6 +106,10 @@ public class FilesUtils {
             String[] split = fileName.split(";");
             for (String s : split) {
                 deleteFile(filePath + s);
+                if (s.contains(THUMBNAIL)) {
+                    s = s.replace(THUMBNAIL, "");
+                    deleteFile(filePath + s);
+                }
             }
         }
     }

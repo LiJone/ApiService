@@ -3,8 +3,10 @@ package com.tss.apiservice.controller;
 import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.common.utils.FilesUtils;
 import com.tss.apiservice.dto.ToolsDto;
+import com.tss.apiservice.po.ToolsImagePO;
 import com.tss.apiservice.service.ToolsService;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,48 +36,51 @@ public class ToolsController {
     @RequestMapping(value = "/app/tools/addToolsMsg/{userid}", method = RequestMethod.POST)
     @ResponseBody
     public ReturnMsg addToolsMsg(@PathVariable("userid") String userid, @RequestBody ToolsDto toolsDto) {
-        ReturnMsg returnMsg = null;
+        ReturnMsg returnMsg = new ReturnMsg();
         if (toolsDto.getTypeid() == null) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具類型id為空");
             return returnMsg;
         }
-        //证件表名字
-        StringBuilder fileNameStr = new StringBuilder();
-        //证件表路径
-        String filePathStr = null;
-        String thumbnailPath;
-        StringBuilder thumbnailHeadNameSb = new StringBuilder();
+        List<ToolsImagePO> toolsImageList = new ArrayList<>();
         boolean status = true;
-        Map map;
-        String fileAllPath;
+
         try {
             //保存文件
             List filesDataArr = toolsDto.getFilesDataArr();
             if (filesDataArr != null && filesDataArr.size() > 0) {
+                int t = 1;
                 for (Object o : filesDataArr) {
-                    map = (HashMap) o;
+                    Map map = (HashMap) o;
                     if (!StringUtils.isEmpty(map.get("base64").toString()) && !StringUtils.isEmpty(map.get("type").toString())) {
-                        fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
-                        String[] split = fileAllPath.split("\\.");
-                        String thumbnail = split[0] + THUMBNAIL;
-                        thumbnailPath = thumbnail + "." + split[1];
-                        //生成缩略图
-                        Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
+                        String fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
                         if ("".equals(fileAllPath)) {
                             status = false;
                             returnMsg.setMsgbox("圖片上傳失敗...");
                             break;
                         } else {
-                            filePathStr = fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1);
-                            String fileName = fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1);
-                            fileNameStr.append(fileName).append(";");
-                            thumbnailHeadNameSb.append(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1)).append(";");
+                            ToolsImagePO toolsImage = new ToolsImagePO();
+                            toolsImage.setToolId(toolsDto.getToolid());
+                            toolsImage.setImageIndex(t);
+                            toolsImage.setImageType(map.get("type").toString());
+                            toolsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            if ("pdf".equals(map.get("type"))) {
+                                toolsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
+                            } else {
+                                String[] split = fileAllPath.split("\\.");
+                                String thumbnail = split[0] + THUMBNAIL;
+                                String thumbnailPath = thumbnail + "." + split[1];
+                                //生成缩略图
+                                Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
+                                toolsImage.setImageName(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1));
+                            }
+                            toolsImageList.add(toolsImage);
+                            t++;
                         }
                     }
                 }
             }
             if (status) {
-                returnMsg = toolsService.addToolsMsg(userid, toolsDto, filePathStr, thumbnailHeadNameSb.toString());
+                returnMsg = toolsService.addToolsMsg(userid, toolsDto, toolsImageList);
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具添加失敗...");
@@ -82,8 +88,9 @@ public class ToolsController {
             e.printStackTrace();
         }
         if (returnMsg.getCode() == ReturnMsg.FAIL) {
-            FilesUtils.deleteFile(fileNameStr.toString(), filePath + filePathStr);
-            FilesUtils.deleteFile(thumbnailHeadNameSb.toString(), filePath + filePathStr);
+            for (ToolsImagePO toolsImage : toolsImageList) {
+                FilesUtils.deleteFile(toolsImage.getImageName(), filePath + toolsImage.getImageDir());
+            }
         }
         return returnMsg;
     }
@@ -119,49 +126,59 @@ public class ToolsController {
     @RequestMapping(value = "/app/tools/updateToolsMsg/{userid}", method = RequestMethod.PUT)
     @ResponseBody
     public ReturnMsg updateToolsMsg(@PathVariable("userid") String userid, @RequestBody ToolsDto toolsDto) {
-        ReturnMsg returnMsg = null;
+        ReturnMsg returnMsg = new ReturnMsg();
         if (toolsDto.getTypeid() == null) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具類型id為空");
             return returnMsg;
         }
-        //证件表名字
-        StringBuilder fileNameStr = new StringBuilder();
-        //证件表路径
-        String filePathStr = null;
-        String thumbnailPath;
-        StringBuilder thumbnailHeadNameSb = new StringBuilder();
-        boolean status = true;
-        Map map;
-        String fileAllPath;
-        try {
 
+        List<ToolsImagePO> toolsImageList = new ArrayList<>();
+        List<Integer> notDelIds = new ArrayList<>();
+        boolean status = true;
+        try {
             //保存文件
             List filesDataArr = toolsDto.getFilesDataArr();
             if (filesDataArr != null && filesDataArr.size() > 0) {
+                int t = 1;
                 for (Object o : filesDataArr) {
-                    map = (HashMap) o;
+                    Map map = (HashMap) o;
                     if (!StringUtils.isEmpty(map.get("base64").toString()) && !StringUtils.isEmpty(map.get("type").toString())) {
-                        fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
-                        String[] split = fileAllPath.split("\\.");
-                        String thumbnail = split[0] + THUMBNAIL;
-                        thumbnailPath = thumbnail + "." + split[1];
-                        //生成缩略图
-                        Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
+                        String fileAllPath = FilesUtils.base64StringToFile(map.get("base64").toString(), filePath, map.get("type").toString());
                         if ("".equals(fileAllPath)) {
                             status = false;
                             returnMsg.setMsgbox("圖片上傳失敗...");
                             break;
                         } else {
-                            filePathStr = fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1);
-                            String fileName = fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1);
-                            fileNameStr.append(fileName).append(";");
-                            thumbnailHeadNameSb.append(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1)).append(";");
+                            ToolsImagePO toolsImage = new ToolsImagePO();
+                            toolsImage.setToolId(toolsDto.getToolid());
+                            toolsImage.setImageIndex(t);
+                            toolsImage.setImageType(map.get("type").toString());
+                            toolsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            if ("pdf".equals(map.get("type"))) {
+                                toolsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
+                            } else {
+                                String[] split = fileAllPath.split("\\.");
+                                String thumbnail = split[0] + THUMBNAIL;
+                                String thumbnailPath = thumbnail + "." + split[1];
+                                //生成缩略图
+                                Thumbnails.of(filePath + fileAllPath).scale(0.2f).toFile(filePath + thumbnailPath);
+                                toolsImage.setImageName(thumbnailPath.substring(thumbnailPath.lastIndexOf("/") + 1));
+                            }
+                            toolsImageList.add(toolsImage);
+                            t++;
                         }
+                    } else if (!StringUtils.isEmpty(map.get("id"))) {
+                        ToolsImagePO toolsImage = new ToolsImagePO();
+                        toolsImage.setId(Integer.parseInt(map.get("id").toString()));
+                        toolsImage.setImageIndex(t);
+                        toolsImageList.add(toolsImage);
+                        t++;
+                        notDelIds.add(Integer.parseInt(map.get("id").toString()));
                     }
                 }
             }
             if (status) {
-                returnMsg = toolsService.updateToolsMsg(userid, toolsDto, filePathStr, thumbnailHeadNameSb.toString());
+                returnMsg = toolsService.updateToolsMsg(userid, toolsDto, toolsImageList, notDelIds);
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具修改失敗...");
@@ -169,8 +186,11 @@ public class ToolsController {
             e.printStackTrace();
         }
         if (returnMsg.getCode() == ReturnMsg.FAIL) {
-            FilesUtils.deleteFile(fileNameStr.toString(), filePath + filePathStr);
-            FilesUtils.deleteFile(thumbnailHeadNameSb.toString(), filePath + filePathStr);
+            for (ToolsImagePO toolsImage : toolsImageList) {
+                if (toolsImage.getImageName() != null) {
+                    FilesUtils.deleteFile(toolsImage.getImageName(), filePath + toolsImage.getImageDir());
+                }
+            }
         }
         return returnMsg;
     }

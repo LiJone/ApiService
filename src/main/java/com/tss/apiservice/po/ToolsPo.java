@@ -1,6 +1,7 @@
 package com.tss.apiservice.po;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 工具信息实体类
@@ -29,16 +30,6 @@ public class ToolsPo implements Serializable {
     private String typename;
 
     /**
-     * 工具图像路径
-     */
-    private String imagepath;
-
-    /**
-     * 工具图像名称
-     */
-    private String imagename;
-
-    /**
      * 检测对象类型
      */
     private Integer type;
@@ -52,6 +43,19 @@ public class ToolsPo implements Serializable {
      * 机构id
      */
     private String orgid;
+
+    /**
+     * 工具图像数据
+     */
+    private List<ToolsImagePO> toolsImageList;
+
+    public List<ToolsImagePO> getToolsImageList() {
+        return toolsImageList;
+    }
+
+    public void setToolsImageList(List<ToolsImagePO> toolsImageList) {
+        this.toolsImageList = toolsImageList;
+    }
 
     public String getTypename() {
         return typename;
@@ -85,22 +89,6 @@ public class ToolsPo implements Serializable {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getImagepath() {
-        return imagepath;
-    }
-
-    public void setImagepath(String imagepath) {
-        this.imagepath = imagepath == null ? null : imagepath.trim();
-    }
-
-    public String getImagename() {
-        return imagename;
-    }
-
-    public void setImagename(String imagename) {
-        this.imagename = imagename == null ? null : imagename.trim();
-    }
-
     public Integer getType() {
         return type;
     }
@@ -130,13 +118,12 @@ public class ToolsPo implements Serializable {
         return "ToolsPo{" +
                 "toolid='" + toolid + '\'' +
                 ", name='" + name + '\'' +
-                ", typeid='" + typeid + '\'' +
+                ", typeid=" + typeid +
                 ", typename='" + typename + '\'' +
-                ", imagepath='" + imagepath + '\'' +
-                ", imagename='" + imagename + '\'' +
                 ", type=" + type +
                 ", validity='" + validity + '\'' +
                 ", orgid='" + orgid + '\'' +
+                ", toolsImageList=" + toolsImageList +
                 '}';
     }
 }

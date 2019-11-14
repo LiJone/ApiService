@@ -1,6 +1,7 @@
 package com.tss.apiservice.po;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 许可证信息实体类
@@ -39,16 +40,6 @@ public class PermitsPo implements Serializable {
     private String enddate;
 
     /**
-     * 文件路径
-     */
-    private String filepath;
-
-    /**
-     * 文件名称
-     */
-    private String filename;
-
-    /**
      * 检测对象类型
      */
     private Integer type;
@@ -67,6 +58,16 @@ public class PermitsPo implements Serializable {
      * 机构id
      */
     private String orgid;
+
+    private List<PermitsImagePO> permitsImageList;
+
+    public List<PermitsImagePO> getPermitsImageList() {
+        return permitsImageList;
+    }
+
+    public void setPermitsImageList(List<PermitsImagePO> permitsImageList) {
+        this.permitsImageList = permitsImageList;
+    }
 
     public Integer getPositionid() {
         return positionid;
@@ -132,22 +133,6 @@ public class PermitsPo implements Serializable {
         this.orgid = orgid;
     }
 
-    public String getFilepath() {
-        return filepath;
-    }
-
-    public void setFilepath(String filepath) {
-        this.filepath = filepath == null ? null : filepath.trim();
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename == null ? null : filename.trim();
-    }
-
     public Integer getType() {
         return type;
     }
@@ -173,12 +158,11 @@ public class PermitsPo implements Serializable {
                 ", typename='" + typename + '\'' +
                 ", startdate='" + startdate + '\'' +
                 ", enddate='" + enddate + '\'' +
-                ", filepath='" + filepath + '\'' +
-                ", filename='" + filename + '\'' +
                 ", type=" + type +
-                ", positionid='" + positionid + '\'' +
+                ", positionid=" + positionid +
                 ", ropeweight=" + ropeweight +
                 ", orgid='" + orgid + '\'' +
+                ", permitsImageList=" + permitsImageList +
                 '}';
     }
 }

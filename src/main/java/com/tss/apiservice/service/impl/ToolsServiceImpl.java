@@ -113,20 +113,20 @@ public class ToolsServiceImpl implements ToolsService {
                 hashMap.put("pagesize", pagesize);
                 List<ToolsPo> toolsPoList = toolsPoMapper.selectListByMap(hashMap);
                 //根据工具信息去查对应的标签表
-                TagInfosPo tagInfosPo = null;
-                HashMap<String, Object> retMap = null;
+                TagInfosPo tagInfosPo;
+                HashMap<String, Object> retMap;
                 ArrayList<Object> arrayList = new ArrayList<>();
-                for (int i = 0; i < toolsPoList.size(); i++) {
+                for (ToolsPo toolsPo : toolsPoList) {
                     retMap = new HashMap<>();
                     tagInfosPo = new TagInfosPo();
                     tagInfosPo.setType(2);
-                    tagInfosPo.setObjnum(toolsPoList.get(i).getToolid());
+                    tagInfosPo.setObjnum(toolsPo.getToolid());
                     List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
                     if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
                         retMap.put("toolStatus", "正常");
-                        String validity = toolsPoList.get(i).getValidity();
-                        Date d1 =formatter.parse(validity);
-                        if (d1.compareTo(new Date()) == -1) {
+                        String validity = toolsPo.getValidity();
+                        Date d1 = formatter.parse(validity);
+                        if (d1.compareTo(new Date()) < 0) {
                             retMap.put("toolStatus", "過期");
                         }
                     } else {
@@ -136,7 +136,9 @@ public class ToolsServiceImpl implements ToolsService {
                             retMap.put("toolStatus", "過期");
                         }
                     }
-                    retMap.put("toolsPo", toolsPoList.get(i));
+                    List<ToolsImagePO> toolsImageList = toolsPoMapper.selectToolsImageByToolId(toolsPo.getToolid());
+                    toolsPo.setToolsImageList(toolsImageList);
+                    retMap.put("toolsPo", toolsPo);
                     retMap.put("tagInfosPos", tagInfosPos);
                     arrayList.add(retMap);
                 }
@@ -149,25 +151,23 @@ public class ToolsServiceImpl implements ToolsService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ReturnMsg addToolsMsg(String userid, ToolsDto toolsDto, String filePathStr, String fileNameStr) {
+    public ReturnMsg addToolsMsg(String userid, ToolsDto toolsDto, List<ToolsImagePO> toolsImageList) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(toolsDto.getName()) || StringUtils.isEmpty(toolsDto.getToolid())) {
             returnMsg.setMsgbox("參數異常...");
-
         } else {
             ToolsPo ret = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
-            Map map = null;
+            Map map;
             if (ret == null) {
                 //获取机构id
                 String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
-                TagInfosPo tagInfosPo = null;
+                TagInfosPo tagInfosPo;
                 List<Map<String, String>> tag = toolsDto.getTag();
-                List<TagInfosPo> tagInfosPoList = new ArrayList();
+                List<TagInfosPo> tagInfosPoList = new ArrayList<>();
                 boolean tagExist = true;
-                for (int i = 0; i < tag.size(); i++) {
+                for (Map<String, String> stringStringMap : tag) {
                     tagInfosPo = new TagInfosPo();
-                    map = (HashMap) tag.get(i);
+                    map = stringStringMap;
                     tagInfosPo.setTagid(map.get("tagCode").toString());
                     TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
                     if (tagInfo == null) {
@@ -205,18 +205,19 @@ public class ToolsServiceImpl implements ToolsService {
                 }
 
                 if (tagExist) {
-                    for (int i = 0; i < tagInfosPoList.size(); i++) {
-                        tagInfosPoMapper.insertSelective(tagInfosPoList.get(i));
+                    for (TagInfosPo infosPo : tagInfosPoList) {
+                        tagInfosPoMapper.insertSelective(infosPo);
                     }
                     ToolsPo toolsPo = new ToolsPo();
                     toolsPo.setToolid(toolsDto.getToolid());
                     toolsPo.setName(toolsDto.getName());
-                    toolsPo.setImagepath(filePathStr);
-                    toolsPo.setImagename(fileNameStr);
                     toolsPo.setValidity(toolsDto.getValiDity());
                     toolsPo.setTypeid(toolsDto.getTypeid());
                     toolsPo.setOrgid(orgid);
                     toolsPoMapper.insertSelective(toolsPo);
+                    for (ToolsImagePO toolsImage : toolsImageList) {
+                        toolsPoMapper.insertToolsImage(toolsImage);
+                    }
                     returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
                 }
             } else {
@@ -231,7 +232,6 @@ public class ToolsServiceImpl implements ToolsService {
     public ReturnMsg deleteToolsMsg(String userid, ToolsDto toolsDto) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
 
-        ToolsPo toolsPoOld = null;
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(toolsDto.getToolid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
@@ -243,7 +243,7 @@ public class ToolsServiceImpl implements ToolsService {
                 returnMsg.setMsgbox("已存在相關記錄，暫不支持刪除操作");
                 return returnMsg;
             }
-            toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
+            ToolsPo toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
             if (toolsPoOld == null) {
                 returnMsg.setMsgbox("工具不存在...");
             } else {
@@ -253,13 +253,17 @@ public class ToolsServiceImpl implements ToolsService {
                 tagInfosPo.setType(2);
                 //删除标签
                 List<TagInfosPo> tagInfosPos = tagInfosPoMapper.selectByTagPo(tagInfosPo);
-                for (int i = 0; i < tagInfosPos.size(); i++) {
-                    tagInfosPoMapper.deleteByPrimaryKey(tagInfosPos.get(i).getTagid());
+                for (TagInfosPo infosPo : tagInfosPos) {
+                    tagInfosPoMapper.deleteByPrimaryKey(infosPo.getTagid());
                 }
-                ToolsPo toolsPo = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
                 toolsPoMapper.deleteByPrimaryKey(toolsDto.getToolid());
-                FilesUtils.deleteFile(toolsPo.getImagename(), filePath + toolsPo.getImagepath());
-
+                List<ToolsImagePO> toolsImageList = toolsPoMapper.selectToolsImageByToolId(toolsDto.getToolid());
+                for (ToolsImagePO toolsImage : toolsImageList) {
+                    FilesUtils.deleteFile(toolsImage.getImageName(), filePath + toolsImage.getImageDir());
+                }
+                HashMap<String, Object> map = new HashMap<>(1);
+                map.put("toolId", toolsDto.getToolid());
+                toolsPoMapper.deleteToolsImageByToolId(map);
                 SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
                 if(safeobjsPo != null){
                     safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
@@ -277,38 +281,33 @@ public class ToolsServiceImpl implements ToolsService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ReturnMsg updateToolsMsg(String userid, ToolsDto toolsDto, String filePathStr, String fileNameStr) {
+    public ReturnMsg updateToolsMsg(String userid, ToolsDto toolsDto, List<ToolsImagePO> toolsImageList, List<Integer> notDelIds) {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-
-        ToolscertPo toolscertPoOld = null;
-        ToolsPo toolsPoOld = null;
-        List<TagInfosPo> tagInfosPosOld = null;
-
+        List<TagInfosPo> tagInfosPosOld;
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(toolsDto.getToolid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
-            toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
+            ToolsPo toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
             if (toolsPoOld != null) {
+                List<ToolsImagePO> toolsImageOldList = toolsPoMapper.selectToolsImageByToolId(toolsDto.getToolid());
                 //获取机构id
                 String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
                 //删除标签，更改工具，删除以前图片
-                TagInfosPo tagInfosPo = null;
+                TagInfosPo tagInfosPo;
                 tagInfosPo = new TagInfosPo();
                 tagInfosPo.setType(2);
                 tagInfosPo.setObjnum(toolsDto.getToolid());
                 tagInfosPosOld = tagInfosPoMapper.selectByTagPo(tagInfosPo);
                 tagInfosPoMapper.deleteByTagPo(tagInfosPo);
-
-                toolscertPoOld = toolscertPoMapper.selectByToolid(toolsDto.getToolid());
                 toolscertPoMapper.deleteByToolid(toolsDto.getToolid());
 
                 List<Map<String, String>> tag = toolsDto.getTag();
-                List<TagInfosPo> tagInfosPoList = new ArrayList();
-                Map map = null;
+                List<TagInfosPo> tagInfosPoList = new ArrayList<>();
+                Map map;
                 boolean tagExist = true;
-                for (int i = 0; i < tag.size(); i++) {
+                for (Map<String, String> stringStringMap : tag) {
                     tagInfosPo = new TagInfosPo();
-                    map = (HashMap) tag.get(i);
+                    map = stringStringMap;
                     tagInfosPo.setTagid(map.get("tagCode").toString());
                     TagInfosPo tagInfo = tagInfosPoMapper.selectByPrimaryKey(tagInfosPo.getTagid());
                     if (tagInfo == null) {
@@ -349,14 +348,21 @@ public class ToolsServiceImpl implements ToolsService {
                     toolsPo.setToolid(toolsDto.getToolid());
                     toolsPo.setName(toolsDto.getName());
                     toolsPo.setTypeid(toolsDto.getTypeid());
-                    toolsPo.setImagepath(filePathStr);
-                    toolsPo.setImagename(fileNameStr);
                     toolsPo.setValidity(toolsDto.getValiDity());
-
                     toolsPo.setOrgid(orgid);
-
-                    for (int i = 0; i < tagInfosPoList.size(); i++) {
-                        tagInfosPoMapper.insertSelective(tagInfosPoList.get(i));
+                    for (TagInfosPo infosPo : tagInfosPoList) {
+                        tagInfosPoMapper.insertSelective(infosPo);
+                    }
+                    HashMap<String, Object> param = new HashMap<>();
+                    param.put("toolId", toolsDto.getToolid());
+                    param.put("Ids", notDelIds);
+                    toolsPoMapper.deleteToolsImageByToolId(param);
+                    for (ToolsImagePO toolsImage : toolsImageList) {
+                        if (toolsImage.getId() == null) {
+                            toolsPoMapper.insertToolsImage(toolsImage);
+                        } else {
+                            toolsPoMapper.updateToolsImage(toolsImage);
+                        }
                     }
                     toolsPoMapper.updateByPrimaryKeySelective(toolsPo);
 
@@ -367,8 +373,10 @@ public class ToolsServiceImpl implements ToolsService {
                 if (returnMsg.getCode() == ReturnMsg.SUCCESS) {
                     //操作成功
                     //1.删除以前的文件
-                    if (toolscertPoOld != null) {
-                        FilesUtils.deleteFile(toolscertPoOld.getImagename(), filePath + toolscertPoOld.getImagepath());
+                    for (ToolsImagePO toolsImage : toolsImageOldList) {
+                        if (!notDelIds.contains(toolsImage.getId())) {
+                            FilesUtils.deleteFile(toolsImage.getImageName(), filePath + toolsImage.getImageDir());
+                        }
                     }
                     SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
                     if(safeobjsPo != null){
@@ -381,12 +389,11 @@ public class ToolsServiceImpl implements ToolsService {
                         }
                     }
 
-
                 } else if (returnMsg.getCode() == ReturnMsg.FAIL) {
                     //操作失败
                     //1.还原删除的标签表，员工证件表，删除上传的文件
-                    for (int i = 0; i < tagInfosPosOld.size(); i++) {
-                        tagInfosPoMapper.insertSelective(tagInfosPosOld.get(i));
+                    for (TagInfosPo infosPo : tagInfosPosOld) {
+                        tagInfosPoMapper.insertSelective(infosPo);
                     }
                 }
             } else {
@@ -453,7 +460,7 @@ public class ToolsServiceImpl implements ToolsService {
                 returnMsg.setCode(ReturnMsg.SUCCESS);
                 returnMsg.setData(new ArrayList<>());
             } else {
-                HashMap<String, Object> retMap = null;
+                HashMap<String, Object> retMap;
                 ArrayList<Object> arrayList = new ArrayList<>();
                 for (ToolsPo toolsPo : toolsPos) {
                     retMap = new HashMap<>();
