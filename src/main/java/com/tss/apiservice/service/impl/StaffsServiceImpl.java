@@ -527,7 +527,7 @@ public class StaffsServiceImpl implements StaffsService {
                     staffsPo.setEffdate(staffsDto.getEffdate());
                     HashMap<String, Object> param = new HashMap<>(2);
                     param.put("staffId", staffsDto.getStaffid());
-                    param.put("Ids", notDelIds);
+                    param.put("ids", notDelIds);
                     staffsPoMapper.deleteStaffsImageByStaffId(param);
                     staffsPoMapper.updateByPrimaryKeySelective(staffsPo);
 

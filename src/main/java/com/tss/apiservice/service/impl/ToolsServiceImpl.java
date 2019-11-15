@@ -355,7 +355,7 @@ public class ToolsServiceImpl implements ToolsService {
                     }
                     HashMap<String, Object> param = new HashMap<>();
                     param.put("toolId", toolsDto.getToolid());
-                    param.put("Ids", notDelIds);
+                    param.put("ids", notDelIds);
                     toolsPoMapper.deleteToolsImageByToolId(param);
                     for (ToolsImagePO toolsImage : toolsImageList) {
                         if (toolsImage.getId() == null) {

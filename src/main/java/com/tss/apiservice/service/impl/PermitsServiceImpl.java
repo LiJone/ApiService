@@ -416,7 +416,7 @@ public class PermitsServiceImpl implements PermitsService {
                     permitsPo.setRopeweight(permitsDto.getRopeweight());
                     HashMap<String, Object> param = new HashMap<>(2);
                     param.put("permitId", permitsDto.getPermitid());
-                    param.put("Ids", notDelIds);
+                    param.put("ids", notDelIds);
                     permitsPoMapper.deletePermitsImageByPermitId(param);
                     for (PermitsImagePO permitsImage : permitsImageList) {
                         if (permitsImage.getId() == null) {

@@ -14,7 +14,7 @@ public class CommonServiceImpl implements CommonService {
     private static final String THUMBNAIL = "_thumbnail";
 
     @Override
-    public ReturnMsg getBase64ByPath(String filePath, String filePathTmp, String fileName) throws Exception {
+    public ReturnMsg getBase64ByPath(String filePath, String filePathTmp, String fileName, String imageIndex) throws Exception {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(filePathTmp) || StringUtils.isEmpty(fileName)) {
             returnMsg.setMsgbox("參數異常...");
@@ -24,6 +24,7 @@ public class CommonServiceImpl implements CommonService {
             map.put("fileData", base64File);
             map.put("filePathTmp", filePathTmp);
             map.put("fileName", fileName);
+            map.put("imageIndex", imageIndex);
             returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", map);
         }
         return returnMsg;
