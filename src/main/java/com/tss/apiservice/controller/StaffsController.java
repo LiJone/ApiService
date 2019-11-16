@@ -64,6 +64,7 @@ public class StaffsController {
                             staffsImage.setImageIndex(t);
                             staffsImage.setImageType(map.get("type"));
                             staffsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            staffsImage.setName(map.get("name"));
                             if ("pdf".equals(map.get("type"))) {
                                 staffsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
                             } else {
@@ -157,6 +158,7 @@ public class StaffsController {
                             staffsImage.setImageIndex(t);
                             staffsImage.setImageType(map.get("type"));
                             staffsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            staffsImage.setName(map.get("name"));
                             if ("pdf".equals(map.get("type"))) {
                                 staffsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
                             } else {

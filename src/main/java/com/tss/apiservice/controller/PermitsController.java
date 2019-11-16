@@ -60,6 +60,7 @@ public class PermitsController {
                             permitsImage.setImageIndex(t);
                             permitsImage.setImageType(map.get("type").toString());
                             permitsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            permitsImage.setName(map.get("name").toString());
                             if ("pdf".equals(map.get("type"))) {
                                 permitsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
                             } else {
@@ -153,6 +154,7 @@ public class PermitsController {
                             permitsImage.setImageIndex(t);
                             permitsImage.setImageType(map.get("type").toString());
                             permitsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            permitsImage.setName(map.get("name").toString());
                             if ("pdf".equals(map.get("type"))) {
                                 permitsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
                             } else {

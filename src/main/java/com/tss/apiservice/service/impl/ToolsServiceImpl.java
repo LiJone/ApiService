@@ -418,7 +418,8 @@ public class ToolsServiceImpl implements ToolsService {
             param.put("objnum", toolid);
             param.put("type", 2);
             TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(param);
-
+            List<ToolsImagePO> toolsImageList = toolsPoMapper.selectToolsImageByToolId(toolsPo.getToolid());
+            toolsPo.setToolsImageList(toolsImageList);
             HashMap<Object, Object> map = new HashMap<>();
             map.put("toolsPo",toolsPo);
             map.put("tagInfosPos",tagInfosPo);

@@ -540,4 +540,12 @@
         from wswpinfo w left join aiengineerinfo a on w.jobnum = a.jobnum
         where w.cpnum = #{cpNum,jdbcType=VARCHAR} and a.schedule = 1
     </select>
+
+    <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        jobnum
+        from aiengineerinfo
+        where orgid = #{orgId,jdbcType=VARCHAR}
+        order by jobnum
+    </select>
 </mapper>

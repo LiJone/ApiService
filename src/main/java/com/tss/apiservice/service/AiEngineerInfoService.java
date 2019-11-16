@@ -47,4 +47,11 @@ public interface AiEngineerInfoService {
      * @return
      */
     ReturnMsg setJobRunStatus(String jobNum);
+
+    /**
+     * 获取所有智能工程编号
+     * @param userid
+     * @return
+     */
+    ReturnMsg getAllNum(String userid);
 }

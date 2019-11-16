@@ -63,6 +63,7 @@ public class ToolsController {
                             toolsImage.setImageIndex(t);
                             toolsImage.setImageType(map.get("type").toString());
                             toolsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            toolsImage.setName(map.get("name").toString());
                             if ("pdf".equals(map.get("type"))) {
                                 toolsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
                             } else {
@@ -154,6 +155,7 @@ public class ToolsController {
                             toolsImage.setImageIndex(t);
                             toolsImage.setImageType(map.get("type").toString());
                             toolsImage.setImageDir(fileAllPath.substring(0, fileAllPath.lastIndexOf("/") + 1));
+                            toolsImage.setName(map.get("name").toString());
                             if ("pdf".equals(map.get("type"))) {
                                 toolsImage.setImageName(fileAllPath.substring(fileAllPath.lastIndexOf("/") + 1));
                             } else {

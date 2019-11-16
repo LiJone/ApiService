@@ -131,4 +131,17 @@ public class AiEngineerInfoController {
         return returnMsg;
     }
 
+    @RequestMapping(value = "/app/engineer/getAllNum/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllNum(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = aiEngineerInfoService.getAllNum(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/engineer/getAllNum/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

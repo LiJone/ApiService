@@ -496,7 +496,8 @@ public class PermitsServiceImpl implements PermitsService {
             param.put("objnum", permitid);
             param.put("type", 0);
             TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(param);
-
+            List<PermitsImagePO> permitsImageList = permitsPoMapper.selectPermitsImageByPermitId(permitsPo.getPermitid());
+            permitsPo.setPermitsImageList(permitsImageList);
             HashMap<Object, Object> map = new HashMap<>();
             map.put("permitsPo", permitsPo);
             map.put("tagInfosPos", tagInfosPo);

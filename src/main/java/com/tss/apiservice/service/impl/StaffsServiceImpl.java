@@ -680,7 +680,8 @@ public class StaffsServiceImpl implements StaffsService {
             param.put("objnum", staffid);
             param.put("type", 1);
             TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(param);
-
+            List<StaffsImagePO> staffsImageList = staffsPoMapper.selectStaffsImageByStaffId(staffsPo.getStaffid());
+            staffsPo.setStaffsImageList(staffsImageList);
             HashMap<Object, Object> map = new HashMap<>();
             map.put("staffscertPos", staffscertPos);
             map.put("staffsPo", staffsPo);

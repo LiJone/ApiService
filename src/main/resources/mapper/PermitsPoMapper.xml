@@ -7,8 +7,6 @@
         <result column="typeid" jdbcType="INTEGER" property="typeid"/>
         <result column="startdate" jdbcType="TIMESTAMP" property="startdate"/>
         <result column="enddate" jdbcType="TIMESTAMP" property="enddate"/>
-        <result column="filepath" jdbcType="VARCHAR" property="filepath"/>
-        <result column="filename" jdbcType="VARCHAR" property="filename"/>
         <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="positionid" jdbcType="INTEGER" property="positionid"/>
         <result column="ropeweight" jdbcType="FLOAT" property="ropeweight"/>
@@ -22,6 +20,7 @@
         <result column="imagename" jdbcType="VARCHAR" property="imageName"/>
         <result column="imagetype" jdbcType="VARCHAR" property="imageType"/>
         <result column="permitid" jdbcType="VARCHAR" property="permitId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
 
     <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.PermitTypePO">
@@ -38,7 +37,7 @@
   </sql>
 
     <sql id="Base_Column_List_Image">
-    id, imageindex, imagedir, imagename, imagetype, permitid
+    id, imageindex, imagedir, imagename, imagetype, permitid, name
   </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -219,6 +218,9 @@
             <if test="permitId != null">
                 permitid,
             </if>
+            <if test="name != null">
+                name,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="imageIndex != null">
@@ -235,6 +237,9 @@
             </if>
             <if test="permitId != null">
                 #{permitId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -273,6 +278,9 @@
             </if>
             <if test="permitId != null">
                 permitid = #{permitId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}

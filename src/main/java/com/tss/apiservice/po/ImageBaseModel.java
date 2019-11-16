@@ -27,6 +27,19 @@ public class ImageBaseModel implements Serializable {
      */
     private String imageType;
 
+    /**
+     * 文件原名
+     */
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
