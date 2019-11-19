@@ -29,10 +29,10 @@ public class CommonCotroller {
 
     @RequestMapping(value = "/app/common/getBase64ByPath", method = RequestMethod.GET)
     @ResponseBody
-    public ReturnMsg getBase64ByPath(String filePathTmp, String fileName, String imageIndex) {
+    public ReturnMsg getBase64ByPath(String filePathTmp, String fileName, String imageIndex, String name) {
         ReturnMsg returnMsg;
         try {
-            returnMsg = commonService.getBase64ByPath(filePath, filePathTmp, fileName, imageIndex);
+            returnMsg = commonService.getBase64ByPath(filePath, filePathTmp, fileName, imageIndex, name);
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據......");
             logger.info("/app/common/getBase64ByPath 异常");

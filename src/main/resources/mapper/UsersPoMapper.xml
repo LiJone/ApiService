@@ -37,6 +37,7 @@
             and username like '%${username}%'
         </if>
         and orgid = #{orgid}
+        order by userid
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>
