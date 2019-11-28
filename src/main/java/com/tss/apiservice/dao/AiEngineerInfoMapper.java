@@ -209,9 +209,23 @@ public interface AiEngineerInfoMapper {
     Integer getCpCountByCpNum(String cpNum);
 
     /**
+     * 根据cp编号查询是否符合条件
+     * @param cpNum cp编号
+     * @return
+     */
+    Integer getCpCountByCpNumClose(String cpNum);
+
+    /**
      * 根据机构编号获取所有智能工程编号
      * @param orgId
      * @return
      */
     List<String> getAllNumByOrgId(String orgId);
+
+    /**
+     * 根据机构编号获取所有智能工程名称
+     * @param orgId
+     * @return
+     */
+    List<String> getAllNameByOrgId(String orgId);
 }

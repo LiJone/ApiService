@@ -23,4 +23,6 @@ public interface GatewaysService {
     ReturnMsg reloadGateWay(String number) throws IOException;
 
     ReturnMsg getGateWaysSetting(String number) throws IOException;
+
+    ReturnMsg getAllName(String userid);
 }

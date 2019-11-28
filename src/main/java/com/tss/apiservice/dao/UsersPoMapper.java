@@ -27,4 +27,6 @@ public interface UsersPoMapper {
      * @return
      */
     String selectOrgIdByUserId(Integer userid);
+
+    List<String> getAllNameByOrgId(String orgId);
 }

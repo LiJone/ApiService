@@ -25,4 +25,8 @@ public interface PermitsService {
     ReturnMsg getPermitType(HttpServletRequest request);
 
     ReturnMsg getAllNum(String userid);
+
+    ReturnMsg getByTypeIds(HttpServletRequest request);
+
+    ReturnMsg getAllName(String userid);
 }

@@ -54,4 +54,11 @@ public interface AiEngineerInfoService {
      * @return
      */
     ReturnMsg getAllNum(String userid);
+
+    /**
+     * 获取所有智能工程名称
+     * @param userid
+     * @return
+     */
+    ReturnMsg getAllName(String userid);
 }

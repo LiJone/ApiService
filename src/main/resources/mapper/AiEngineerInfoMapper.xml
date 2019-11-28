@@ -541,11 +541,26 @@
         where w.cpnum = #{cpNum,jdbcType=VARCHAR} and a.schedule = 1
     </select>
 
+    <select id="getCpCountByCpNumClose" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select
+        count(w.id)
+        from wswpinfo w left join aiengineerinfo a on w.jobnum = a.jobnum
+        where w.cpnum = #{cpNum,jdbcType=VARCHAR} and a.schedule = 0
+    </select>
+
     <select id="getAllNumByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
         jobnum
         from aiengineerinfo
         where orgid = #{orgId,jdbcType=VARCHAR}
         order by jobnum
+    </select>
+
+    <select id="getAllNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        jobname
+        from aiengineerinfo
+        where orgid = #{orgId,jdbcType=VARCHAR}
+        order by jobname
     </select>
 </mapper>

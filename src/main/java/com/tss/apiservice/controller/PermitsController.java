@@ -237,4 +237,32 @@ public class PermitsController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/permits/getByTypeIds", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getByTypeIds(HttpServletRequest request) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = permitsService.getByTypeIds(request);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/permits/getAllNum/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/permits/getAllName/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllName(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = permitsService.getAllName(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/permits/getAllName/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

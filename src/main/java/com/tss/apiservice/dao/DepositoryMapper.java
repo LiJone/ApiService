@@ -27,4 +27,11 @@ public interface DepositoryMapper {
      * @return
      */
     List<DepositoryPO> selectStatisticListByMap(HashMap<Object, Object> hashMap);
+
+    /**
+     * 获取所有仓库记录种类名称
+     * @param orgId
+     * @return
+     */
+    List<String> getAllTypeNameByOrgId(String orgId);
 }

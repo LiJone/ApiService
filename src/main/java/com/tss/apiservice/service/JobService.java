@@ -24,4 +24,6 @@ public interface JobService {
     ReturnMsg setJobObjLeavtime(@PathVariable("userid") String userid, SafeobjsDto safeobjsDto) throws ParseException;
 
     ReturnMsg getAllNum(String userid);
+
+    ReturnMsg getAllName(String userid);
 }

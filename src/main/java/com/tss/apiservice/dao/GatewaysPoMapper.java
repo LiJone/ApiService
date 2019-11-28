@@ -21,4 +21,5 @@ public interface GatewaysPoMapper {
 
     int updateByPrimaryKeySelective(GatewaysPo record);
 
+    List<String> getAllNameByOrgId(String orgId);
 }

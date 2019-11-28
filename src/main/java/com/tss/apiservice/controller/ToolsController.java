@@ -239,7 +239,17 @@ public class ToolsController {
         return returnMsg;
     }
 
-    public static void main(String[] args) throws IOException {
-        Thumbnails.of("D:\\Download\\WeChat Files\\微信图片_20191110205104.jpg").scale(1.00f).outputQuality(0.05f).toFile("D:\\Download\\WeChat Files\\1.jpg");
+    @RequestMapping(value = "/app/tools/getAllName/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllName(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = toolsService.getAllName(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/tools/getAllName/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
     }
 }

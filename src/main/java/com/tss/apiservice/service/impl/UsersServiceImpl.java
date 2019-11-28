@@ -13,6 +13,8 @@ import com.tss.apiservice.po.UsersPo;
 import com.tss.apiservice.po.UsersPowerPo;
 import com.tss.apiservice.po.UsersSetPo;
 import com.tss.apiservice.service.UsersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,7 +29,7 @@ import java.util.List;
 
 @Service
 public class UsersServiceImpl implements UsersService {
-
+    private static Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class);
     @Autowired
     UsersPoMapper usersPoMapper;
 
@@ -332,6 +334,7 @@ public class UsersServiceImpl implements UsersService {
                 usersSetPoMapper.updateByPrimaryKeySelective(usersSetPo);
             }
             //发送修改到MQ
+            logger.info("sendUserSettingToMq jobNum:{},osdId:{},code:{}", usersPo.getOrgid(), usersSetDto.getTimeout(), MQCode.USER_SETTING_UPDATE);
             MQAllSendMessage.sendUserSettingToMq(usersPo.getOrgid(), usersSetDto.getTimeout(), MQCode.USER_SETTING_UPDATE, apiServiceMQ);
             returnMsg.setMsgbox("成功");
             returnMsg.setCode(ReturnMsg.SUCCESS);
@@ -344,5 +347,21 @@ public class UsersServiceImpl implements UsersService {
     public String getUserNameById(Integer userid) {
         UsersPo usersPo = usersPoMapper.selectByPrimaryKey(userid);
         return usersPo.getUsername();
+    }
+
+    @Override
+    public ReturnMsg getAllName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = usersPoMapper.getAllNameByOrgId(orgid);
+            returnMsg.setData(allName);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
     }
 }

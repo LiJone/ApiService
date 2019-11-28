@@ -271,4 +271,32 @@ public class StaffsController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/staffs/getAllEnName/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllEnName(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = staffsService.getAllEnName(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/staffs/getAllEnName/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
+
+    @RequestMapping(value = "/app/staffs/getAllChName/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllChName(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = staffsService.getAllChName(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/staffs/getAllChName/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

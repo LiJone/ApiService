@@ -24,4 +24,11 @@ public interface DepositoryService {
      * @return 返回集合
      */
     ReturnMsg<Object> getDepositoryStatisticMsgList(HttpServletRequest request);
+
+    /**
+     * 获取所有仓库记录种类名称
+     * @param userid
+     * @return
+     */
+    ReturnMsg getAllTypeName(String userid);
 }

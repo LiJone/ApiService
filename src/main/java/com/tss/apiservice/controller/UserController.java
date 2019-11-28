@@ -129,4 +129,18 @@ public class UserController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/user/getAllName/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllChName(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = usersService.getAllName(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/user/getAllName/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

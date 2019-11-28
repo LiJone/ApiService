@@ -164,4 +164,20 @@ public class DepositoryServiceImpl implements DepositoryService {
         }
         return returnMsg;
     }
+
+    @Override
+    public ReturnMsg getAllTypeName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = depositoryMapper.getAllTypeNameByOrgId(orgid);
+            returnMsg.setData(allName);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
 }

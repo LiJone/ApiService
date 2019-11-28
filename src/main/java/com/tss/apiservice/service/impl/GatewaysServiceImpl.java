@@ -15,6 +15,8 @@ import com.tss.apiservice.po.EngineerinfoPo;
 import com.tss.apiservice.po.GatewaysPo;
 import com.tss.apiservice.service.GatewaysService;
 import com.tss.apiservice.utils.HttpUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ import java.util.Map;
 
 @Service
 public class GatewaysServiceImpl implements GatewaysService {
-
+    private static Logger logger = LoggerFactory.getLogger(GatewaysServiceImpl.class);
     @Autowired
     EngineerinfoPoMapper engineerinfoPoMapper;
 
@@ -84,6 +86,7 @@ public class GatewaysServiceImpl implements GatewaysService {
 
                     EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
                     if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
+                        logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
                         MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                     }
                 } else {
@@ -190,6 +193,7 @@ public class GatewaysServiceImpl implements GatewaysService {
 
             EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
             if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
+                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
                 MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
             }
         }
@@ -221,6 +225,7 @@ public class GatewaysServiceImpl implements GatewaysService {
 
                 EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
                 if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
+                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
                     MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                 }
             } else {
@@ -248,6 +253,7 @@ public class GatewaysServiceImpl implements GatewaysService {
                 if ("200".equals(code)) {
                     GatewaysPo gatewaysPo = gatewaysPoMapper.selectByPrimaryKey(number);
                     //推送消息 MQ
+                    logger.info("sendGateWaysToMq gatewaysPo:{},code:{}", gatewaysPo, MQCode.GATEWAYS_SETING);
                     MQAllSendMessage.sendGateWaysToMq(gatewaysPo, MQCode.GATEWAYS_SETING, apiServiceMQ);
                     returnMsg.setCode(ReturnMsg.SUCCESS);
                     returnMsg.setMsgbox("成功");
@@ -319,6 +325,22 @@ public class GatewaysServiceImpl implements GatewaysService {
                 returnMsg.setMsgbox("獲取網關靈敏度返回為空");
                 return returnMsg;
             }
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getAllName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = gatewaysPoMapper.getAllNameByOrgId(orgid);
+            returnMsg.setData(allName);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
         }
         return returnMsg;
     }

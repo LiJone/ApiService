@@ -9,6 +9,8 @@ import com.tss.apiservice.dao.*;
 import com.tss.apiservice.dto.ToolsDto;
 import com.tss.apiservice.po.*;
 import com.tss.apiservice.service.ToolsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.*;
 
 @Service
 public class ToolsServiceImpl implements ToolsService {
+    private static Logger logger = LoggerFactory.getLogger(ToolsServiceImpl.class);
     @Autowired
     ToolsPoMapper toolsPoMapper;
 
@@ -126,7 +129,14 @@ public class ToolsServiceImpl implements ToolsService {
                         retMap.put("toolStatus", "正常");
                         String validity = toolsPo.getValidity();
                         Date d1 = formatter.parse(validity);
-                        if (d1.compareTo(new Date()) < 0) {
+                        Date now = new Date();
+                        Calendar cal1 = Calendar.getInstance();
+                        cal1.setTime(now);
+                        cal1.set(Calendar.HOUR_OF_DAY, 0);
+                        cal1.set(Calendar.MINUTE, 0);
+                        cal1.set(Calendar.SECOND, 0);
+                        cal1.set(Calendar.MILLISECOND, 0);
+                        if (d1.compareTo(cal1.getTime()) < 0) {
                             retMap.put("toolStatus", "過期");
                         }
                     } else {
@@ -269,6 +279,7 @@ public class ToolsServiceImpl implements ToolsService {
                     safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
                     EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
                     if(engineerinfoPo.getSchedule() == 1){
+                        logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
                         MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(),safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE,apiServiceMQ);
                     }
                 }
@@ -385,6 +396,7 @@ public class ToolsServiceImpl implements ToolsService {
 
                         EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
                         if(engineerinfoPo.getSchedule() == 1){
+                            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
                             MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(),safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE,apiServiceMQ);
                         }
                     }
@@ -495,6 +507,22 @@ public class ToolsServiceImpl implements ToolsService {
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             List<String> allNum = toolsPoMapper.getAllNumByOrgId(orgid);
             returnMsg.setData(allNum);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getAllName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = toolsPoMapper.getAllNameByOrgId(orgid);
+            returnMsg.setData(allName);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
         }

@@ -33,4 +33,6 @@ public interface ToolsPoMapper {
     void deleteToolsImageByToolId(HashMap<String, Object> map);
 
     void updateToolsImage(ToolsImagePO toolsImage);
+
+    List<String> getAllNameByOrgId(String orgId);
 }

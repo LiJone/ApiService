@@ -170,4 +170,20 @@ public class OSDInfosServiceImpl implements OSDInfosService {
         }
         return returnMsg;
     }
+
+    @Override
+    public ReturnMsg getAllName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = osdInfosPoMapper.getAllNameByOrgId(orgid);
+            returnMsg.setData(allName);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
 }

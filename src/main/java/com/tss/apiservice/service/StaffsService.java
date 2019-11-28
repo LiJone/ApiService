@@ -31,4 +31,8 @@ public interface StaffsService {
     ReturnMsg getCpStaffs(HttpServletRequest request);
 
     ReturnMsg getAllNum(String userid);
+
+    ReturnMsg getAllEnName(String userid);
+
+    ReturnMsg getAllChName(String userid);
 }

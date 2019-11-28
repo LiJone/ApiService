@@ -5,10 +5,13 @@ import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.common.utils.FilesUtils;
 import com.tss.apiservice.common.utils.MQAllSendMessage;
 import com.tss.apiservice.common.utils.MQCode;
+import com.tss.apiservice.controller.StaffsController;
 import com.tss.apiservice.dao.*;
 import com.tss.apiservice.dto.StaffsDto;
 import com.tss.apiservice.po.*;
 import com.tss.apiservice.service.StaffsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import java.util.*;
 
 @Service
 public class StaffsServiceImpl implements StaffsService {
+    private static Logger logger = LoggerFactory.getLogger(StaffsServiceImpl.class);
 
     @Autowired
     StaffsPoMapper staffsPoMapper;
@@ -263,7 +267,14 @@ public class StaffsServiceImpl implements StaffsService {
                         for (StaffscertPo staffscertPo : staffscertPos) {
                             String validity = staffscertPo.getValidity();
                             Date d1 = formatter.parse(validity);
-                            if (d1.compareTo(new Date()) < 0) {
+                            Date now = new Date();
+                            Calendar cal1 = Calendar.getInstance();
+                            cal1.setTime(now);
+                            cal1.set(Calendar.HOUR_OF_DAY, 0);
+                            cal1.set(Calendar.MINUTE, 0);
+                            cal1.set(Calendar.SECOND, 0);
+                            cal1.set(Calendar.MILLISECOND, 0);
+                            if (d1.compareTo(cal1.getTime()) < 0) {
                                 retMap.put("staffscertStatus", "證過期");
                                 break;
                             }
@@ -340,6 +351,7 @@ public class StaffsServiceImpl implements StaffsService {
 
                 EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
                 if (engineerinfoPo.getSchedule() == 1) {
+                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
                     MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                 }
             }
@@ -413,6 +425,7 @@ public class StaffsServiceImpl implements StaffsService {
                     safeobjsPoMapper.updateByPrimaryKeySelective(safeobjsPo);
 
                     if (engineerinfoPo.getSchedule() == 1) {
+                        logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
                         MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                     }
                 }
@@ -422,6 +435,7 @@ public class StaffsServiceImpl implements StaffsService {
                     AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
                     if (aiEngineerInfo != null) {
                         if (aiEngineerInfo.getSchedule() == 1) {
+                            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
                             MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
                         }
                     }
@@ -776,9 +790,12 @@ public class StaffsServiceImpl implements StaffsService {
                 List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffsPo.getStaffid());
                 for (StaffscertPo staffscertPo : staffscertPos) {
                     if (typeIds.contains(staffscertPo.getTypeid())) {
-                        Integer count =  aiEngineerInfoMapper.getCpCountByCpNum(staffsPo.getStaffid());
-                        if (count == null || count <= 3) {
-                            staffsPoList.add(staffsPo);
+                        Integer openCount =  aiEngineerInfoMapper.getCpCountByCpNum(staffsPo.getStaffid());
+                        Integer closeCount =  aiEngineerInfoMapper.getCpCountByCpNumClose(staffsPo.getStaffid());
+                        if (openCount == null || openCount <= 3) {
+                            if (closeCount == null || closeCount <= 10) {
+                                staffsPoList.add(staffsPo);
+                            }
                         }
                     }
                 }
@@ -805,4 +822,37 @@ public class StaffsServiceImpl implements StaffsService {
         }
         return returnMsg;
     }
+
+    @Override
+    public ReturnMsg getAllEnName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = staffsPoMapper.getAllEnNameByOrgId(orgid);
+            returnMsg.setData(allName);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getAllChName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = staffsPoMapper.getAllChNameByOrgId(orgid);
+            returnMsg.setData(allName);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
+
 }

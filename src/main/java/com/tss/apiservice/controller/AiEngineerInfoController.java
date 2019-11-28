@@ -144,4 +144,18 @@ public class AiEngineerInfoController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/engineer/getAllName/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllName(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = aiEngineerInfoService.getAllName(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/engineer/getAllName/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

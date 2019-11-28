@@ -15,6 +15,8 @@ import com.tss.apiservice.po.ObjsconditionPo;
 import com.tss.apiservice.po.SafeobjsPo;
 import com.tss.apiservice.po.UsersPo;
 import com.tss.apiservice.service.JobService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,7 +30,7 @@ import java.util.*;
 
 @Service
 public class JobServiceImpl implements JobService {
-
+    private static Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
     @Autowired
     EngineerinfoPoMapper engineerinfoPoMapper;
 
@@ -461,6 +463,7 @@ public class JobServiceImpl implements JobService {
                 returnMsg.setMsgbox("成功");
                 returnMsg.setCode(ReturnMsg.SUCCESS);
                 if (engineerinfoPoOld.getSchedule() == 1) {
+                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
                     MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
                 }
             }
@@ -483,6 +486,7 @@ public class JobServiceImpl implements JobService {
             objsconditionPoMapper.deleteByOsdid(jobDto.getOsdid());
 
             if (engineerinfoPo.getSchedule() == 1) {
+                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_DELETE);
                 MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_DELETE, apiServiceMQ);
             }
 
@@ -503,9 +507,11 @@ public class JobServiceImpl implements JobService {
             EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(jobDto.getOsdid());
             if (jobDto.isRunStatus()) {
                 engineerinfoPo.setSchedule(1);
+                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_ADD);
                 MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_ADD, apiServiceMQ);
             } else {
                 engineerinfoPo.setSchedule(0);
+                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_DELETE);
                 MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_DELETE, apiServiceMQ);
             }
             engineerinfoPoMapper.updateByPrimaryKeySelective(engineerinfoPo);
@@ -534,6 +540,7 @@ public class JobServiceImpl implements JobService {
                 String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(leavetime);
                 safeobjsPoMapper.updateByPrimaryKeySelective(safeobjsPo);
                 //推送消息到MQ
+                logger.info("sendJobObjLeavtime userid:{},format:{},safeobjsPo:{},code:{}", userid, format, safeobjsPo, MQCode.JOB_OBJ_UPDATE);
                 MQAllSendMessage.sendJobObjLeavtime(userid, format, safeobjsPo, MQCode.JOB_OBJ_UPDATE, apiServiceMQ);
                 returnMsg.setMsgbox("成功");
                 returnMsg.setCode(ReturnMsg.SUCCESS);
@@ -552,6 +559,22 @@ public class JobServiceImpl implements JobService {
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             List<String> allNum = engineerinfoPoMapper.getAllNumByOrgId(orgid);
             returnMsg.setData(allNum);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getAllName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = engineerinfoPoMapper.getAllNameByOrgId(orgid);
+            returnMsg.setData(allName);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
         }

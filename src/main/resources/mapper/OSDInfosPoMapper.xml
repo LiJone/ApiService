@@ -25,6 +25,7 @@
             and name like '%${name}%'
         </if>
         and orgid = #{orgid}
+        order by osdid
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>
@@ -79,5 +80,13 @@
         from osdinfos
         where orgid = #{orgid,jdbcType=VARCHAR}
         order by osdid
+    </select>
+
+    <select id="getAllNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        name
+        from osdinfos
+        where orgid = #{orgId,jdbcType=VARCHAR}
+        order by name
     </select>
 </mapper>

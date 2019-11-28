@@ -120,4 +120,18 @@ public class JobController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/job/getAllName/{userid}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getAllName(@PathVariable("userid") String userid) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = jobService.getAllName(userid);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/job/getAllName/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

@@ -33,6 +33,7 @@
             and name like '%${name}%'
         </if>
         and orgid = #{orgid}
+        order by number
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>
@@ -116,4 +117,12 @@
         </set>
         where number = #{number,jdbcType=VARCHAR}
     </update>
+
+    <select id="getAllNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        name
+        from gateways
+        where orgid = #{orgId,jdbcType=VARCHAR}
+        order by name
+    </select>
 </mapper>

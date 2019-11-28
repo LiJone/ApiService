@@ -32,4 +32,6 @@ public interface PermitsPoMapper {
     void deletePermitsImageByPermitId(HashMap<String, Object> map);
 
     void updatePermitsImage(PermitsImagePO permitsImage);
+
+    List<String> getAllNameByOrgId(String orgId);
 }

@@ -52,6 +52,7 @@
             and jobnum &lt;= #{numberEnd}
         </if>
         and orgid = #{orgid}
+        order by jobnum
         <if test="startrow != null and pagesize != null">
             limit #{startrow} , #{pagesize}
         </if>
@@ -172,5 +173,13 @@
         from engineerinfo
         where orgid = #{orgid,jdbcType=VARCHAR}
         order by jobnum
+    </select>
+
+    <select id="getAllNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        name
+        from engineerinfo
+        where orgid = #{orgId,jdbcType=VARCHAR}
+        order by name
     </select>
 </mapper>

@@ -9,6 +9,8 @@ import com.tss.apiservice.form.*;
 import com.tss.apiservice.po.*;
 import com.tss.apiservice.service.AiEngineerInfoService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,6 +26,7 @@ import java.util.List;
  */
 @Component
 public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
+    private static Logger logger = LoggerFactory.getLogger(AiEngineerInfoServiceImpl.class);
 
     @Autowired
     private AiEngineerInfoMapper aiEngineerInfoMapper;
@@ -138,9 +141,12 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
                 }
                 List<WSWPInfoForm> wswpInfoFormList = aiEngineerInfoForm.getWswpInfoFormList();
                 for (WSWPInfoForm wswpInfoForm : wswpInfoFormList) {
-                    Integer count = aiEngineerInfoMapper.getCpCountByCpNum(wswpInfoForm.getCpNum());
-                    if (count != null && count > 3) {
+                    Integer openCount = aiEngineerInfoMapper.getCpCountByCpNum(wswpInfoForm.getCpNum());
+                    Integer closeCount =  aiEngineerInfoMapper.getCpCountByCpNumClose(wswpInfoForm.getCpNum());
+                    if (openCount != null && openCount > 3) {
                         throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他運行中工程3個以上");
+                    } else if (closeCount != null && closeCount > 10){
+                        throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他關閉中工程10個以上");
                     } else {
                         WSWPInfoPO wswpBindInfo = new WSWPInfoPO();
                         wswpBindInfo.setCpNum(wswpInfoForm.getCpNum());
@@ -345,9 +351,12 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             }
             List<WSWPInfoForm> wswpInfoFormList = aiEngineerInfoForm.getWswpInfoFormList();
             for (WSWPInfoForm wswpInfoForm : wswpInfoFormList) {
-                Integer count = aiEngineerInfoMapper.getCpCountByCpNum(wswpInfoForm.getCpNum());
-                if (count != null && count > 3) {
+                Integer openCount = aiEngineerInfoMapper.getCpCountByCpNum(wswpInfoForm.getCpNum());
+                Integer closeCount =  aiEngineerInfoMapper.getCpCountByCpNumClose(wswpInfoForm.getCpNum());
+                if (openCount != null && openCount > 3) {
                     throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他運行中工程3個以上");
+                } else if (closeCount != null && closeCount > 10){
+                    throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他關閉中工程10個以上");
                 } else {
                     WSWPInfoPO wswpBindInfo = new WSWPInfoPO();
                     wswpBindInfo.setCpNum(wswpInfoForm.getCpNum());
@@ -362,6 +371,7 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             aiEngineerInfo.setEndTime(aiEngineerInfoForm.getEndTime());
             aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineerInfo);
             if (aiEngineerInfo.getSchedule() == 1) {
+                logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
                 MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMq);
             }
             returnMsg.setMsgbox("修改成功");
@@ -412,8 +422,10 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
             if (aiEngineerInfo.getSchedule() == 1) {
                 aiEngineerInfo.setSchedule(0);
+                logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_DELETE);
                 MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_DELETE, apiServiceMq);
             } else {
+                logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_ADD);
                 aiEngineerInfo.setSchedule(1);
                 MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_ADD, apiServiceMq);
             }
@@ -434,6 +446,22 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             List<String> allNum = aiEngineerInfoMapper.getAllNumByOrgId(orgid);
             returnMsg.setData(allNum);
+            returnMsg.setCode(ReturnMsg.SUCCESS);
+            returnMsg.setMsgbox("成功");
+        }
+        return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getAllName(String userid) {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        if (StringUtils.isEmpty(userid)) {
+            returnMsg.setMsgbox("參數異常...");
+        } else {
+            //获取机构id
+            String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
+            List<String> allName = aiEngineerInfoMapper.getAllNameByOrgId(orgid);
+            returnMsg.setData(allName);
             returnMsg.setCode(ReturnMsg.SUCCESS);
             returnMsg.setMsgbox("成功");
         }

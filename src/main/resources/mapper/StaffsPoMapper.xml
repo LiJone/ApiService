@@ -360,4 +360,20 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
+
+    <select id="getAllEnNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        enname
+        from staffs
+        where orgid = #{orgId,jdbcType=VARCHAR}
+        order by enname
+    </select>
+
+    <select id="getAllChNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        chname
+        from staffs
+        where orgid = #{orgId,jdbcType=VARCHAR}
+        order by chname
+    </select>
 </mapper>

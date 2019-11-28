@@ -39,4 +39,8 @@ public interface StaffsPoMapper {
     void deleteStaffsImageByStaffId(HashMap<String, Object> map);
 
     void updateStaffsImage(StaffsImagePO staffsImage);
+
+    List<String> getAllEnNameByOrgId(String orgId);
+
+    List<String> getAllChNameByOrgId(String orgId);
 }

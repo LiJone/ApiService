@@ -24,4 +24,6 @@ public interface ToolsService {
     ReturnMsg getToolType(HttpServletRequest request);
 
     ReturnMsg getAllNum(String userid);
+
+    ReturnMsg getAllName(String userid);
 }
