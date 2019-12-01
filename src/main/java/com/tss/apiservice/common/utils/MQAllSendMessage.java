@@ -13,8 +13,8 @@ import java.util.HashMap;
 
 public class MQAllSendMessage {
 
-    public static void sendMQDtoToDataEngine(ApiServiceMQ apiServiceMQ, MQDto mqDto) {
-        apiServiceMQ.sendMessageToDataEngine(JSON.toJSON(mqDto).toString());
+    public static void sendMQDtoToSafeSystem(ApiServiceMQ apiServiceMQ, MQDto mqDto) {
+        apiServiceMQ.sendMessageToSafeSystem(JSON.toJSON(mqDto).toString());
     }
 
     public static void sendJobMq(String JobNum, String OSDID, int mqCode, ApiServiceMQImpl apiServiceMQ) {
@@ -24,7 +24,7 @@ public class MQAllSendMessage {
             map.put("JobNum", String.valueOf(JobNum));
         }
         arrayList.add(map);
-        MQAllSendMessage.sendMQDtoToDataEngine(apiServiceMQ, new MQDto(mqCode, arrayList));
+        MQAllSendMessage.sendMQDtoToSafeSystem(apiServiceMQ, new MQDto(mqCode, arrayList));
     }
 
     public static void sendJobObjLeavtime(String UserID, String TimeOut, SafeobjsPo safeobjsPo , int mqCode, ApiServiceMQImpl apiServiceMQ) {
@@ -43,7 +43,7 @@ public class MQAllSendMessage {
             map.put("LeaveTime", TimeOut);
         }
         arrayList.add(map);
-        MQAllSendMessage.sendMQDtoToDataEngine(apiServiceMQ, new MQDto(mqCode, arrayList));
+        MQAllSendMessage.sendMQDtoToSafeSystem(apiServiceMQ, new MQDto(mqCode, arrayList));
     }
 
     public static void sendUserSettingToMq(String orgId, Integer TimeOut, int mqCode, ApiServiceMQ apiServiceMQ) {
@@ -56,7 +56,7 @@ public class MQAllSendMessage {
             map.put("TimeOut", TimeOut);
         }
         arrayList.add(map);
-        MQAllSendMessage.sendMQDtoToDataEngine(apiServiceMQ, new MQDto(mqCode, arrayList));
+        MQAllSendMessage.sendMQDtoToSafeSystem(apiServiceMQ, new MQDto(mqCode, arrayList));
     }
 
     public static void sendGateWaysToMq(GatewaysPo gatewaysPo, int mqCode, ApiServiceMQImpl apiServiceMQ) {
@@ -72,7 +72,7 @@ public class MQAllSendMessage {
             map.put("GatewayName", gatewaysPo.getName());
         }
         arrayList.add(map);
-        MQAllSendMessage.sendMQDtoToDataEngine(apiServiceMQ, new MQDto(mqCode, arrayList));
+        MQAllSendMessage.sendMQDtoToSafeSystem(apiServiceMQ, new MQDto(mqCode, arrayList));
     }
 
 }

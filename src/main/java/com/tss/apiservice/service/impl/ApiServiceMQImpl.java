@@ -18,7 +18,7 @@ public class ApiServiceMQImpl implements ApiServiceMQ {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    private static ActiveMQTopic dataEngineTopic = new ActiveMQTopic("DataEngine");
+    private static ActiveMQTopic safeSystemTopic = new ActiveMQTopic("SafeSystem");
 
     @Override
     public void sendMessage(Destination destination , String message) {
@@ -27,8 +27,8 @@ public class ApiServiceMQImpl implements ApiServiceMQ {
     }
 
     @Override
-    public void sendMessageToDataEngine( String message) {
-        logger.info(" ApiService To MQ DataEngine" + message);
-        jmsTemplate.convertAndSend(dataEngineTopic, message);
+    public void sendMessageToSafeSystem( String message) {
+        logger.info(" ApiService To MQ SafeSystem" + message);
+        jmsTemplate.convertAndSend(safeSystemTopic, message);
     }
 }

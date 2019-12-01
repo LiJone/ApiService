@@ -6,7 +6,7 @@ public interface ApiServiceMQ {
 
     void sendMessage(Destination destination , String message);
 
-    void sendMessageToDataEngine(String message);
+    void sendMessageToSafeSystem(String message);
 
 
 }

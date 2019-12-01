@@ -27,7 +27,7 @@ public class CommonCotroller {
     @Autowired
     CommonService commonService;
 
-    @RequestMapping(value = "/app/common/getBase64ByPath", method = RequestMethod.GET)
+    @RequestMapping(value = "/app/common/getBase64ByPath")
     @ResponseBody
     public ReturnMsg getBase64ByPath(String filePathTmp, String fileName, String imageIndex, String name) {
         ReturnMsg returnMsg;
@@ -42,7 +42,7 @@ public class CommonCotroller {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/app/common/getThumbnailImage", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/app/common/getThumbnailImage", produces = "application/json;charset=utf-8")
     public ReturnMsg getThumbnailImage(String filePathTmp, String fileName) {
         ReturnMsg returnMsg;
         try {
@@ -57,7 +57,7 @@ public class CommonCotroller {
 
 
     @ResponseBody
-    @RequestMapping(value = "/app/common/getImage", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/app/common/getImage", produces = "application/json;charset=utf-8")
     public void getImage(String filePathTmp, String fileName, HttpServletResponse response) {
         FileInputStream in = null;
         ServletOutputStream out = null;
