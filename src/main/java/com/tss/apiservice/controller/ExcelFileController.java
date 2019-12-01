@@ -104,7 +104,7 @@ public class ExcelFileController {
                 dataList[arrayList.size()][4] = (workDays + "天");
                 dataList[arrayList.size()][5] = (workAddHours + "小時");
                 dataList[arrayList.size()][6] = (workAddSalarys + "元");
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取考勤汇总数据失败");
             }
@@ -190,7 +190,7 @@ public class ExcelFileController {
                 dataList[arrayList.size()][9] = (workAddHours + "小時");
                 dataList[arrayList.size()][10] = ("");
                 dataList[arrayList.size()][11] = (realSalarys + "元");
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取個人考勤汇总数据失败");
             }
@@ -241,7 +241,7 @@ public class ExcelFileController {
                     dataList[i][6] = abnormalPo.getReason();
                     dataList[i][7] = abnormalPo.getImageid();
                 }
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取異常数据失败");
             }
@@ -282,7 +282,7 @@ public class ExcelFileController {
                     dataList[i][5] = staffscertStatus;
                     dataList[i][6] = staffscertPos.get(0).getValidity();
                 }
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取過期員工数据失败");
             }
@@ -323,7 +323,7 @@ public class ExcelFileController {
                     dataList[i][5] = staffscertStatus;
                     dataList[i][6] = staffscertPos.get(0).getValidity();
                 }
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取逾過期員工数据失败");
             }
@@ -363,7 +363,7 @@ public class ExcelFileController {
                     dataList[i][5] = permitsPo.getEnddate();
                     dataList[i][6] = permitsStatus;
                 }
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取過期許可證数据失败");
             }
@@ -403,7 +403,7 @@ public class ExcelFileController {
                     dataList[i][5] = permitsPo.getEnddate();
                     dataList[i][6] = permitsStatus;
                 }
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取逾過期許可證数据失败");
             }
@@ -441,7 +441,7 @@ public class ExcelFileController {
                     dataList[i][3] = toolStatus;
                     dataList[i][4] = toolsPo.getValidity();
                 }
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取過期工具数据失败");
             }
@@ -479,7 +479,7 @@ public class ExcelFileController {
                     dataList[i][3] = toolStatus;
                     dataList[i][4] = toolsPo.getValidity();
                 }
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取逾過期工具数据失败");
             }
@@ -527,7 +527,7 @@ public class ExcelFileController {
                 dataList[arrayList.size()][4] = ("");
                 dataList[arrayList.size()][5] = ("");
                 dataList[arrayList.size()][6] = arrayList.size() + "個";
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取倉庫数据失败");
             }
@@ -592,7 +592,7 @@ public class ExcelFileController {
                 dataList[allRow][3] = ("");
                 dataList[allRow][4] = ("");
                 dataList[allRow][5] = (allCount + "個");
-                ExcelUtils.ExportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
+                ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取倉庫統計数据失败");
             }

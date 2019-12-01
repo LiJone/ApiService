@@ -20,26 +20,26 @@ public class MQAllSendMessage {
     public static void sendJobMq(String JobNum, String OSDID, int mqCode, ApiServiceMQImpl apiServiceMQ) {
         ArrayList<Object> arrayList = new ArrayList<>();
         HashMap<String, Object> map = new HashMap<>();
-        if(!StringUtils.isEmpty(JobNum)){
+        if (!StringUtils.isEmpty(JobNum)) {
             map.put("JobNum", String.valueOf(JobNum));
         }
         arrayList.add(map);
         MQAllSendMessage.sendMQDtoToSafeSystem(apiServiceMQ, new MQDto(mqCode, arrayList));
     }
 
-    public static void sendJobObjLeavtime(String UserID, String TimeOut, SafeobjsPo safeobjsPo , int mqCode, ApiServiceMQImpl apiServiceMQ) {
+    public static void sendJobObjLeavtime(String UserID, String TimeOut, SafeobjsPo safeobjsPo, int mqCode, ApiServiceMQImpl apiServiceMQ) {
         ArrayList<Object> arrayList = new ArrayList<>();
         HashMap<String, Object> map = new HashMap<>();
-        if(!StringUtils.isEmpty(safeobjsPo.getJobnum())){
+        if (!StringUtils.isEmpty(safeobjsPo.getJobnum())) {
             map.put("JobNum", safeobjsPo.getJobnum());
         }
-        if(!StringUtils.isEmpty(safeobjsPo.getObjnum())){
+        if (!StringUtils.isEmpty(safeobjsPo.getObjnum())) {
             map.put("ObjNum", safeobjsPo.getObjnum());
         }
-        if(!StringUtils.isEmpty(safeobjsPo.getType())){
+        if (!StringUtils.isEmpty(safeobjsPo.getType())) {
             map.put("ObjType", safeobjsPo.getType());
         }
-        if(!StringUtils.isEmpty(TimeOut)){
+        if (!StringUtils.isEmpty(TimeOut)) {
             map.put("LeaveTime", TimeOut);
         }
         arrayList.add(map);
@@ -49,10 +49,10 @@ public class MQAllSendMessage {
     public static void sendUserSettingToMq(String orgId, Integer TimeOut, int mqCode, ApiServiceMQ apiServiceMQ) {
         ArrayList<Object> arrayList = new ArrayList<>();
         HashMap<String, Object> map = new HashMap<>();
-        if(!StringUtils.isEmpty(orgId)){
+        if (!StringUtils.isEmpty(orgId)) {
             map.put("OrgId", orgId);
         }
-        if(!StringUtils.isEmpty(TimeOut)){
+        if (!StringUtils.isEmpty(TimeOut)) {
             map.put("TimeOut", TimeOut);
         }
         arrayList.add(map);
@@ -62,17 +62,26 @@ public class MQAllSendMessage {
     public static void sendGateWaysToMq(GatewaysPo gatewaysPo, int mqCode, ApiServiceMQImpl apiServiceMQ) {
         ArrayList<Object> arrayList = new ArrayList<>();
         HashMap<String, Object> map = new HashMap<>();
-        if(!StringUtils.isEmpty(gatewaysPo.getNumber())){
+        if (!StringUtils.isEmpty(gatewaysPo.getNumber())) {
             map.put("GatewayID", gatewaysPo.getNumber());
         }
-        if(!StringUtils.isEmpty(gatewaysPo.getProtocol())){
+        if (!StringUtils.isEmpty(gatewaysPo.getProtocol())) {
             map.put("ProtocolType", gatewaysPo.getProtocol());
         }
-        if(!StringUtils.isEmpty(gatewaysPo.getName())){
+        if (!StringUtils.isEmpty(gatewaysPo.getName())) {
             map.put("GatewayName", gatewaysPo.getName());
         }
         arrayList.add(map);
         MQAllSendMessage.sendMQDtoToSafeSystem(apiServiceMQ, new MQDto(mqCode, arrayList));
     }
 
+    public static void sendIsNotBind(String orgId, String objNum, Integer objType, int mqCode, ApiServiceMQImpl apiServiceMQ) {
+        ArrayList<Object> arrayList = new ArrayList<>();
+        HashMap<String, Object> map = new HashMap<>(3);
+        map.put("OrgID", orgId);
+        map.put("ObjNum", objNum);
+        map.put("ObjType", objType);
+        arrayList.add(map);
+        MQAllSendMessage.sendMQDtoToSafeSystem(apiServiceMQ, new MQDto(mqCode, arrayList));
+    }
 }

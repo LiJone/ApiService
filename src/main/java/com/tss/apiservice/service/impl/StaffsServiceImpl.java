@@ -337,38 +337,41 @@ public class StaffsServiceImpl implements StaffsService {
                 staffsPoMapper.deleteStaffsImageByStaffId(map);
                 returnMsg.setCode(ReturnMsg.SUCCESS);
                 returnMsg.setMsgbox("成功");
-            }
-        }
-        if (returnMsg.getCode() == ReturnMsg.SUCCESS) {
-            //判断员工是否存在工程中，如果存在，则发送mq
-//            trueOrFalseToMQ(staffsDto.getStaffid());
-            //删除的话，需要通知MQ的同时，也需要删除安全对象信息表，删除员工证件条件表
-            SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid(), 1);
-            if (safeobjsPo != null) {
-                //如果安全对象表中有数据，删除安全对象表，删除员工证件条件表
-                safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
-                objsconditionPoMapper.deleteByStaffid(safeobjsPo.getObjnum());
 
-                EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
-                if (engineerinfoPo.getSchedule() == 1) {
-                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
-                    MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+                //删除的话，需要通知MQ的同时，也需要删除安全对象信息表，删除员工证件条件表
+                SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid(), 1);
+                boolean isFind = false;
+                if (safeobjsPo != null) {
+                    isFind = true;
+                    //如果安全对象表中有数据，删除安全对象表，删除员工证件条件表
+                    safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
+                    objsconditionPoMapper.deleteByStaffid(safeobjsPo.getObjnum());
+
+                    EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
+                    if (engineerinfoPo.getSchedule() == 1) {
+                        logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
+                        MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+                    }
                 }
-            }
-            //1.4CP推送
-            WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(staffsDto.getStaffid());
-            if (wswpInfo != null) {
-                String jobNum = wswpInfo.getJobNum();
-                AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
-                if (aiEngineerInfo != null) {
-                    if (aiEngineerInfo.getSchedule() == 1) {
-                        throw new Exception("該員工正在使用中！");
-                    } else {
-                        List<StaffsImagePO> staffsImageList = staffsPoMapper.selectStaffsImageByStaffId(staffsDto.getStaffid());
-                        for (StaffsImagePO staffsImage : staffsImageList) {
-                            FilesUtils.deleteFile(staffsImage.getImageName(), filePath + staffsImage.getImageDir());
+                //1.4CP推送
+                WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(staffsDto.getStaffid());
+                if (wswpInfo != null) {
+                    String jobNum = wswpInfo.getJobNum();
+                    AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+                    if (aiEngineerInfo != null) {
+                        isFind = true;
+                        if (aiEngineerInfo.getSchedule() == 1) {
+                            throw new Exception("該員工正在使用中！");
+                        } else {
+                            List<StaffsImagePO> staffsImageList = staffsPoMapper.selectStaffsImageByStaffId(staffsDto.getStaffid());
+                            for (StaffsImagePO staffsImage : staffsImageList) {
+                                FilesUtils.deleteFile(staffsImage.getImageName(), filePath + staffsImage.getImageDir());
+                            }
                         }
                     }
+                }
+                if (!isFind) {
+                    MQAllSendMessage.sendIsNotBind(staffsPo.getOrgid(), staffsPo.getStaffid(), staffsPo.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
                 }
             }
         }
@@ -395,10 +398,10 @@ public class StaffsServiceImpl implements StaffsService {
             if (staffsPoOld != null) {
                 List<StaffsImagePO> staffsImageOldList = staffsPoMapper.selectStaffsImageByStaffId(staffsDto.getStaffid());
                 //start 为了实时修改盒子员工加上
-                //判断员工是否存在工程中，如果存在，则发送mq
-//                    trueOrFalseToMQ(staffsDto.getStaffid());
                 SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid(), 1);
+                boolean isFind = false;
                 if (safeobjsPo != null) {
+                    isFind = true;
                     //员工存在工程中，查看是否添加的员工证件条件是否和以前一样，不一样则不给修改，
                     List<ObjsconditionPo> objsconditionPos = objsconditionPoMapper.selectByStaffid(staffsDto.getStaffid());
                     //保存需要满足员工个人的证件
@@ -434,11 +437,15 @@ public class StaffsServiceImpl implements StaffsService {
                     String jobNum = wswpInfo.getJobNum();
                     AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
                     if (aiEngineerInfo != null) {
+                        isFind = true;
                         if (aiEngineerInfo.getSchedule() == 1) {
                             logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
                             MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
                         }
                     }
+                }
+                if (!isFind) {
+                    MQAllSendMessage.sendIsNotBind(staffsPoOld.getOrgid(), staffsPoOld.getStaffid(), staffsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
                 }
                 //end 为了实时修改盒子员工加上
 

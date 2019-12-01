@@ -46,4 +46,8 @@ public class MQCode {
      */
     public final static int ENGINEER_RUN_UPDATE = 12302;
 
+    /**
+     * 实体未绑定工程
+     */
+    public final static int IS_NOT_BIND = 12400;
 }

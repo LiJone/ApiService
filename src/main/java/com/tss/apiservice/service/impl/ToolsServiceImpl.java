@@ -275,13 +275,18 @@ public class ToolsServiceImpl implements ToolsService {
                 map.put("toolId", toolsDto.getToolid());
                 toolsPoMapper.deleteToolsImageByToolId(map);
                 SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
+                boolean isFind = false;
                 if(safeobjsPo != null){
+                    isFind = true;
                     safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
                     EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
                     if(engineerinfoPo.getSchedule() == 1){
                         logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
                         MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(),safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE,apiServiceMQ);
                     }
+                }
+                if (!isFind) {
+                    MQAllSendMessage.sendIsNotBind(toolsPoOld.getOrgid(), toolsPoOld.getToolid(), toolsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
                 }
                 returnMsg.setMsgbox("成功");
                 returnMsg.setCode(ReturnMsg.SUCCESS);
@@ -390,7 +395,9 @@ public class ToolsServiceImpl implements ToolsService {
                         }
                     }
                     SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
+                    boolean isFind = false;
                     if(safeobjsPo != null){
+                        isFind = true;
                         safeobjsPo.setObjname(toolsDto.getName());
                         safeobjsPoMapper.updateByPrimaryKeySelective(safeobjsPo);
 
@@ -399,6 +406,9 @@ public class ToolsServiceImpl implements ToolsService {
                             logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
                             MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(),safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE,apiServiceMQ);
                         }
+                    }
+                    if (!isFind) {
+                        MQAllSendMessage.sendIsNotBind(toolsPoOld.getOrgid(), toolsPoOld.getToolid(), toolsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
                     }
 
                 } else if (returnMsg.getCode() == ReturnMsg.FAIL) {

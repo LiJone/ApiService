@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @Controller
 public class CommonCotroller {
@@ -57,11 +58,14 @@ public class CommonCotroller {
 
 
     @ResponseBody
-    @RequestMapping(value = "/app/common/getImage", produces = "application/json;charset=utf-8")
-    public void getImage(String filePathTmp, String fileName, HttpServletResponse response) {
+    @RequestMapping(value = "/app/common/getFile", produces = "application/json;charset=utf-8")
+    public void getFile(String filePathTmp, String fileName, String name, HttpServletResponse response) {
         FileInputStream in = null;
         ServletOutputStream out = null;
         try {
+            response.setContentType("application/ms-excel;charset=UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename="
+                    .concat(String.valueOf(URLEncoder.encode(name, "UTF-8"))));
             File file = new File(filePath + filePathTmp + fileName);
             in = new FileInputStream(file);
             out = response.getOutputStream();
@@ -72,7 +76,7 @@ public class CommonCotroller {
             }
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("下载文件失败:_" + e.getMessage(), e);
         } finally {
             try {
                 assert in != null;
@@ -80,7 +84,7 @@ public class CommonCotroller {
                 assert out != null;
                 out.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("下载文件失败:_" + e.getMessage(), e);
             }
         }
     }

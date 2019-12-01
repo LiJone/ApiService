@@ -315,7 +315,9 @@ public class PermitsServiceImpl implements PermitsService {
 
                 //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
                 SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid(), 0);
+                boolean isFind = false;
                 if (safeobjsPo != null) {
+                    isFind = true;
                     //这里是直接删除
                     safeobjsPoMapper.deleteByPrimaryKey(safeobjsPo.getObjnum());
                     EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
@@ -338,6 +340,7 @@ public class PermitsServiceImpl implements PermitsService {
                     }
                     AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
                     if (aiEngineerInfo != null) {
+                        isFind = true;
                         if (aiEngineerInfo.getSchedule() == 1) {
                             throw new Exception("該許可證正在使用中！");
                         } else {
@@ -346,6 +349,9 @@ public class PermitsServiceImpl implements PermitsService {
                                 FilesUtils.deleteFile(permitsImage.getImageName(), filePath + permitsImage.getImageDir());
                             }
                         }
+                    }
+                    if (!isFind) {
+                        MQAllSendMessage.sendIsNotBind(permitsPo.getOrgid(), permitsPo.getPermitid(), permitsPo.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
                     }
                 }
             }
@@ -458,7 +464,9 @@ public class PermitsServiceImpl implements PermitsService {
 
                     //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
                     SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid(), 0);
+                    boolean isFind = false;
                     if (safeobjsPo != null) {
+                        isFind = true;
                         //修改安全对象信息表中的许可证名称
                         safeobjsPo.setObjname(permitsDto.getName());
                         safeobjsPoMapper.updateByPrimaryKeySelective(safeobjsPo);
@@ -482,10 +490,14 @@ public class PermitsServiceImpl implements PermitsService {
                         }
                         AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
                         if (aiEngineerInfo != null) {
+                            isFind = true;
                             if (aiEngineerInfo.getSchedule() == 1) {
                                 logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
                                 MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
                             }
+                        }
+                        if (!isFind) {
+                            MQAllSendMessage.sendIsNotBind(permitsPoOld.getOrgid(), permitsPoOld.getPermitid(), permitsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
                         }
                     }
                 } else if (returnMsg.getCode() == ReturnMsg.FAIL) {
