@@ -181,6 +181,9 @@ public class ToolsController {
             }
             if (status) {
                 returnMsg = toolsService.updateToolsMsg(userid, toolsDto, toolsImageList, notDelIds);
+                if (returnMsg.getCode() == 1) {
+                    toolsService.sendUpdateMq(toolsDto);
+                }
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工具修改失敗...");

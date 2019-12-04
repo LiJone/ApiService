@@ -184,6 +184,9 @@ public class StaffsController {
             }
             if (fileUploadStatus) {
                 returnMsg = staffsService.updateStaffsMsg(userid, staffsDto, staffsImageList, notDelIds);
+                if (returnMsg.getCode() == 1) {
+                    staffsService.sendUpdateMq(staffsDto);
+                }
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "員工修改失敗...");

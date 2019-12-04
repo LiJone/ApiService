@@ -1,6 +1,7 @@
 package com.tss.apiservice.service;
 
 import com.tss.apiservice.common.ReturnMsg;
+import com.tss.apiservice.dto.PermitsDto;
 import com.tss.apiservice.dto.StaffsDto;
 import com.tss.apiservice.po.StaffsImagePO;
 
@@ -35,4 +36,6 @@ public interface StaffsService {
     ReturnMsg getAllEnName(String userid);
 
     ReturnMsg getAllChName(String userid);
+
+    void sendUpdateMq(StaffsDto staffsDto);
 }

@@ -57,6 +57,9 @@ public class JobController {
         ReturnMsg returnMsg;
         try {
             returnMsg = jobService.updateJobMsg(userid, jobDto);
+            if (returnMsg.getCode() == 1) {
+                jobService.sendUpdateMq(jobDto);
+            }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "工程修改失敗...");
             logger.info("/app/job/updateJobMsg/{userid} 异常");

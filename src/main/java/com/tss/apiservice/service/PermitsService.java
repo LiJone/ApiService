@@ -29,4 +29,6 @@ public interface PermitsService {
     ReturnMsg getByTypeIds(HttpServletRequest request);
 
     ReturnMsg getAllName(String userid);
+
+    void sendUpdateMq(PermitsDto permitsDto);
 }

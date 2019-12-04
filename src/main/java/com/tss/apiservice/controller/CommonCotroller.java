@@ -1,12 +1,14 @@
 package com.tss.apiservice.controller;
 
 import com.tss.apiservice.common.ReturnMsg;
+import com.tss.apiservice.dto.ImageDto;
 import com.tss.apiservice.service.CommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,12 +30,12 @@ public class CommonCotroller {
     @Autowired
     CommonService commonService;
 
-    @RequestMapping(value = "/app/common/getBase64ByPath")
+    @RequestMapping(value = "/app/common/getBase64ByPath", produces = "application/json;charset=utf-8")
     @ResponseBody
-    public ReturnMsg getBase64ByPath(String filePathTmp, String fileName, String imageIndex, String name) {
+    public ReturnMsg getBase64ByPath(@RequestBody ImageDto imageDto) {
         ReturnMsg returnMsg;
         try {
-            returnMsg = commonService.getBase64ByPath(filePath, filePathTmp, fileName, imageIndex, name);
+            returnMsg = commonService.getBase64ByPath(filePath, imageDto);
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據......");
             logger.info("/app/common/getBase64ByPath 异常");

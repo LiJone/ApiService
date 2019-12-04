@@ -61,4 +61,10 @@ public interface AiEngineerInfoService {
      * @return
      */
     ReturnMsg getAllName(String userid);
+
+    /**
+     * 发送消息
+     * @param aiEngineerInfoForm
+     */
+    void sendUpdateMq(AiEngineerInfoForm aiEngineerInfoForm);
 }

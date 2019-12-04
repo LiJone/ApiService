@@ -25,4 +25,8 @@ public interface GatewaysService {
     ReturnMsg getGateWaysSetting(String number) throws IOException;
 
     ReturnMsg getAllName(String userid);
+
+    void sendUpdateMq(GatewaysDto gatewaysDto);
+
+    void sendAddMq(GatewaysDto gatewaysDto);
 }

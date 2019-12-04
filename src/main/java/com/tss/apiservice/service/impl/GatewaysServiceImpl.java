@@ -84,11 +84,11 @@ public class GatewaysServiceImpl implements GatewaysService {
                     gatewaysPoMapper.insertSelective(gatewaysPo);
                     returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
 
-                    EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
-                    if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
-                        logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
-                        MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
-                    }
+//                    EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
+//                    if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
+//                        logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
+//                        MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+//                    }
                 } else {
                     returnMsg.setMsgbox("網關名稱已存在...");
                 }
@@ -223,11 +223,11 @@ public class GatewaysServiceImpl implements GatewaysService {
                 gatewaysPoMapper.updateByPrimaryKeySelective(gatewaysPo);
                 returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功");
 
-                EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
-                if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
-                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
-                    MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
-                }
+//                EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
+//                if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
+//                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
+//                    MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+//                }
             } else {
                 returnMsg.setMsgbox("網關名稱已存在...");
             }
@@ -236,7 +236,6 @@ public class GatewaysServiceImpl implements GatewaysService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg addGateWaysSetting(String userid, String number, Integer distance) throws IOException {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(number) || StringUtils.isEmpty(distance)) {
@@ -343,5 +342,23 @@ public class GatewaysServiceImpl implements GatewaysService {
             returnMsg.setMsgbox("成功");
         }
         return returnMsg;
+    }
+
+    @Override
+    public void sendAddMq(GatewaysDto gatewaysDto) {
+        EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
+        if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
+            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
+            MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+        }
+    }
+
+    @Override
+    public void sendUpdateMq(GatewaysDto gatewaysDto) {
+        EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(gatewaysDto.getOsdid());
+        if (engineerinfoPo != null && engineerinfoPo.getSchedule() == 1) {
+            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
+            MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+        }
     }
 }

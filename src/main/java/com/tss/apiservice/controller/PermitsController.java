@@ -180,6 +180,9 @@ public class PermitsController {
             }
             if (status) {
                 returnMsg = permitsService.updatePermitsMsg(userid, permitsDto, permitsImageList, notDelIds);
+                if (returnMsg.getCode() == 1) {
+                    permitsService.sendUpdateMq(permitsDto);
+                }
             }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "許可證修改失敗...");

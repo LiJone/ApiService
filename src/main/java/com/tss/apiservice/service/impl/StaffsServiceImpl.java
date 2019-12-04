@@ -185,7 +185,7 @@ public class StaffsServiceImpl implements StaffsService {
     }
 
     @Override
-    public ReturnMsg getStaffsMsgList(HttpServletRequest request) throws Exception{
+    public ReturnMsg getStaffsMsgList(HttpServletRequest request) throws Exception {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String pageSize = request.getParameter("pageSize");
@@ -194,8 +194,8 @@ public class StaffsServiceImpl implements StaffsService {
         String numberEnd = request.getParameter("numberEnd");
         String chname = request.getParameter("chname");
         String enname = request.getParameter("enname");
-        String expire =  request.getParameter("expire");
-        String expireNumber =  request.getParameter("expireNumber");
+        String expire = request.getParameter("expire");
+        String expireNumber = request.getParameter("expireNumber");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
@@ -399,9 +399,9 @@ public class StaffsServiceImpl implements StaffsService {
                 List<StaffsImagePO> staffsImageOldList = staffsPoMapper.selectStaffsImageByStaffId(staffsDto.getStaffid());
                 //start 为了实时修改盒子员工加上
                 SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid(), 1);
-                boolean isFind = false;
+//                boolean isFind = false;
                 if (safeobjsPo != null) {
-                    isFind = true;
+//                    isFind = true;
                     //员工存在工程中，查看是否添加的员工证件条件是否和以前一样，不一样则不给修改，
                     List<ObjsconditionPo> objsconditionPos = objsconditionPoMapper.selectByStaffid(staffsDto.getStaffid());
                     //保存需要满足员工个人的证件
@@ -422,31 +422,31 @@ public class StaffsServiceImpl implements StaffsService {
                             }
                         }
                     }
-                    EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
+//                    EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
                     //满足条件了，则需要修改员工中的名称，和员工证件条件表中的数据
                     safeobjsPo.setObjname(staffsDto.getEnname());
                     safeobjsPoMapper.updateByPrimaryKeySelective(safeobjsPo);
 
-                    if (engineerinfoPo.getSchedule() == 1) {
-                        logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
-                        MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
-                    }
+//                    if (engineerinfoPo.getSchedule() == 1) {
+//                        logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
+//                        MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+//                    }
                 }
-                WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(staffsDto.getStaffid());
-                if (wswpInfo != null) {
-                    String jobNum = wswpInfo.getJobNum();
-                    AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
-                    if (aiEngineerInfo != null) {
-                        isFind = true;
-                        if (aiEngineerInfo.getSchedule() == 1) {
-                            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
-                            MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
-                        }
-                    }
-                }
-                if (!isFind) {
-                    MQAllSendMessage.sendIsNotBind(staffsPoOld.getOrgid(), staffsPoOld.getStaffid(), staffsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
-                }
+//                WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(staffsDto.getStaffid());
+//                if (wswpInfo != null) {
+//                    String jobNum = wswpInfo.getJobNum();
+//                    AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+//                    if (aiEngineerInfo != null) {
+//                        isFind = true;
+//                        if (aiEngineerInfo.getSchedule() == 1) {
+//                            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
+//                            MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
+//                        }
+//                    }
+//                }
+//                if (!isFind) {
+//                    MQAllSendMessage.sendIsNotBind(staffsPoOld.getOrgid(), staffsPoOld.getStaffid(), staffsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
+//                }
                 //end 为了实时修改盒子员工加上
 
                 //2.删除标签表和证件表
@@ -719,7 +719,7 @@ public class StaffsServiceImpl implements StaffsService {
     public ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
-        String expireNumber =  request.getParameter("expireNumber");
+        String expireNumber = request.getParameter("expireNumber");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (StringUtils.isEmpty(userid)) {
             returnMsg.setMsgbox("參數異常...");
@@ -785,7 +785,7 @@ public class StaffsServiceImpl implements StaffsService {
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             List<String> ids = staffsPoMapper.selectCpListByPositionTypeId(positionTypeId);
             List<Integer> typeIds = new ArrayList<>();
-            for (String id: ids) {
+            for (String id : ids) {
                 String[] split = id.split(",");
                 for (String s : split) {
                     typeIds.add(Integer.valueOf(s));
@@ -797,8 +797,8 @@ public class StaffsServiceImpl implements StaffsService {
                 List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffsPo.getStaffid());
                 for (StaffscertPo staffscertPo : staffscertPos) {
                     if (typeIds.contains(staffscertPo.getTypeid())) {
-                        Integer openCount =  aiEngineerInfoMapper.getCpCountByCpNum(staffsPo.getStaffid());
-                        Integer closeCount =  aiEngineerInfoMapper.getCpCountByCpNumClose(staffsPo.getStaffid());
+                        Integer openCount = aiEngineerInfoMapper.getCpCountByCpNum(staffsPo.getStaffid());
+                        Integer closeCount = aiEngineerInfoMapper.getCpCountByCpNumClose(staffsPo.getStaffid());
                         if (openCount == null || openCount <= 3) {
                             if (closeCount == null || closeCount <= 10) {
                                 staffsPoList.add(staffsPo);
@@ -862,4 +862,34 @@ public class StaffsServiceImpl implements StaffsService {
         return returnMsg;
     }
 
+    @Override
+    public void sendUpdateMq(StaffsDto staffsDto) {
+        StaffsPo staffsPoOld = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
+        //start 为了实时修改盒子员工加上
+        SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(staffsDto.getStaffid(), 1);
+        boolean isFind = false;
+        if (safeobjsPo != null) {
+            isFind = true;
+            EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
+            if (engineerinfoPo.getSchedule() == 1) {
+                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
+                MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+            }
+        }
+        WSWPInfoPO wswpInfo = aiEngineerInfoMapper.selectByWswpNum(staffsDto.getStaffid());
+        if (wswpInfo != null) {
+            String jobNum = wswpInfo.getJobNum();
+            AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+            if (aiEngineerInfo != null) {
+                isFind = true;
+                if (aiEngineerInfo.getSchedule() == 1) {
+                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
+                    MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
+                }
+            }
+        }
+        if (!isFind) {
+            MQAllSendMessage.sendIsNotBind(staffsPoOld.getOrgid(), staffsPoOld.getStaffid(), staffsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
+        }
+    }
 }

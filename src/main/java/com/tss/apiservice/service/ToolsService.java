@@ -26,4 +26,6 @@ public interface ToolsService {
     ReturnMsg getAllNum(String userid);
 
     ReturnMsg getAllName(String userid);
+
+    void sendUpdateMq(ToolsDto toolsDto);
 }

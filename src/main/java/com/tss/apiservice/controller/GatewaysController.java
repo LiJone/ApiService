@@ -26,6 +26,9 @@ public class GatewaysController {
         ReturnMsg returnMsg;
         try {
             returnMsg = gatewaysService.addGateways(userid, gatewaysDto);
+            if (returnMsg.getCode() == 1) {
+                gatewaysService.sendAddMq(gatewaysDto);
+            }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關錄入失敗...");
             logger.info("/app/tools/addGateWaysMsg/{userid} 异常");
@@ -82,6 +85,9 @@ public class GatewaysController {
         ReturnMsg returnMsg;
         try {
             returnMsg = gatewaysService.updateGateWaysMsg(userid , gatewaysDto);
+            if (returnMsg.getCode() == 1) {
+                gatewaysService.sendUpdateMq(gatewaysDto);
+            }
         } catch (Exception e) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "網關修改失敗...");
             logger.info("/app/gateWays/updateGateWaysMsg 异常");

@@ -462,44 +462,44 @@ public class PermitsServiceImpl implements PermitsService {
                         }
                     }
 
-                    //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
+//                    //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
                     SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid(), 0);
-                    boolean isFind = false;
+//                    boolean isFind = false;
                     if (safeobjsPo != null) {
-                        isFind = true;
+//                        isFind = true;
                         //修改安全对象信息表中的许可证名称
                         safeobjsPo.setObjname(permitsDto.getName());
                         safeobjsPoMapper.updateByPrimaryKeySelective(safeobjsPo);
-                        EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
-                        if (engineerinfoPo.getSchedule() == 1) {
-                            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
-                            MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
-                        }
+//                        EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
+//                        if (engineerinfoPo.getSchedule() == 1) {
+//                            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
+//                            MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+//                        }
                     }
-                    //1.4许可证推送
-                    PermitBindInfoPO permitBindInfo = aiEngineerInfoMapper.selectByPermitNum(permitsDto.getPermitid());
-                    if (permitBindInfo != null) {
-                        String jobNum = null;
-                        if (permitBindInfo.getBindType() == 1) {
-                            FuncBindInfoPO funcBindInfo = aiEngineerInfoMapper.selectByFuncNum(permitBindInfo.getBindNum());
-                            if (funcBindInfo != null) {
-                                jobNum = funcBindInfo.getJobNum();
-                            }
-                        } else {
-                            jobNum = permitBindInfo.getBindNum();
-                        }
-                        AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
-                        if (aiEngineerInfo != null) {
-                            isFind = true;
-                            if (aiEngineerInfo.getSchedule() == 1) {
-                                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
-                                MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
-                            }
-                        }
-                        if (!isFind) {
-                            MQAllSendMessage.sendIsNotBind(permitsPoOld.getOrgid(), permitsPoOld.getPermitid(), permitsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
-                        }
-                    }
+//                    //1.4许可证推送
+//                    PermitBindInfoPO permitBindInfo = aiEngineerInfoMapper.selectByPermitNum(permitsDto.getPermitid());
+//                    if (permitBindInfo != null) {
+//                        String jobNum = null;
+//                        if (permitBindInfo.getBindType() == 1) {
+//                            FuncBindInfoPO funcBindInfo = aiEngineerInfoMapper.selectByFuncNum(permitBindInfo.getBindNum());
+//                            if (funcBindInfo != null) {
+//                                jobNum = funcBindInfo.getJobNum();
+//                            }
+//                        } else {
+//                            jobNum = permitBindInfo.getBindNum();
+//                        }
+//                        AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+//                        if (aiEngineerInfo != null) {
+//                            isFind = true;
+//                            if (aiEngineerInfo.getSchedule() == 1) {
+//                                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
+//                                MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
+//                            }
+//                        }
+//                        if (!isFind) {
+//                            MQAllSendMessage.sendIsNotBind(permitsPoOld.getOrgid(), permitsPoOld.getPermitid(), permitsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
+//                        }
+//                    }
                 } else if (returnMsg.getCode() == ReturnMsg.FAIL) {
                     //1.还原删除的标签表，员工证件表，删除上传的文件
                     for (TagInfosPo infosPo : tagInfosPosOld) {
@@ -632,5 +632,45 @@ public class PermitsServiceImpl implements PermitsService {
             returnMsg.setMsgbox("成功");
         }
         return returnMsg;
+    }
+
+    @Override
+    public void sendUpdateMq(PermitsDto permitsDto) {
+        PermitsPo permitsPoOld = permitsPoMapper.selectByPrimaryKey(permitsDto.getPermitid());
+        //在工程中的话去修改工程对象信息表，要是工程启动的话，就推送，加修改
+        SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(permitsDto.getPermitid(), 0);
+        boolean isFind = false;
+        if (safeobjsPo != null) {
+            isFind = true;
+            EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
+            if (engineerinfoPo.getSchedule() == 1) {
+                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
+                MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+            }
+        }
+        //1.4许可证推送
+        PermitBindInfoPO permitBindInfo = aiEngineerInfoMapper.selectByPermitNum(permitsDto.getPermitid());
+        if (permitBindInfo != null) {
+            String jobNum = null;
+            if (permitBindInfo.getBindType() == 1) {
+                FuncBindInfoPO funcBindInfo = aiEngineerInfoMapper.selectByFuncNum(permitBindInfo.getBindNum());
+                if (funcBindInfo != null) {
+                    jobNum = funcBindInfo.getJobNum();
+                }
+            } else {
+                jobNum = permitBindInfo.getBindNum();
+            }
+            AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
+            if (aiEngineerInfo != null) {
+                isFind = true;
+                if (aiEngineerInfo.getSchedule() == 1) {
+                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
+                    MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMQ);
+                }
+            }
+            if (!isFind) {
+                MQAllSendMessage.sendIsNotBind(permitsPoOld.getOrgid(), permitsPoOld.getPermitid(), permitsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
+            }
+        }
     }
 }

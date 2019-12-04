@@ -395,21 +395,21 @@ public class ToolsServiceImpl implements ToolsService {
                         }
                     }
                     SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
-                    boolean isFind = false;
+//                    boolean isFind = false;
                     if(safeobjsPo != null){
-                        isFind = true;
+//                        isFind = true;
                         safeobjsPo.setObjname(toolsDto.getName());
                         safeobjsPoMapper.updateByPrimaryKeySelective(safeobjsPo);
 
-                        EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
-                        if(engineerinfoPo.getSchedule() == 1){
-                            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
-                            MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(),safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE,apiServiceMQ);
-                        }
+//                        EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
+//                        if(engineerinfoPo.getSchedule() == 1){
+//                            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
+//                            MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(),safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE,apiServiceMQ);
+//                        }
                     }
-                    if (!isFind) {
-                        MQAllSendMessage.sendIsNotBind(toolsPoOld.getOrgid(), toolsPoOld.getToolid(), toolsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
-                    }
+//                    if (!isFind) {
+//                        MQAllSendMessage.sendIsNotBind(toolsPoOld.getOrgid(), toolsPoOld.getToolid(), toolsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
+//                    }
 
                 } else if (returnMsg.getCode() == ReturnMsg.FAIL) {
                     //操作失败
@@ -537,5 +537,24 @@ public class ToolsServiceImpl implements ToolsService {
             returnMsg.setMsgbox("成功");
         }
         return returnMsg;
+    }
+
+    @Override
+    public void sendUpdateMq(ToolsDto toolsDto) {
+        ToolsPo toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
+        SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
+        boolean isFind = false;
+        if(safeobjsPo != null){
+            isFind = true;
+
+            EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(safeobjsPo.getOsdid());
+            if(engineerinfoPo.getSchedule() == 1){
+                logger.info("sendJobMq jobNum:{},osdId:{},code:{}", safeobjsPo.getJobnum(), safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE);
+                MQAllSendMessage.sendJobMq(safeobjsPo.getJobnum(),safeobjsPo.getOsdid(), MQCode.JOB_RUN_UPDATE,apiServiceMQ);
+            }
+        }
+        if (!isFind) {
+            MQAllSendMessage.sendIsNotBind(toolsPoOld.getOrgid(), toolsPoOld.getToolid(), toolsPoOld.getType(), MQCode.IS_NOT_BIND, apiServiceMQ);
+        }
     }
 }

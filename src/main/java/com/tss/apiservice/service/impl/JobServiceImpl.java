@@ -462,10 +462,10 @@ public class JobServiceImpl implements JobService {
 
                 returnMsg.setMsgbox("成功");
                 returnMsg.setCode(ReturnMsg.SUCCESS);
-                if (engineerinfoPoOld.getSchedule() == 1) {
-                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
-                    MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
-                }
+//                if (engineerinfoPoOld.getSchedule() == 1) {
+//                    logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
+//                    MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+//                }
             }
 
         }
@@ -579,5 +579,14 @@ public class JobServiceImpl implements JobService {
             returnMsg.setMsgbox("成功");
         }
         return returnMsg;
+    }
+
+    @Override
+    public void sendUpdateMq(JobDto jobDto) {
+        EngineerinfoPo engineerinfoPoOld = engineerinfoPoMapper.selectByJobNum(jobDto.getJobnum());
+        if (engineerinfoPoOld.getSchedule() == 1) {
+            logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPoOld.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
+            MQAllSendMessage.sendJobMq(engineerinfoPoOld.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
+        }
     }
 }

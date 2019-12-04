@@ -86,7 +86,9 @@ public class AiEngineerInfoController {
         }
         try {
             returnMsg = aiEngineerInfoService.updateEngineerMsg(aiEngineerInfoForm);
-
+            if (returnMsg.getCode() == 1) {
+                aiEngineerInfoService.sendUpdateMq(aiEngineerInfoForm);
+            }
         } catch (NullPointerException n) {
             returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "數據庫參數存在空值");
         } catch (Exception e) {

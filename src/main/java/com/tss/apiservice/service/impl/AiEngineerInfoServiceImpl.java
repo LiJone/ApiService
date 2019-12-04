@@ -370,10 +370,10 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             aiEngineerInfo.setStartTime(aiEngineerInfoForm.getStartTime());
             aiEngineerInfo.setEndTime(aiEngineerInfoForm.getEndTime());
             aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineerInfo);
-            if (aiEngineerInfo.getSchedule() == 1) {
-                logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
-                MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMq);
-            }
+//            if (aiEngineerInfo.getSchedule() == 1) {
+//                logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
+//                MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMq);
+//            }
             returnMsg.setMsgbox("修改成功");
             returnMsg.setCode(ReturnMsg.SUCCESS);
         }
@@ -466,5 +466,14 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             returnMsg.setMsgbox("成功");
         }
         return returnMsg;
+    }
+
+    @Override
+    public void sendUpdateMq(AiEngineerInfoForm aiEngineerInfoForm) {
+        AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(aiEngineerInfoForm.getJobNum());
+        if (aiEngineerInfo.getSchedule() == 1) {
+            logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
+            MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMq);
+        }
     }
 }
