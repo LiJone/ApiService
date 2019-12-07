@@ -422,14 +422,15 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             AiEngineerInfoPO aiEngineerInfo = aiEngineerInfoMapper.selectByAiNum(jobNum);
             if (aiEngineerInfo.getSchedule() == 1) {
                 aiEngineerInfo.setSchedule(0);
+                aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineerInfo);
                 logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_DELETE);
                 MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_DELETE, apiServiceMq);
             } else {
                 logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_ADD);
                 aiEngineerInfo.setSchedule(1);
+                aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineerInfo);
                 MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_ADD, apiServiceMq);
             }
-            aiEngineerInfoMapper.updateAiEngineerInfo(aiEngineerInfo);
             returnMsg.setMsgbox("成功");
             returnMsg.setCode(ReturnMsg.SUCCESS);
         }
