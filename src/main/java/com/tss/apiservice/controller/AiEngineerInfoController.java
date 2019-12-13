@@ -160,4 +160,18 @@ public class AiEngineerInfoController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/engineer/getSurroundings/{jobnum}", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getSurroundings(@PathVariable("jobnum") String jobNum) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = aiEngineerInfoService.getSurroundings(jobNum);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/engineer/getSurroundings/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

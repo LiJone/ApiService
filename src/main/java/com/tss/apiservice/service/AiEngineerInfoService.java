@@ -4,6 +4,7 @@ import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.form.AiEngineerInfoForm;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * @author 壮Jone
@@ -67,4 +68,11 @@ public interface AiEngineerInfoService {
      * @param aiEngineerInfoForm
      */
     void sendUpdateMq(AiEngineerInfoForm aiEngineerInfoForm);
+
+    /**
+     * 获取工程环境信息
+     * @param jobNum
+     * @return
+     */
+    ReturnMsg getSurroundings(String jobNum) throws IOException;
 }

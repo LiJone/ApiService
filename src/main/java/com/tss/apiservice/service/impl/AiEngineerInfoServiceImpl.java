@@ -1,25 +1,34 @@
 package com.tss.apiservice.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.tss.apiservice.common.PageUtil;
 import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.common.utils.MQAllSendMessage;
 import com.tss.apiservice.common.utils.MQCode;
 import com.tss.apiservice.dao.*;
+import com.tss.apiservice.dto.SurroundingDto;
 import com.tss.apiservice.form.*;
 import com.tss.apiservice.po.*;
 import com.tss.apiservice.service.AiEngineerInfoService;
 
+import com.tss.apiservice.utils.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 壮Jone
@@ -36,6 +45,9 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
 
     @Autowired
     private ApiServiceMQImpl apiServiceMq;
+
+    @Value("${getSurroundingsUrl}")
+    private String getSurroundingsUrl;
 
     @Override
     @Transactional(propagation= Propagation.REQUIRED,rollbackFor= Exception.class)
@@ -476,5 +488,33 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             logger.info("sendJobMq jobNum:{},orgId:{},code:{}", aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE);
             MQAllSendMessage.sendJobMq(aiEngineerInfo.getJobNum(), aiEngineerInfo.getOrgId(), MQCode.ENGINEER_RUN_UPDATE, apiServiceMq);
         }
+    }
+
+    @Override
+    public ReturnMsg getSurroundings(String jobNum) throws IOException {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        List<String> ids = aiEngineerInfoMapper.selectSurroundingsOsdIdListByAiNum(jobNum);
+        if (ids != null && ids.size() > 0) {
+            Map<String, Object> param = new HashMap<>(1);
+            param.put("devsn", ids);
+            String s = HttpUtils.sendPost(JSON.toJSONString(param), getSurroundingsUrl);
+            if (!StringUtils.isEmpty(s)) {
+                JSONObject jsonObject = JSON.parseObject(s);
+                String code = jsonObject.getString("code");
+                if ("200".equals(code)) {
+                    String data = jsonObject.getString("data");
+                    if (!StringUtils.isEmpty(data)) {
+                        List<SurroundingDto> dtoList = JSON.parseArray(data,SurroundingDto.class);
+                        returnMsg.setData(dtoList);
+                        returnMsg.setCode(ReturnMsg.SUCCESS);
+                        returnMsg.setMsgbox("成功");
+                    }
+                }
+            }
+        } else {
+            returnMsg.setCode(ReturnMsg.FAIL);
+            returnMsg.setMsgbox("無環境數據！");
+        }
+        return returnMsg;
     }
 }

@@ -228,4 +228,11 @@ public interface AiEngineerInfoMapper {
      * @return
      */
     List<String> getAllNameByOrgId(String orgId);
+
+    /**
+     * 根据工程id获取环境信息盒子编号
+     * @param jobNum
+     * @return
+     */
+    List<String> selectSurroundingsOsdIdListByAiNum(String jobNum);
 }
