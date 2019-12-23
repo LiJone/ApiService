@@ -507,14 +507,15 @@ public class JobServiceImpl implements JobService {
             EngineerinfoPo engineerinfoPo = engineerinfoPoMapper.selectByOsdid(jobDto.getOsdid());
             if (jobDto.isRunStatus()) {
                 engineerinfoPo.setSchedule(1);
+                engineerinfoPoMapper.updateByPrimaryKeySelective(engineerinfoPo);
                 logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_ADD);
                 MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_ADD, apiServiceMQ);
             } else {
                 engineerinfoPo.setSchedule(0);
+                engineerinfoPoMapper.updateByPrimaryKeySelective(engineerinfoPo);
                 logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_DELETE);
                 MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), jobDto.getOsdid(), MQCode.JOB_RUN_DELETE, apiServiceMQ);
             }
-            engineerinfoPoMapper.updateByPrimaryKeySelective(engineerinfoPo);
             returnMsg.setMsgbox("成功");
             returnMsg.setCode(ReturnMsg.SUCCESS);
         }
