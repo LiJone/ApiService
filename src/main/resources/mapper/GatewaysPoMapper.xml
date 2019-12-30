@@ -10,9 +10,19 @@
         <result column="osdid" jdbcType="VARCHAR" property="osdid"/>
         <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
     </resultMap>
+
+    <resultMap id="BaseResultMapType" type="com.tss.apiservice.po.GateWayTypePO">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="typenum" jdbcType="VARCHAR" property="typenum"/>
+        <result column="enable" jdbcType="INTEGER" property="enable"/>
+    </resultMap>
     <sql id="Base_Column_List">
     number, name, type, protocol, network, osdid, orgid
   </sql>
+
+    <sql id="Base_Column_List_Type">
+        id, typenum, enable
+    </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -120,9 +130,16 @@
 
     <select id="getAllNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
-        name
+        distinct name
         from gateways
         where orgid = #{orgId,jdbcType=VARCHAR}
         order by name
+    </select>
+
+    <select id="getGateWayType" resultMap="BaseResultMapType">
+        select
+        <include refid="Base_Column_List_Type"/>
+        from gatewaystype
+        order by id
     </select>
 </mapper>

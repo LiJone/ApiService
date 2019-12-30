@@ -138,4 +138,18 @@ public class GatewaysController {
         }
         return returnMsg;
     }
+
+    @RequestMapping(value = "/app/gateWays/getGateWayType", method = RequestMethod.GET)
+    @ResponseBody
+    public ReturnMsg getToolType(HttpServletRequest request) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = gatewaysService.getGateWayType(request);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據...");
+            logger.info("/app/gateWays/getGateWayType/{userid} 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
+    }
 }

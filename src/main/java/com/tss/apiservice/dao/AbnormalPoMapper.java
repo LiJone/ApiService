@@ -20,4 +20,6 @@ public interface AbnormalPoMapper {
     int updateByPrimaryKeySelective(AbnormalPo record);
 
     Integer selectByNumberAndType(Map<String, Object> map);
+
+    void deleteByNumberAndType(Map<String, Object> hashMap);
 }

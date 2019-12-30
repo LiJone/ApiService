@@ -70,7 +70,7 @@
 
     <select id="getAllTypeNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
-        c.typename
+        distinct c.typename
         from depotrecord d left join tools t on d.toolid = t.toolid
         left join tooltype c on t.typeid = c.id
         where d.orgid = #{orgId,jdbcType=VARCHAR}

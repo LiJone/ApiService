@@ -247,7 +247,7 @@
 
     <select id="getAllNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
-        name
+        distinct name
         from tools
         where orgid = #{orgId,jdbcType=VARCHAR}
         order by name

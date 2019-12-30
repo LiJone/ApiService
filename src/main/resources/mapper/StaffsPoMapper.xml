@@ -363,7 +363,7 @@
 
     <select id="getAllEnNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
-        enname
+        distinct enname
         from staffs
         where orgid = #{orgId,jdbcType=VARCHAR}
         order by enname
@@ -371,7 +371,7 @@
 
     <select id="getAllChNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
-        chname
+        distinct chname
         from staffs
         where orgid = #{orgId,jdbcType=VARCHAR}
         order by chname

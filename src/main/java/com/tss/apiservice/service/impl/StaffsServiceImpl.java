@@ -10,6 +10,7 @@ import com.tss.apiservice.dao.*;
 import com.tss.apiservice.dto.StaffsDto;
 import com.tss.apiservice.po.*;
 import com.tss.apiservice.service.StaffsService;
+import com.tss.apiservice.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,7 +224,7 @@ public class StaffsServiceImpl implements StaffsService {
             } else if (!StringUtils.isEmpty(expireNumber)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
-                cal.add(Calendar.MONTH, 1);
+                cal.add(Calendar.MONTH, Integer.parseInt(expireNumber));
                 String format = formatter.format(cal.getTime());
                 hashMap.put("expireNumber", format);
             }
@@ -309,14 +310,14 @@ public class StaffsServiceImpl implements StaffsService {
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(staffsDto.getStaffid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
-            Map<String, Object> param = new HashMap<>(2);
-            param.put("number", staffsDto.getStaffid());
-            param.put("type", 1);
-            Integer count = abnormalPoMapper.selectByNumberAndType(param);
-            if (count != null && count > 0) {
-                returnMsg.setMsgbox("已存在相關記錄，暫不支持刪除操作");
-                return returnMsg;
-            }
+//            Map<String, Object> param = new HashMap<>(2);
+//            param.put("number", staffsDto.getStaffid());
+//            param.put("type", 1);
+//            Integer count = abnormalPoMapper.selectByNumberAndType(param);
+//            if (count != null && count > 0) {
+//                returnMsg.setMsgbox("已存在相關記錄，暫不支持刪除操作");
+//                return returnMsg;
+//            }
             //删除员工，删除标签，删除员工证件，删除头像
             StaffsPo staffsPo = staffsPoMapper.selectByPrimaryKey(staffsDto.getStaffid());
             if (staffsPo == null) {
@@ -335,6 +336,12 @@ public class StaffsServiceImpl implements StaffsService {
                 HashMap<String, Object> map = new HashMap<>(1);
                 map.put("staffId", staffsDto.getStaffid());
                 staffsPoMapper.deleteStaffsImageByStaffId(map);
+
+                Map<String, Object> hashMap = new HashMap<>(2);
+                hashMap.put("number", staffsDto.getStaffid());
+                hashMap.put("type", 1);
+                abnormalPoMapper.deleteByNumberAndType(hashMap);
+
                 returnMsg.setCode(ReturnMsg.SUCCESS);
                 returnMsg.setMsgbox("成功");
 
@@ -716,7 +723,7 @@ public class StaffsServiceImpl implements StaffsService {
     }
 
     @Override
-    public ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException {
+    public ReturnMsg getExpireDataList(HttpServletRequest request) throws Exception {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String expireNumber = request.getParameter("expireNumber");
@@ -733,7 +740,7 @@ public class StaffsServiceImpl implements StaffsService {
             if (!StringUtils.isEmpty(expireNumber)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
-                cal.add(Calendar.MONTH, 1);
+                cal.add(Calendar.MONTH, Integer.parseInt(expireNumber));
                 String format = formatter.format(cal.getTime());
                 hashMap.put("expireNumber", format);
             } else {

@@ -144,7 +144,7 @@
 
     <select id="getAllNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
         select
-        username
+        distinct username
         from users
         where orgid = #{orgId,jdbcType=VARCHAR}
         order by username

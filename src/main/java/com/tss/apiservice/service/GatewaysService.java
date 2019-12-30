@@ -29,4 +29,6 @@ public interface GatewaysService {
     void sendUpdateMq(GatewaysDto gatewaysDto);
 
     void sendAddMq(GatewaysDto gatewaysDto);
+
+    ReturnMsg getGateWayType(HttpServletRequest request);
 }

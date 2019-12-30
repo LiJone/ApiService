@@ -76,7 +76,7 @@ public class ReportServiceImpl implements ReportService {
                 //查询所有的考勤记录
                 List<AttendancePo> attendancePos = attendancePoMapper.selectListByMap(map);
                 Float workAddHour = 0F;
-                Double workAddSalary = 0.0;
+                double workAddSalary = 0.0;
                 if (attendancePos != null && attendancePos.size() > 0) {
                     for (AttendancePo attendancePo : attendancePos) {
                         Double oneDay = 0.0;
@@ -161,7 +161,7 @@ public class ReportServiceImpl implements ReportService {
                     times.add(attendOTRecordPo.getOttime());
                 }
                 Integer salary = attendancePo.getTreatment();
-                Double realSalary;
+                double realSalary;
                 if (salary == null || salary == 0) {
                     realSalary = 0.0;
                 } else {

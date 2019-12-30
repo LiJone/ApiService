@@ -23,7 +23,7 @@ public class ReportController {
     @ResponseBody
     @RequestMapping(value = "/app/report/getAttendanceCollect", method = RequestMethod.GET)
     public ReturnMsg getAttendanceCollect(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = reportService.getAttendanceCollect(request);
         } catch (Exception e) {
@@ -37,7 +37,7 @@ public class ReportController {
     @ResponseBody
     @RequestMapping(value = "/app/report/getOneStaffAttendance", method = RequestMethod.GET)
     public ReturnMsg getOneStaffAttendance(HttpServletRequest request) {
-        ReturnMsg<Object> returnMsg = null;
+        ReturnMsg returnMsg;
         try {
             returnMsg = reportService.getOneStaffAttendance(request);
         } catch (Exception e) {

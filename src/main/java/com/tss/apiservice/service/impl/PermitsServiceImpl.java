@@ -198,7 +198,7 @@ public class PermitsServiceImpl implements PermitsService {
             } else if (!StringUtils.isEmpty(expireNumber)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
-                cal.add(Calendar.MONTH, 1);
+                cal.add(Calendar.MONTH, Integer.parseInt(expireNumber));
                 String format = formatter.format(cal.getTime());
                 hashMap.put("expireNumber", format);
             }
@@ -285,14 +285,14 @@ public class PermitsServiceImpl implements PermitsService {
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(permitsDto.getPermitid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
-            Map<String, Object> param = new HashMap<>(2);
-            param.put("number", permitsDto.getPermitid());
-            param.put("type", 0);
-            Integer count = abnormalPoMapper.selectByNumberAndType(param);
-            if (count != null && count > 0) {
-                returnMsg.setMsgbox("已存在相關記錄，暫不支持刪除操作");
-                return returnMsg;
-            }
+//            Map<String, Object> param = new HashMap<>(2);
+//            param.put("number", permitsDto.getPermitid());
+//            param.put("type", 0);
+//            Integer count = abnormalPoMapper.selectByNumberAndType(param);
+//            if (count != null && count > 0) {
+//                returnMsg.setMsgbox("已存在相關記錄，暫不支持刪除操作");
+//                return returnMsg;
+//            }
             //删除还要对图片进行删除
             PermitsPo permitsPo = permitsPoMapper.selectByPrimaryKey(permitsDto.getPermitid());
             if (permitsPo == null) {
@@ -310,6 +310,12 @@ public class PermitsServiceImpl implements PermitsService {
                 HashMap<String, Object> map = new HashMap<>(1);
                 map.put("permitId", permitsDto.getPermitid());
                 permitsPoMapper.deletePermitsImageByPermitId(map);
+
+                Map<String, Object> hashMap = new HashMap<>(2);
+                hashMap.put("number", permitsDto.getPermitid());
+                hashMap.put("type", 0);
+                abnormalPoMapper.deleteByNumberAndType(hashMap);
+
                 returnMsg.setCode(ReturnMsg.SUCCESS);
                 returnMsg.setMsgbox("成功");
 
@@ -558,7 +564,7 @@ public class PermitsServiceImpl implements PermitsService {
             if (!StringUtils.isEmpty(expireNumber)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
-                cal.add(Calendar.MONTH, 1);
+                cal.add(Calendar.MONTH, Integer.parseInt(expireNumber));
                 String format = formatter.format(cal.getTime());
                 hashMap.put("expireNumber", format);
             } else {

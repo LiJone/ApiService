@@ -94,7 +94,7 @@ public class ToolsServiceImpl implements ToolsService {
             } else if (!StringUtils.isEmpty(expireNumber)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
-                cal.add(Calendar.MONTH, 1);
+                cal.add(Calendar.MONTH, Integer.parseInt(expireNumber));
                 String format = formatter.format(cal.getTime());
                 hashMap.put("expireNumber", format);
             }
@@ -245,14 +245,14 @@ public class ToolsServiceImpl implements ToolsService {
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(toolsDto.getToolid())) {
             returnMsg.setMsgbox("參數異常...");
         } else {
-            Map<String, Object> param = new HashMap<>(2);
-            param.put("number", toolsDto.getToolid());
-            param.put("type", 2);
-            Integer count = abnormalPoMapper.selectByNumberAndType(param);
-            if (count != null && count > 0) {
-                returnMsg.setMsgbox("已存在相關記錄，暫不支持刪除操作");
-                return returnMsg;
-            }
+//            Map<String, Object> param = new HashMap<>(2);
+//            param.put("number", toolsDto.getToolid());
+//            param.put("type", 2);
+//            Integer count = abnormalPoMapper.selectByNumberAndType(param);
+//            if (count != null && count > 0) {
+//                returnMsg.setMsgbox("已存在相關記錄，暫不支持刪除操作");
+//                return returnMsg;
+//            }
             ToolsPo toolsPoOld = toolsPoMapper.selectByPrimaryKey(toolsDto.getToolid());
             if (toolsPoOld == null) {
                 returnMsg.setMsgbox("工具不存在...");
@@ -274,6 +274,12 @@ public class ToolsServiceImpl implements ToolsService {
                 HashMap<String, Object> map = new HashMap<>(1);
                 map.put("toolId", toolsDto.getToolid());
                 toolsPoMapper.deleteToolsImageByToolId(map);
+
+                Map<String, Object> hashMap = new HashMap<>(2);
+                hashMap.put("number", toolsDto.getToolid());
+                hashMap.put("type", 2);
+                abnormalPoMapper.deleteByNumberAndType(hashMap);
+
                 SafeobjsPo safeobjsPo = safeobjsPoMapper.selectByPrimaryKey(toolsDto.getToolid(), 2);
                 boolean isFind = false;
                 if(safeobjsPo != null){
@@ -471,7 +477,7 @@ public class ToolsServiceImpl implements ToolsService {
             if (!StringUtils.isEmpty(expireNumber)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
-                cal.add(Calendar.MONTH, 1);
+                cal.add(Calendar.MONTH, Integer.parseInt(expireNumber));
                 String format = formatter.format(cal.getTime());
                 hashMap.put("expireNumber", format);
             } else {

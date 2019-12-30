@@ -12,7 +12,9 @@ import com.tss.apiservice.dao.GatewaysPoMapper;
 import com.tss.apiservice.dao.UsersPoMapper;
 import com.tss.apiservice.dto.GatewaysDto;
 import com.tss.apiservice.po.EngineerinfoPo;
+import com.tss.apiservice.po.GateWayTypePO;
 import com.tss.apiservice.po.GatewaysPo;
+import com.tss.apiservice.po.PermitTypePO;
 import com.tss.apiservice.service.GatewaysService;
 import com.tss.apiservice.utils.HttpUtils;
 import org.slf4j.Logger;
@@ -360,5 +362,11 @@ public class GatewaysServiceImpl implements GatewaysService {
             logger.info("sendJobMq jobNum:{},osdId:{},code:{}", engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE);
             MQAllSendMessage.sendJobMq(engineerinfoPo.getJobnum(), gatewaysDto.getOsdid(), MQCode.JOB_RUN_UPDATE, apiServiceMQ);
         }
+    }
+
+    @Override
+    public ReturnMsg getGateWayType(HttpServletRequest request) {
+        List<GateWayTypePO> arrayList = gatewaysPoMapper.getGateWayType();
+        return new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
     }
 }

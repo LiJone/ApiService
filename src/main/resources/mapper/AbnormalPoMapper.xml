@@ -152,4 +152,8 @@
   <select id="selectByNumberAndType" parameterType="java.util.Map" resultType="java.lang.Integer">
     select count(*) from abnormal where number = #{number,jdbcType=VARCHAR} and type = #{type,jdbcType=INTEGER}
   </select>
+
+  <delete id="deleteByNumberAndType" parameterType="java.util.Map">
+    delete from abnormal where number = #{number,jdbcType=VARCHAR} and type = #{type,jdbcType=INTEGER}
+  </delete>
 </mapper>

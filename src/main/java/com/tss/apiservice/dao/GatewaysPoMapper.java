@@ -1,5 +1,6 @@
 package com.tss.apiservice.dao;
 
+import com.tss.apiservice.po.GateWayTypePO;
 import com.tss.apiservice.po.GatewaysPo;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +23,6 @@ public interface GatewaysPoMapper {
     int updateByPrimaryKeySelective(GatewaysPo record);
 
     List<String> getAllNameByOrgId(String orgId);
+
+    List<GateWayTypePO> getGateWayType();
 }

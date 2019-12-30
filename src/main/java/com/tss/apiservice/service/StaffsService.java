@@ -25,7 +25,7 @@ public interface StaffsService {
 
     ReturnMsg getStaffsMsg(HttpServletRequest request);
 
-    ReturnMsg getExpireDataList(HttpServletRequest request) throws ParseException;
+    ReturnMsg getExpireDataList(HttpServletRequest request) throws Exception;
 
     ReturnMsg getCertType(HttpServletRequest request);
 
