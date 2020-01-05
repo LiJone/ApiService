@@ -28,7 +28,7 @@ public class CommonCotroller {
     private String filePath;
 
     @Autowired
-    CommonService commonService;
+    private CommonService commonService;
 
     @RequestMapping(value = "/app/common/getBase64ByPath", produces = "application/json;charset=utf-8")
     @ResponseBody
@@ -89,5 +89,19 @@ public class CommonCotroller {
                 logger.error("下载文件失败:_" + e.getMessage(), e);
             }
         }
+    }
+
+    @RequestMapping(value = "/app/common/getNowBase64", produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public ReturnMsg getNowBase64(@RequestBody ImageDto imageDto) {
+        ReturnMsg returnMsg;
+        try {
+            returnMsg = commonService.getBase64ByPath(filePath, imageDto);
+        } catch (Exception e) {
+            returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據......");
+            logger.info("/app/common/getBase64ByPath 异常");
+            e.printStackTrace();
+        }
+        return returnMsg;
     }
 }

@@ -567,4 +567,8 @@
     <select id="selectSurroundingsOsdIdListByAiNum" parameterType="java.lang.String" resultType="java.lang.String">
         select number from gateways where osdid in (select osdnum from osdbindinfo where bindnum = #{jobNum,jdbcType=VARCHAR}) and type = 7
     </select>
+
+    <select id="selectNoiseOsdIdListByAiNum" parameterType="java.lang.String" resultType="java.lang.String">
+        select number from gateways where osdid in (select osdnum from osdbindinfo where bindnum = #{jobNum,jdbcType=VARCHAR}) and type = 8
+    </select>
 </mapper>

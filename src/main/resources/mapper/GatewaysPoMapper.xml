@@ -140,6 +140,7 @@
         select
         <include refid="Base_Column_List_Type"/>
         from gatewaystype
+        where enable = 1
         order by id
     </select>
 </mapper>

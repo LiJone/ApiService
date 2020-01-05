@@ -235,4 +235,11 @@ public interface AiEngineerInfoMapper {
      * @return
      */
     List<String> selectSurroundingsOsdIdListByAiNum(String jobNum);
+
+    /**
+     * 根据工程id获取噪音信息盒子编号
+     * @param jobNum
+     * @return
+     */
+    List<String> selectNoiseOsdIdListByAiNum(String jobNum);
 }

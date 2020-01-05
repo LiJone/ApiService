@@ -8,6 +8,7 @@ import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.common.utils.MQAllSendMessage;
 import com.tss.apiservice.common.utils.MQCode;
 import com.tss.apiservice.dao.*;
+import com.tss.apiservice.dto.NoiseDTO;
 import com.tss.apiservice.dto.SurroundingDto;
 import com.tss.apiservice.form.*;
 import com.tss.apiservice.po.*;
@@ -50,7 +51,7 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
     private String getSurroundingsUrl;
 
     @Override
-    @Transactional(propagation= Propagation.REQUIRED,rollbackFor= Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg addEngineerMsg(String userid, AiEngineerInfoForm aiEngineerInfoForm) throws Exception {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(userid) || StringUtils.isEmpty(aiEngineerInfoForm.getJobNum())) {
@@ -154,10 +155,10 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
                 List<WSWPInfoForm> wswpInfoFormList = aiEngineerInfoForm.getWswpInfoFormList();
                 for (WSWPInfoForm wswpInfoForm : wswpInfoFormList) {
                     Integer openCount = aiEngineerInfoMapper.getCpCountByCpNum(wswpInfoForm.getCpNum());
-                    Integer closeCount =  aiEngineerInfoMapper.getCpCountByCpNumClose(wswpInfoForm.getCpNum());
+                    Integer closeCount = aiEngineerInfoMapper.getCpCountByCpNumClose(wswpInfoForm.getCpNum());
                     if (openCount != null && openCount > 3) {
                         throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他運行中工程3個以上");
-                    } else if (closeCount != null && closeCount > 10){
+                    } else if (closeCount != null && closeCount > 10) {
                         throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他關閉中工程10個以上");
                     } else {
                         WSWPInfoPO wswpBindInfo = new WSWPInfoPO();
@@ -227,7 +228,7 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
                     List<WSWPInfoForm> wswpInfoForms = aiEngineerInfoMapper.selectWswpFormByAiNum(aiEngineerInfoForm.getJobNum());
                     aiEngineerInfoForm.setWswpInfoFormList(wswpInfoForms);
                     List<FuncBindInfoForm> funcBindInfoForms = aiEngineerInfoMapper.selectFuncFormByAiNum(aiEngineerInfoForm.getJobNum());
-                    for (FuncBindInfoForm funcBindInfoForm :funcBindInfoForms) {
+                    for (FuncBindInfoForm funcBindInfoForm : funcBindInfoForms) {
                         if (funcBindInfoForm.getFuncType() == 1) {
                             List<OsdBindInfoForm> osdBindInfoForms1 = aiEngineerInfoMapper.selectOsdFormByFuncNum(funcBindInfoForm.getFuncNum());
                             funcBindInfoForm.setOsdBindInfoFormList(osdBindInfoForms1);
@@ -247,7 +248,7 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
     }
 
     @Override
-    @Transactional(propagation= Propagation.REQUIRED,rollbackFor= Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg updateEngineerMsg(AiEngineerInfoForm aiEngineerInfoForm) throws Exception {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(aiEngineerInfoForm.getId()) || StringUtils.isEmpty(aiEngineerInfoForm.getJobNum())) {
@@ -364,10 +365,10 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
             List<WSWPInfoForm> wswpInfoFormList = aiEngineerInfoForm.getWswpInfoFormList();
             for (WSWPInfoForm wswpInfoForm : wswpInfoFormList) {
                 Integer openCount = aiEngineerInfoMapper.getCpCountByCpNum(wswpInfoForm.getCpNum());
-                Integer closeCount =  aiEngineerInfoMapper.getCpCountByCpNumClose(wswpInfoForm.getCpNum());
+                Integer closeCount = aiEngineerInfoMapper.getCpCountByCpNumClose(wswpInfoForm.getCpNum());
                 if (openCount != null && openCount > 3) {
                     throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他運行中工程3個以上");
-                } else if (closeCount != null && closeCount > 10){
+                } else if (closeCount != null && closeCount > 10) {
                     throw new Exception("工程編號" + aiEngineerInfoForm.getJobNum() + "的CP編號" + wswpInfoForm.getCpNum() + "已綁定其他關閉中工程10個以上");
                 } else {
                     WSWPInfoPO wswpBindInfo = new WSWPInfoPO();
@@ -393,7 +394,7 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
     }
 
     @Override
-    @Transactional(propagation= Propagation.REQUIRED,rollbackFor= Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ReturnMsg deleteEngineerMsg(String jobNum) {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         if (StringUtils.isEmpty(jobNum)) {
@@ -493,22 +494,33 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
     @Override
     public ReturnMsg getSurroundings(String jobNum) throws IOException {
         ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
-        List<String> ids = aiEngineerInfoMapper.selectSurroundingsOsdIdListByAiNum(jobNum);
-        if (ids != null && ids.size() > 0) {
-            Map<String, Object> param = new HashMap<>(1);
-            param.put("devsn", ids);
+        List<String> dtusn = aiEngineerInfoMapper.selectSurroundingsOsdIdListByAiNum(jobNum);
+        List<String> noisesn = aiEngineerInfoMapper.selectNoiseOsdIdListByAiNum(jobNum);
+        if ((dtusn != null && dtusn.size() > 0) || (noisesn != null && noisesn.size() > 0)) {
+            Map<String, Object> param = new HashMap<>(2);
+            param.put("dtusn", dtusn);
+            noisesn.add("2");
+            param.put("noisesn", noisesn);
             String s = HttpUtils.sendPost(JSON.toJSONString(param), getSurroundingsUrl);
             if (!StringUtils.isEmpty(s)) {
                 JSONObject jsonObject = JSON.parseObject(s);
                 String code = jsonObject.getString("code");
                 if ("200".equals(code)) {
-                    String data = jsonObject.getString("data");
-                    if (!StringUtils.isEmpty(data)) {
-                        List<SurroundingDto> dtoList = JSON.parseArray(data,SurroundingDto.class);
-                        returnMsg.setData(dtoList);
-                        returnMsg.setCode(ReturnMsg.SUCCESS);
-                        returnMsg.setMsgbox("成功");
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    String dtuvalues = data.getString("dtuvalues");
+                    String noisevalues = data.getString("noisevalues");
+                    Map<String, Object> map = new HashMap<>(2);
+                    if (!StringUtils.isEmpty(dtuvalues)) {
+                        List<SurroundingDto> dtoList = JSON.parseArray(dtuvalues, SurroundingDto.class);
+                        map.put("dtuvalues", dtoList);
                     }
+                    if (!StringUtils.isEmpty(noisevalues)) {
+                        List<NoiseDTO> dtoList = JSON.parseArray(noisevalues, NoiseDTO.class);
+                        map.put("noisevalues", dtoList);
+                    }
+                    returnMsg.setData(map);
+                    returnMsg.setCode(ReturnMsg.SUCCESS);
+                    returnMsg.setMsgbox("成功");
                 }
             }
         } else {
