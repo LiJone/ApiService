@@ -298,14 +298,15 @@ public class ExcelFileController {
             ReturnMsg returnMsg = staffsService.getExpireDataList(request);
             if (returnMsg.getCode() == 1) {
                 String userid = request.getParameter("userid");
+                String expireNumber = request.getParameter("expireNumber");
                 String username = usersService.getUserNameById(Integer.valueOf(userid));
                 ArrayList<Object> arrayList = (ArrayList<Object>) returnMsg.getData();
-                String sheetName = "逾過期員工表格";
+                String sheetName = expireNumber + "個月逾過期員工表格";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String date = sdf.format(new Date());
-                String titleName = "逾過期員工報表";
+                String titleName = expireNumber + "個月逾過期員工報表";
                 String titleName2 = "打印人：" + username + "                  打印時間：" + date;
-                String fileName = "逾過期員工表格";
+                String fileName = expireNumber + "個月逾過期員工表格";
                 int columnNumber = 7;
                 int[] columnWidth = {8, 20, 18, 10, 15, 15, 18};
                 String[] columnName = {"No.", "員工編號", "英文名稱", "中文名稱", "證件", "狀態", "過期時間"};
