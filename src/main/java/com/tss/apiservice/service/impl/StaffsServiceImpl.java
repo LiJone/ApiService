@@ -20,8 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -756,17 +760,33 @@ public class StaffsServiceImpl implements StaffsService {
                 HashMap<String, Object> retMap = null;
                 ArrayList<Object> arrayList = new ArrayList<>();
                 for (StaffsPo staffsPo : staffsPos) {
-                    retMap = new HashMap<>();
                     //再查找员工证件表
                     List<StaffscertPo> staffscertPos = staffscertPoMapper.selectByStaffid(staffsPo.getStaffid());
-                    if (!StringUtils.isEmpty(expireNumber)) {
-                        retMap.put("permitsStatus", "證正常");
-                    } else {
-                        retMap.put("permitsStatus", "證過期");
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    for (StaffscertPo staffscertPo : staffscertPos) {
+                        retMap = new HashMap<>();
+                        if (!StringUtils.isEmpty(expireNumber)) {
+                            LocalDate expireDate = LocalDate.now().plusMonths(Long.parseLong(expireNumber));
+                            LocalDate localDate= LocalDate.now();
+                            LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
+                            if (validity.isBefore(localDate) || validity.isAfter(expireDate)) {
+                                continue;
+                            } else {
+                                retMap.put("permitsStatus", "證正常");
+                            }
+                        } else {
+                            LocalDate localDate= LocalDate.now();
+                            LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
+                            if (validity.isBefore(localDate)) {
+                                retMap.put("permitsStatus", "證過期");
+                            } else {
+                                continue;
+                            }
+                        }
+                        retMap.put("staffsPo", staffsPo);
+                        retMap.put("staffscertPo", staffscertPo);
+                        arrayList.add(retMap);
                     }
-                    retMap.put("staffsPo", staffsPo);
-                    retMap.put("staffscertPos", staffscertPos);
-                    arrayList.add(retMap);
                 }
                 returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", arrayList);
             }

@@ -3,6 +3,7 @@ package com.tss.apiservice.service.impl;
 import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.dto.ImageDto;
 import com.tss.apiservice.service.CommonService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -16,6 +17,18 @@ import java.util.Map;
 public class CommonServiceImpl implements CommonService {
 
     private static final String THUMBNAIL = "_thumbnail";
+
+//    @Value("${filePath}")
+//    private String filePath;
+//
+//    @Value("${filePath}")
+//    private String filePath;
+//
+//    @Value("${filePath}")
+//    private String filePath;
+//
+//    @Value("${filePath}")
+//    private String filePath;
 
     @Override
     public ReturnMsg getBase64ByPath(String filePath, ImageDto imageDto) throws Exception {
@@ -52,5 +65,10 @@ public class CommonServiceImpl implements CommonService {
             returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", map);
         }
         return returnMsg;
+    }
+
+    @Override
+    public ReturnMsg getNowBase64(String deviceid) {
+        return null;
     }
 }

@@ -81,6 +81,7 @@
     <select id="selectListByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
         <if test="expire == null and expireNumber == null">
             select
+            distinct
             <include refid="Base_Column_List"/>
             from staffs
             where 1 = 1
@@ -101,7 +102,7 @@
         </if>
         <if test="expire != null">
             select
-            a.*
+            distinct a.*
             from staffs a inner join staffscert s on a.staffid = s.staffid and
             DATE_FORMAT(s.validity,'%Y-%m-%d') &lt; DATE_FORMAT(now(),'%Y-%m-%d')
             where 1 = 1
@@ -122,7 +123,7 @@
         </if>
         <if test="expireNumber != null">
             select
-            a.*
+            distinct a.*
             from staffs a inner join staffscert s on a.staffid = s.staffid and
             DATE_FORMAT(s.validity,'%Y-%m-%d') &lt;= DATE_FORMAT(#{expireNumber},'%Y-%m-%d') and
             DATE_FORMAT(s.validity,'%Y-%m-%d') &gt;= DATE_FORMAT(now(),'%Y-%m-%d')

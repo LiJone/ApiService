@@ -272,15 +272,15 @@ public class ExcelFileController {
                 for (int i = 0; i < arrayList.size(); i++) {
                     HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
                     StaffsPo staffsPo = (StaffsPo) retMap.get("staffsPo");
-                    List<StaffscertPo> staffscertPos = (List<StaffscertPo>) retMap.get("staffscertPos");
+                    StaffscertPo staffscertPo = (StaffscertPo) retMap.get("staffscertPo");
                     String staffscertStatus = (String) retMap.get("staffscertStatus");
                     dataList[i][0] = ((i + 1) + "");
                     dataList[i][1] = staffsPo.getStaffid();
                     dataList[i][2] = staffsPo.getEnname();
                     dataList[i][3] = staffsPo.getChname();
-                    dataList[i][4] = "綠卡";
+                    dataList[i][4] = staffscertPo.getTypename();
                     dataList[i][5] = staffscertStatus;
-                    dataList[i][6] = staffscertPos.get(0).getValidity();
+                    dataList[i][6] = staffscertPo.getValidity();
                 }
                 ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
@@ -313,15 +313,15 @@ public class ExcelFileController {
                 for (int i = 0; i < arrayList.size(); i++) {
                     HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
                     StaffsPo staffsPo = (StaffsPo) retMap.get("staffsPo");
-                    List<StaffscertPo> staffscertPos = (List<StaffscertPo>) retMap.get("staffscertPos");
+                    StaffscertPo staffscertPo = (StaffscertPo) retMap.get("staffscertPo");
                     String staffscertStatus = (String) retMap.get("staffscertStatus");
                     dataList[i][0] = ((i + 1) + "");
                     dataList[i][1] = staffsPo.getStaffid();
                     dataList[i][2] = staffsPo.getEnname();
                     dataList[i][3] = staffsPo.getChname();
-                    dataList[i][4] = "綠卡";
+                    dataList[i][4] = staffscertPo.getTypename();
                     dataList[i][5] = staffscertStatus;
-                    dataList[i][6] = staffscertPos.get(0).getValidity();
+                    dataList[i][6] = staffscertPo.getValidity();
                 }
                 ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {

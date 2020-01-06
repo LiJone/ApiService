@@ -499,7 +499,6 @@ public class AiEngineerInfoServiceImpl implements AiEngineerInfoService {
         if ((dtusn != null && dtusn.size() > 0) || (noisesn != null && noisesn.size() > 0)) {
             Map<String, Object> param = new HashMap<>(2);
             param.put("dtusn", dtusn);
-            noisesn.add("2");
             param.put("noisesn", noisesn);
             String s = HttpUtils.sendPost(JSON.toJSONString(param), getSurroundingsUrl);
             if (!StringUtils.isEmpty(s)) {

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +16,15 @@ import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
+/**
+ * @author 壮Jone
+ */
 public class HttpUtils {
+
     public static String sendPost(String params, String requestUrl) throws IOException {
 
         // 将参数转为二进制流
-        byte[] requestBytes = params.getBytes("utf-8");
+        byte[] requestBytes = params.getBytes(StandardCharsets.UTF_8);
         // 客户端实例化
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod(requestUrl);
@@ -43,8 +48,7 @@ public class HttpUtils {
             e.printStackTrace();
         }
         // 将二进制流转为String
-        String result = new String(datas, "UTF-8");
-        return result;
+        return new String(datas, StandardCharsets.UTF_8);
     }
 
     /**

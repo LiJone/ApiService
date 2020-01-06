@@ -93,13 +93,13 @@ public class CommonCotroller {
 
     @RequestMapping(value = "/app/common/getNowBase64", produces = "application/json;charset=utf-8")
     @ResponseBody
-    public ReturnMsg getNowBase64(@RequestBody ImageDto imageDto) {
+    public ReturnMsg getNowBase64(String deviceid) {
         ReturnMsg returnMsg;
         try {
-            returnMsg = commonService.getBase64ByPath(filePath, imageDto);
+            returnMsg = commonService.getNowBase64(deviceid);
         } catch (Exception e) {
             returnMsg = new ReturnMsg(ReturnMsg.FAIL, "未獲取到相關數據......");
-            logger.info("/app/common/getBase64ByPath 异常");
+            logger.info("/app/common/getNowBase64 异常");
             e.printStackTrace();
         }
         return returnMsg;
