@@ -43,7 +43,7 @@ public class ReportServiceImpl implements ReportService {
             returnMsg.setMsgbox("參數異常...");
         } else {
             //获取所有的员工
-            HashMap<Object, Object> map = new HashMap<>(3);
+            HashMap<String, Object> map = new HashMap<>(3);
             //获取机构id
             String orgid = usersPoMapper.selectOrgIdByUserId(Integer.parseInt(userid));
             map.put("orgid", orgid);

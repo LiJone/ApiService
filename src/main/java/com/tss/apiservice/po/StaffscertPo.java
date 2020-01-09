@@ -24,6 +24,16 @@ public class StaffscertPo implements Serializable {
 
     private String staffid;
 
+    private String staffscertStatus;
+
+    public String getStaffscertStatus() {
+        return staffscertStatus;
+    }
+
+    public void setStaffscertStatus(String staffscertStatus) {
+        this.staffscertStatus = staffscertStatus;
+    }
+
     public Integer getTypeid() {
         return typeid;
     }

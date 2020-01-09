@@ -1,12 +1,16 @@
 package com.tss.apiservice.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.tss.apiservice.common.ReturnMsg;
 import com.tss.apiservice.dto.ImageDto;
 import com.tss.apiservice.service.CommonService;
+import com.tss.apiservice.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,17 +22,26 @@ public class CommonServiceImpl implements CommonService {
 
     private static final String THUMBNAIL = "_thumbnail";
 
-//    @Value("${filePath}")
-//    private String filePath;
-//
-//    @Value("${filePath}")
-//    private String filePath;
-//
-//    @Value("${filePath}")
-//    private String filePath;
-//
-//    @Value("${filePath}")
-//    private String filePath;
+    @Value("${loginUrl}")
+    private String loginUrl;
+
+    @Value("${serverIpUrl}")
+    private String serverIpUrl;
+
+    @Value("${getImageUrl}")
+    private String getImageUrl;
+
+    @Value("${loginName}")
+    private String loginName;
+
+    @Value("${passWord}")
+    private String passWord;
+
+    @Value("${serverip}")
+    private String serverip;
+
+    @Value("${deviceid}")
+    private String deviceid;
 
     @Override
     public ReturnMsg getBase64ByPath(String filePath, ImageDto imageDto) throws Exception {
@@ -68,7 +81,25 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public ReturnMsg getNowBase64(String deviceid) {
-        return null;
+    public ReturnMsg getNowBase64(String deviceid) throws Exception {
+        ReturnMsg returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
+        String url = getImageUrl + "?deviceid=" + this.deviceid + "&serverip=" + serverip;
+        String s = HttpUtils.doGet(url);
+        if (!StringUtils.isEmpty(s)) {
+            JSONObject jsonObject = JSON.parseObject(s);
+            String status = jsonObject.getString("status");
+            if ("200".equals(status)) {
+                Map<String, String> map = new HashMap<>(1);
+                map.put("fileData", jsonObject.getString("picBase64"));
+                returnMsg = new ReturnMsg<>(ReturnMsg.SUCCESS, "成功", map);
+            } else if ("202".equals(status)){
+                returnMsg.setMsgbox("设备不在线！");
+            } else {
+                returnMsg.setMsgbox("抓取返回失败！");
+            }
+        } else {
+            returnMsg.setMsgbox("第三方接口返回为空");
+        }
+        return returnMsg;
     }
 }

@@ -157,26 +157,11 @@
             and staffid like '%${staffid}%'
         </if>
         <if test="staffsName != null">
-            and enname like '%${staffsName}%'
+            and (enname like '%${staffsName}%' or chname like '%${staffsName}%')
         </if>
         <if test="orgid != null">
             and orgid = #{orgid}
         </if>
-        union
-        select
-        <include refid="Base_Column_List"/>
-        from staffs
-        where 1 = 1
-        <if test="staffid != null">
-            and staffid = #{staffid}
-        </if>
-        <if test="staffsName != null">
-            and chname like '%${staffsName}%'
-        </if>
-        <if test="orgid != null">
-            and orgid = #{orgid}
-        </if>
-
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">

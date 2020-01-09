@@ -268,8 +268,8 @@ public class StaffsServiceImpl implements StaffsService {
 
                     //循环员工证件表，得到证件是否存在过期
                     retMap.put("staffscertStatus", "證正常");
-                    if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
-                        for (StaffscertPo staffscertPo : staffscertPos) {
+                    for (StaffscertPo staffscertPo : staffscertPos) {
+                        if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
                             String validity = staffscertPo.getValidity();
                             Date d1 = formatter.parse(validity);
                             Date now = new Date();
@@ -280,16 +280,31 @@ public class StaffsServiceImpl implements StaffsService {
                             cal1.set(Calendar.SECOND, 0);
                             cal1.set(Calendar.MILLISECOND, 0);
                             if (d1.compareTo(cal1.getTime()) < 0) {
+                                staffscertPo.setStaffscertStatus("證過期");
                                 retMap.put("staffscertStatus", "證過期");
-                                break;
-                            }
-                        }
-                    } else {
-                        for (int y = 0; y < staffscertPos.size(); y++) {
-                            if (!StringUtils.isEmpty(expireNumber)) {
-                                retMap.put("staffscertStatus", "證正常");
                             } else {
-                                retMap.put("staffscertStatus", "證過期");
+                                staffscertPo.setStaffscertStatus("證正常");
+                            }
+                        } else {
+                            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                            if (!StringUtils.isEmpty(expireNumber)) {
+                                LocalDate expireDate = LocalDate.now().plusMonths(Long.parseLong(expireNumber));
+                                LocalDate localDate= LocalDate.now();
+                                LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
+                                if (validity.isBefore(localDate) || validity.isAfter(expireDate)) {
+                                    staffscertPos.remove(staffscertPo);
+                                } else {
+                                    staffscertPo.setStaffscertStatus("證正常");
+                                }
+                            } else {
+                                LocalDate localDate= LocalDate.now();
+                                LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
+                                if (validity.isBefore(localDate)) {
+                                    staffscertPo.setStaffscertStatus("證過期");
+                                    retMap.put("staffscertStatus", "證過期");
+                                } else {
+                                    staffscertPos.remove(staffscertPo);
+                                }
                             }
                         }
                     }
@@ -772,13 +787,13 @@ public class StaffsServiceImpl implements StaffsService {
                             if (validity.isBefore(localDate) || validity.isAfter(expireDate)) {
                                 continue;
                             } else {
-                                retMap.put("permitsStatus", "證正常");
+                                retMap.put("staffscertStatus", "證正常");
                             }
                         } else {
                             LocalDate localDate= LocalDate.now();
                             LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
                             if (validity.isBefore(localDate)) {
-                                retMap.put("permitsStatus", "證過期");
+                                retMap.put("staffscertStatus", "證過期");
                             } else {
                                 continue;
                             }
