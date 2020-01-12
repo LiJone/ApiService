@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -53,7 +54,23 @@ public class ReportServiceImpl implements ReportService {
             if (!StringUtils.isEmpty(staffsName)) {
                 map.put("staffsName", staffsName);
             }
-
+            Map<String, Object> hashMap = new HashMap<>(3);
+            hashMap.put("orgid", orgid);
+            if (!StringUtils.isEmpty(timeBegin)) {
+                hashMap.put("timeBegin", timeBegin);
+            }
+            if (!StringUtils.isEmpty(timeEnd)) {
+                hashMap.put("timeEnd", timeEnd);
+            }
+            List<String> staffidList = attendancePoMapper.selectStaffidByOrgid(hashMap);
+            if (StringUtils.isEmpty(staffid) && StringUtils.isEmpty(staffsName)) {
+                if (staffidList != null && staffidList.size() > 0) {
+                    map.put("staffidList", staffidList);
+                } else {
+                    returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "未獲取到相關數據...");
+                    return returnMsg;
+                }
+            }
             List<StaffsPo> staffsPos = staffsPoMapper.selectListByMap02(map);
             //循环所有的上班记录员工，各个班次上班只要有记录就是 半天
             map = new HashMap<>(4);
@@ -78,6 +95,8 @@ public class ReportServiceImpl implements ReportService {
                 Float workAddHour = 0F;
                 double workAddSalary = 0.0;
                 if (attendancePos != null && attendancePos.size() > 0) {
+                    retMap.put("osdnum", attendancePos.get(0).getOsdnum());
+                    retMap.put("osdname", attendancePos.get(0).getOsdname());
                     for (AttendancePo attendancePo : attendancePos) {
                         Double oneDay = 0.0;
                         if (attendancePo.getAmontime() != null) {

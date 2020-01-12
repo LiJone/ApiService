@@ -65,4 +65,11 @@ public interface AttendancePoMapper {
      * @return
      */
     Float selectAddHour(Integer id);
+
+    /**
+     * 根据条件返回员工id
+     * @param hashMap
+     * @return
+     */
+    List<String> selectStaffidByOrgid(Map<String, Object> hashMap);
 }

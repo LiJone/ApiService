@@ -159,6 +159,12 @@
         <if test="staffsName != null">
             and (enname like '%${staffsName}%' or chname like '%${staffsName}%')
         </if>
+        <if test="staffidList != null and staffidList.size > 0">
+            and staffid in
+            <foreach collection="staffidList" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
         <if test="orgid != null">
             and orgid = #{orgid}
         </if>

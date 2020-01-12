@@ -268,6 +268,7 @@ public class StaffsServiceImpl implements StaffsService {
 
                     //循环员工证件表，得到证件是否存在过期
                     retMap.put("staffscertStatus", "證正常");
+                    List<StaffscertPo> staffscertPoList = new ArrayList<>();
                     for (StaffscertPo staffscertPo : staffscertPos) {
                         if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
                             String validity = staffscertPo.getValidity();
@@ -285,6 +286,7 @@ public class StaffsServiceImpl implements StaffsService {
                             } else {
                                 staffscertPo.setStaffscertStatus("證正常");
                             }
+                            staffscertPoList.add(staffscertPo);
                         } else {
                             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                             if (!StringUtils.isEmpty(expireNumber)) {
@@ -292,9 +294,9 @@ public class StaffsServiceImpl implements StaffsService {
                                 LocalDate localDate= LocalDate.now();
                                 LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
                                 if (validity.isBefore(localDate) || validity.isAfter(expireDate)) {
-                                    staffscertPos.remove(staffscertPo);
                                 } else {
                                     staffscertPo.setStaffscertStatus("證正常");
+                                    staffscertPoList.add(staffscertPo);
                                 }
                             } else {
                                 LocalDate localDate= LocalDate.now();
@@ -302,8 +304,7 @@ public class StaffsServiceImpl implements StaffsService {
                                 if (validity.isBefore(localDate)) {
                                     staffscertPo.setStaffscertStatus("證過期");
                                     retMap.put("staffscertStatus", "證過期");
-                                } else {
-                                    staffscertPos.remove(staffscertPo);
+                                    staffscertPoList.add(staffscertPo);
                                 }
                             }
                         }
@@ -312,7 +313,7 @@ public class StaffsServiceImpl implements StaffsService {
                     staffsPo.setStaffsImageList(staffsImageList);
                     retMap.put("staffsPo", staffsPo);
                     retMap.put("tagInfosPos", tagInfosPos);
-                    retMap.put("staffscertPos", staffscertPos);
+                    retMap.put("staffscertPos", staffscertPoList);
                     arrayList.add(retMap);
                 }
                 pageUtil.setPageData(arrayList);
@@ -711,7 +712,7 @@ public class StaffsServiceImpl implements StaffsService {
     }
 
     @Override
-    public ReturnMsg getStaffsMsg(HttpServletRequest request) {
+    public ReturnMsg getStaffsMsg(HttpServletRequest request) throws Exception {
         ReturnMsg<Object> returnMsg = new ReturnMsg<>(ReturnMsg.FAIL, "失敗");
         String userid = request.getParameter("userid");
         String staffid = request.getParameter("staffid");
@@ -729,6 +730,14 @@ public class StaffsServiceImpl implements StaffsService {
             TagInfosPo tagInfosPo = tagInfosPoMapper.selectByObjnum(param);
             List<StaffsImagePO> staffsImageList = staffsPoMapper.selectStaffsImageByStaffId(staffsPo.getStaffid());
             staffsPo.setStaffsImageList(staffsImageList);
+            String effdate = staffsPo.getEffdate();
+            if (effdate != null && !"".equals(effdate)) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date d2 = formatter.parse(effdate);
+                if (!d2.after(new Date())) {
+                    staffsPo.setTreatment(staffsPo.getAltersalary());
+                }
+            }
             HashMap<Object, Object> map = new HashMap<>();
             map.put("staffscertPos", staffscertPos);
             map.put("staffsPo", staffsPo);

@@ -60,6 +60,32 @@ public class AttendancePo implements Serializable {
      */
     private String orgid;
 
+    /**
+     * osd编号
+     */
+    private String osdnum;
+
+    /**
+     * osd名称
+     */
+    private String osdname;
+
+    public String getOsdnum() {
+        return osdnum;
+    }
+
+    public void setOsdnum(String osdnum) {
+        this.osdnum = osdnum;
+    }
+
+    public String getOsdname() {
+        return osdname;
+    }
+
+    public void setOsdname(String osdname) {
+        this.osdname = osdname;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -90,10 +116,6 @@ public class AttendancePo implements Serializable {
 
     public void setPmofftime(String pmofftime) {
         this.pmofftime = pmofftime;
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
     }
 
     public String getAmontime() {

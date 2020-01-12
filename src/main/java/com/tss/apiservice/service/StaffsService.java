@@ -23,7 +23,7 @@ public interface StaffsService {
 
     ReturnMsg getStaffsPermitsType(HttpServletRequest request);
 
-    ReturnMsg getStaffsMsg(HttpServletRequest request);
+    ReturnMsg getStaffsMsg(HttpServletRequest request) throws Exception;
 
     ReturnMsg getExpireDataList(HttpServletRequest request) throws Exception;
 

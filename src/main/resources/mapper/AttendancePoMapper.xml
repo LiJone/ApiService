@@ -13,10 +13,12 @@
         <result column="pmontime" jdbcType="TIME" property="pmontime"/>
         <result column="pmofftime" jdbcType="TIME" property="pmofftime"/>
         <result column="orgid" jdbcType="VARCHAR" property="orgid"/>
+        <result column="osdnum" jdbcType="VARCHAR" property="osdnum"/>
+        <result column="osdname" jdbcType="VARCHAR" property="osdname"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-    id, attdate, jobnum, number, type, treatment, amontime, amofftime, pmontime, pmofftime, orgid
+    id, attdate, jobnum, number, type, treatment, amontime, amofftime, pmontime, pmofftime, orgid, osdnum, osdname
   </sql>
 
     <resultMap id="AttendOTRResultMap" type="com.tss.apiservice.po.AttendOTRecordPo">
@@ -234,5 +236,18 @@
 
     <select id="selectAddHour" parameterType="java.lang.Integer" resultType="java.lang.Float">
         select sum(hour) from attendotrecord where ottime is not null and attendid = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectStaffidByOrgid" resultType="java.lang.String" parameterType="java.util.Map">
+        select
+        distinct number
+        from attendance
+        where orgid = #{orgid}
+        <if test="timeBegin != null">
+            and attdate &gt;= #{timeBegin}
+        </if>
+        <if test="timeEnd != null">
+            and attdate &lt;= #{timeEnd}
+        </if>
     </select>
 </mapper>

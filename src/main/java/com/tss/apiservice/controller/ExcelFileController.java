@@ -67,19 +67,21 @@ public class ExcelFileController {
                 String titleName = "考勤匯總報表 (" + timeBegin + "至" + timeEnd + ")";
                 String titleName2 = "打印人：" + username + "                  打印時間：" + date;
                 String fileName = "考勤汇总表格";
-                int columnNumber = 7;
-                int[] columnWidth = {8, 20, 18, 10, 15, 18, 13};
-                String[] columnName = {"No.", "員工編號", "英文名", "中文名", "個人總天數", "個人加班總小時", "總薪酬"};
+                int columnNumber = 9;
+                int[] columnWidth = {8, 20, 18, 10, 15, 18, 13, 15, 15};
+                String[] columnName = {"No.", "員工編號", "英文名", "中文名", "個人總天數", "個人加班總小時", "總薪酬", "osd編號", "osd名稱"};
                 Double workDays = 0.0;
                 Double workAddSalarys = 0.0;
                 Float workAddHours = 0F;
-                String[][] dataList = new String[arrayList.size() + 1][7];
+                String[][] dataList = new String[arrayList.size() + 1][9];
                 for (int i = 0; i < arrayList.size(); i++) {
                     HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
                     StaffsPo staffsPo = (StaffsPo) retMap.get("staffsPo");
                     Double workDay = (Double) retMap.get("workDay");
                     Float workAddHour = (Float) retMap.get("workAddHour");
                     Double workAddSalary = (Double) retMap.get("workAddSalary");
+                    String osdnum = (String) retMap.get("osdnum");
+                    String osdname = (String) retMap.get("osdname");
                     if (workDay != null) {
                         workDays = workDays + workDay;
                     }
@@ -96,6 +98,8 @@ public class ExcelFileController {
                     dataList[i][4] = (workDay + "天");
                     dataList[i][5] = (workAddHour + "小時");
                     dataList[i][6] = (workAddSalary + "元");
+                    dataList[i][7] = (osdnum);
+                    dataList[i][8] = (osdname);
                 }
                 dataList[arrayList.size()][0] = ("合計");
                 dataList[arrayList.size()][1] = ("");
@@ -104,6 +108,8 @@ public class ExcelFileController {
                 dataList[arrayList.size()][4] = (workDays + "天");
                 dataList[arrayList.size()][5] = (workAddHours + "小時");
                 dataList[arrayList.size()][6] = (workAddSalarys + "元");
+                dataList[arrayList.size()][7] = ("");
+                dataList[arrayList.size()][8] = ("");
                 ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取考勤汇总数据失败");
@@ -132,14 +138,14 @@ public class ExcelFileController {
                 String titleName = name + "考勤詳情報表 (" + timeBegin + "至" + timeEnd + ")";
                 String titleName2 = "打印人：" + username + "                  打印時間：" + date;
                 String fileName = name + "考勤詳情表格";
-                int columnNumber = 12;
-                int[] columnWidth = {8, 18, 20, 10, 15, 18, 13, 18, 18, 10, 15, 18};
+                int columnNumber = 14;
+                int[] columnWidth = {8, 18, 20, 10, 15, 18, 13, 18, 18, 10, 15, 18, 15, 15};
                 String[] columnName = {"No.", "日期", "員工編號", "上午上班時間", "上午下班時間", "下午上班時間",
-                        "下午下班時間", "晚上加班時間", "上班天數", "加班小時", "每日薪酬", "實際薪酬"};
+                        "下午下班時間", "晚上加班時間", "上班天數", "加班小時", "每日薪酬", "實際薪酬", "osd編號", "osd名稱"};
                 Double workDays = 0.0;
                 Double realSalarys = 0.0;
                 Double workAddHours = 0.0;
-                String[][] dataList = new String[arrayList.size() + 1][12];
+                String[][] dataList = new String[arrayList.size() + 1][14];
                 for (int i = 0; i < arrayList.size(); i++) {
                     HashMap<Object, Object> retMap = (HashMap<Object, Object>) arrayList.get(i);
                     AttendancePo attendancePo = (AttendancePo) retMap.get("attendancePo");
@@ -177,6 +183,8 @@ public class ExcelFileController {
                     dataList[i][9] = workAddHour == null ? "" : (workAddHour + "小時");
                     dataList[i][10] = salary == null ? "0" : (salary + "元");
                     dataList[i][11] = realSalary == null ? "0" : (realSalary + "元");
+                    dataList[i][12] = attendancePo.getOsdnum();
+                    dataList[i][13] = attendancePo.getOsdname();
                 }
                 dataList[arrayList.size()][0] = ("合計");
                 dataList[arrayList.size()][1] = ("");
@@ -190,6 +198,8 @@ public class ExcelFileController {
                 dataList[arrayList.size()][9] = (workAddHours + "小時");
                 dataList[arrayList.size()][10] = ("");
                 dataList[arrayList.size()][11] = (realSalarys + "元");
+                dataList[arrayList.size()][12] = ("");
+                dataList[arrayList.size()][13] = ("");
                 ExcelUtils.exportWithResponse(sheetName, titleName, titleName2, fileName, columnNumber, columnWidth, columnName, dataList, response);
             } else {
                 logger.error("获取個人考勤汇总数据失败");
