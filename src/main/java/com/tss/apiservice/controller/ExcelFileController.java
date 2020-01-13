@@ -68,7 +68,7 @@ public class ExcelFileController {
                 String titleName2 = "打印人：" + username + "                  打印時間：" + date;
                 String fileName = "考勤汇总表格";
                 int columnNumber = 9;
-                int[] columnWidth = {8, 20, 18, 10, 15, 18, 13, 15, 15};
+                int[] columnWidth = {8, 20, 18, 10, 15, 18, 13, 15, 30};
                 String[] columnName = {"No.", "員工編號", "英文名", "中文名", "個人總天數", "個人加班總小時", "總薪酬", "osd編號", "osd名稱"};
                 Double workDays = 0.0;
                 Double workAddSalarys = 0.0;
@@ -139,7 +139,7 @@ public class ExcelFileController {
                 String titleName2 = "打印人：" + username + "                  打印時間：" + date;
                 String fileName = name + "考勤詳情表格";
                 int columnNumber = 14;
-                int[] columnWidth = {8, 18, 20, 10, 15, 18, 13, 18, 18, 10, 15, 18, 15, 15};
+                int[] columnWidth = {8, 18, 20, 10, 15, 18, 13, 18, 18, 10, 15, 18, 15, 30};
                 String[] columnName = {"No.", "日期", "員工編號", "上午上班時間", "上午下班時間", "下午上班時間",
                         "下午下班時間", "晚上加班時間", "上班天數", "加班小時", "每日薪酬", "實際薪酬", "osd編號", "osd名稱"};
                 Double workDays = 0.0;
