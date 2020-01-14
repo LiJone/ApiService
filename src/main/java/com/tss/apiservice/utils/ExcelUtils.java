@@ -46,7 +46,7 @@ public class ExcelUtils {
             // 字体加粗
             headerFont1.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
             // 设置字体类型
-            headerFont1.setFontName("黑体");
+            headerFont1.setFontName("Times New Roman");
             // 设置字体大小
             headerFont1.setFontHeightInPoints((short) 15);
             // 为标题样式设置字体样式
@@ -77,7 +77,7 @@ public class ExcelUtils {
             // 字体加粗
             headerFont2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
             // 设置字体类型
-            headerFont2.setFontName("黑体");
+            headerFont2.setFontName("Times New Roman");
             // 设置字体大小
             headerFont2.setFontHeightInPoints((short) 13);
             // 为标题样式设置字体样式
@@ -110,7 +110,7 @@ public class ExcelUtils {
             // 字体加粗
             headerFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
             // 设置字体类型
-            headerFont.setFontName("黑体");
+            headerFont.setFontName("Times New Roman");
             // 设置字体大小
             headerFont.setFontHeightInPoints((short) 11);
             // 为标题样式设置字体样式
@@ -154,7 +154,7 @@ public class ExcelUtils {
                 // 创建字体样式
                 HSSFFont bodyFont = (HSSFFont) wb.createFont();
                 // 设置字体类型
-                bodyFont.setFontName("黑体");
+                bodyFont.setFontName("Times New Roman");
                 // 设置字体大小
                 bodyFont.setFontHeightInPoints((short) 9);
                 // 为标题样式设置字体样式

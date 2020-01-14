@@ -269,40 +269,47 @@ public class StaffsServiceImpl implements StaffsService {
                     //循环员工证件表，得到证件是否存在过期
                     retMap.put("staffscertStatus", "證正常");
                     List<StaffscertPo> staffscertPoList = new ArrayList<>();
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     for (StaffscertPo staffscertPo : staffscertPos) {
                         if (StringUtils.isEmpty(expire) && StringUtils.isEmpty(expireNumber)) {
-                            String validity = staffscertPo.getValidity();
-                            Date d1 = formatter.parse(validity);
-                            Date now = new Date();
-                            Calendar cal1 = Calendar.getInstance();
-                            cal1.setTime(now);
-                            cal1.set(Calendar.HOUR_OF_DAY, 0);
-                            cal1.set(Calendar.MINUTE, 0);
-                            cal1.set(Calendar.SECOND, 0);
-                            cal1.set(Calendar.MILLISECOND, 0);
-                            if (d1.compareTo(cal1.getTime()) < 0) {
-                                staffscertPo.setStaffscertStatus("證過期");
+                            LocalDate localDate= LocalDate.now();
+                            LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
+                            if (validity.isBefore(localDate)) {
+                                staffscertPo.setStaffscertStatus("0");
                                 retMap.put("staffscertStatus", "證過期");
                             } else {
-                                staffscertPo.setStaffscertStatus("證正常");
+                                for (int i = 1; true; i++) {
+                                    if (i > 3) {
+                                        staffscertPo.setStaffscertStatus("4");
+                                        break;
+                                    } else {
+                                        LocalDate expireDate = LocalDate.now().plusMonths(i);
+                                        if (!validity.isAfter(expireDate)) {
+                                            if (i == 2) {
+                                                staffscertPo.setStaffscertStatus("3");
+                                            } else {
+                                                staffscertPo.setStaffscertStatus(i + "");
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                             staffscertPoList.add(staffscertPo);
                         } else {
-                            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                             if (!StringUtils.isEmpty(expireNumber)) {
                                 LocalDate expireDate = LocalDate.now().plusMonths(Long.parseLong(expireNumber));
                                 LocalDate localDate= LocalDate.now();
                                 LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
-                                if (validity.isBefore(localDate) || validity.isAfter(expireDate)) {
-                                } else {
-                                    staffscertPo.setStaffscertStatus("證正常");
+                                if (!validity.isBefore(localDate) && !validity.isAfter(expireDate)) {
+                                    staffscertPo.setStaffscertStatus(expireNumber);
                                     staffscertPoList.add(staffscertPo);
                                 }
                             } else {
                                 LocalDate localDate= LocalDate.now();
                                 LocalDate validity = LocalDate.parse(staffscertPo.getValidity().split(" ")[0], fmt);
                                 if (validity.isBefore(localDate)) {
-                                    staffscertPo.setStaffscertStatus("證過期");
+                                    staffscertPo.setStaffscertStatus("0");
                                     retMap.put("staffscertStatus", "證過期");
                                     staffscertPoList.add(staffscertPo);
                                 }
