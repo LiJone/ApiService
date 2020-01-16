@@ -89,21 +89,23 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
                 map = new HashMap<>();
                 map.put("abnormalPo", abnormalPo);
                 number = abnormalPo.getNumber();
-                if (abnormalPo.getType() == 0) {
-                    permitsPo = permitsPoMapper.selectByPrimaryKey(number);
-                    if (permitsPo != null) {
-                        map.put("objName", permitsPo.getName());
-                    }
-                } else if (abnormalPo.getType() == 1) {
-                    staffsPo = staffsPoMapper.selectByPrimaryKey(number);
-                    if (staffsPo != null) {
-                        map.put("objName", staffsPo.getEnname());
-                        map.put("objNameCh", staffsPo.getChname());
-                    }
-                } else if (abnormalPo.getType() == 2) {
-                    toolsPo = toolsPoMapper.selectByPrimaryKey(number);
-                    if (toolsPo != null) {
-                        map.put("objName", toolsPo.getName());
+                if (number != null) {
+                    if (abnormalPo.getType() == 0) {
+                        permitsPo = permitsPoMapper.selectByPrimaryKey(number);
+                        if (permitsPo != null) {
+                            map.put("objName", permitsPo.getName());
+                        }
+                    } else if (abnormalPo.getType() == 1) {
+                        staffsPo = staffsPoMapper.selectByPrimaryKey(number);
+                        if (staffsPo != null) {
+                            map.put("objName", staffsPo.getEnname());
+                            map.put("objNameCh", staffsPo.getChname());
+                        }
+                    } else if (abnormalPo.getType() == 2) {
+                        toolsPo = toolsPoMapper.selectByPrimaryKey(number);
+                        if (toolsPo != null) {
+                            map.put("objName", toolsPo.getName());
+                        }
                     }
                 }
                 list.add(map);
