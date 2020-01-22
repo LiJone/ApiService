@@ -49,7 +49,7 @@
         left join tooltype c on t.typeid = c.id left join osdinfos o on d.osdid = o.osdid
         where 1 = 1
         <if test="toolname != null">
-            and t.name like '%${toolname}%'
+            and c.typename like '%${toolname}%'
         </if>
         <if test="osdname != null">
             and o.name like '%${osdname}%'
