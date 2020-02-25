@@ -11,6 +11,8 @@ public class AbnormalExceptionVo {
 
     private  String engineerName;
 
+    private String aiEngineerName;
+
     private String number;
 
     private Integer type;
@@ -103,5 +105,13 @@ public class AbnormalExceptionVo {
 
     public void setEngineerName(String engineerName) {
         this.engineerName = engineerName;
+    }
+
+    public String getAiEngineerName() {
+        return aiEngineerName;
+    }
+
+    public void setAiEngineerName(String aiEngineerName) {
+        this.aiEngineerName = aiEngineerName;
     }
 }

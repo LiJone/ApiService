@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.tss</groupId>
     <artifactId>apiservice</artifactId>
-    <version>1.4.25</version>
+    <version>1.4.26</version>
     <name>Tss-Apiservice</name>
     <description>Demo project for Spring Boot</description>
 

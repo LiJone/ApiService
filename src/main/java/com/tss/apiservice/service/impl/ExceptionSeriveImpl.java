@@ -87,6 +87,8 @@ public class ExceptionSeriveImpl implements ExceptionSerive {
             ArrayList<Object> list = new ArrayList<>();
             for (AbnormalExceptionVo abnormalPo : abnormalPos) {
                 map = new HashMap<>();
+                if (abnormalPo.getEngineerName() == null || abnormalPo.getEngineerName().equals(""))
+                    abnormalPo.setEngineerName(abnormalPo.getAiEngineerName());
                 map.put("abnormalPo", abnormalPo);
                 number = abnormalPo.getNumber();
                 if (number != null) {

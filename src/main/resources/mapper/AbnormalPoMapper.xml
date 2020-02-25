@@ -19,8 +19,9 @@
   </sql>
 
   <select id="selectByHashMap" parameterType="java.lang.Integer" resultType="com.tss.apiservice.po.vo.AbnormalExceptionVo">
-    select abnormal.* ,engineerinfo.name as engineerName
+    select abnormal.* ,engineerinfo.name as engineerName, aiengineerinfo.jobname as aiEngineerName
     from abnormal left join  engineerinfo on abnormal.jobnum = engineerinfo.jobnum
+    left join aiengineerinfo on abnormal.jobnum = aiengineerinfo.jobnum
     where 1 = 1
     <if test="timeBegin != null">
       and DATE_FORMAT(abnormal.abtime,'%Y-%m-%d') &gt;= #{timeBegin}
